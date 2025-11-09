@@ -1,0 +1,36 @@
+{
+  "name": "archi-graph-template",
+  "version": "1.0.0",
+  "description": "WordPress theme with interactive graph visualization",
+  "scripts": {
+    "build": "webpack --mode production",
+    "dev": "webpack --mode development --watch",
+    "build:blocks": "wp-scripts build assets/js/blocks-editor.js --output-path=dist/js"
+  },
+  "keywords": [
+    "wordpress",
+    "theme",
+    "graph",
+    "visualization"
+  ],
+  "author": "",
+  "license": "GPL-2.0-or-later",
+  "devDependencies": {
+    "@babel/core": "^7.28.5",
+    "@babel/preset-env": "^7.28.5",
+    "@babel/preset-react": "^7.28.5",
+    "@wordpress/scripts": "^19.2.4",
+    "babel-loader": "^10.0.0",
+    "css-loader": "^7.1.2",
+    "sass": "^1.93.2",
+    "sass-loader": "^16.0.6",
+    "style-loader": "^4.0.0",
+    "webpack": "^5.102.1",
+    "webpack-cli": "^6.0.1"
+  },
+  "dependencies": {
+    "d3": "^7.9.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}

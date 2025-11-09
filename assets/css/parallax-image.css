@@ -411,3 +411,245 @@
         scroll-behavior: smooth;
     }
 }
+/**
+ * Enhanced Parallax Image Block Styles
+ * Includes transitions, animations, and effects
+ */
+
+/* Base Parallax Image Container */
+.archi-parallax-image {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: #000;
+}
+
+.archi-parallax-image-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.archi-parallax-image-element {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+/* Parallax Effects */
+.parallax-effect-fixed .archi-parallax-image-element {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+}
+
+.parallax-effect-scroll .archi-parallax-image-container {
+  will-change: transform;
+}
+
+.parallax-effect-zoom .archi-parallax-image-element {
+  transform: scale(1);
+  transition: transform 0.6s ease-out;
+}
+
+.parallax-effect-zoom:hover .archi-parallax-image-element {
+  transform: scale(1.1);
+}
+
+.has-zoom-effect .archi-parallax-image-element {
+  animation: subtle-zoom 20s ease-in-out infinite alternate;
+}
+
+@keyframes subtle-zoom {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.05);
+  }
+}
+
+/* Overlay */
+.archi-parallax-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Text Overlay */
+.archi-parallax-text-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.archi-parallax-text-content {
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  max-width: 80%;
+}
+
+/* Text Positions */
+.text-position-center .archi-parallax-text-overlay {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.text-position-top .archi-parallax-text-overlay {
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 3rem;
+  text-align: center;
+}
+
+.text-position-bottom .archi-parallax-text-overlay {
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 3rem;
+  text-align: center;
+}
+
+.text-position-top-left .archi-parallax-text-overlay {
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 3rem;
+}
+
+.text-position-top-right .archi-parallax-text-overlay {
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 3rem;
+  text-align: right;
+}
+
+.text-position-bottom-left .archi-parallax-text-overlay {
+  align-items: flex-end;
+  justify-content: flex-start;
+  padding: 3rem;
+}
+
+.text-position-bottom-right .archi-parallax-text-overlay {
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 3rem;
+  text-align: right;
+}
+
+/* Scroll Animations */
+.has-scroll-animation {
+  opacity: 0;
+  transform: translateY(0);
+}
+
+.has-scroll-animation.is-visible {
+  opacity: 1;
+}
+
+/* Fade In Animation */
+.animation-fade-in.is-visible {
+  animation: fadeIn 1s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Slide Up Animation */
+.animation-slide-up {
+  transform: translateY(50px);
+}
+
+.animation-slide-up.is-visible {
+  animation: slideUp 1s ease-out forwards;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Slide Down Animation */
+.animation-slide-down {
+  transform: translateY(-50px);
+}
+
+.animation-slide-down.is-visible {
+  animation: slideDown 1s ease-out forwards;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Zoom In Animation */
+.animation-zoom-in {
+  transform: scale(0.8);
+}
+
+.animation-zoom-in.is-visible {
+  animation: zoomIn 1s ease-out forwards;
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .parallax-effect-fixed .archi-parallax-image-element {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+  }
+
+  .archi-parallax-text-content {
+    font-size: 1.2rem;
+  }
+
+  .text-position-top-left .archi-parallax-text-overlay,
+  .text-position-top-right .archi-parallax-text-overlay,
+  .text-position-bottom-left .archi-parallax-text-overlay,
+  .text-position-bottom-right .archi-parallax-text-overlay {
+    padding: 1.5rem;
+  }
+}

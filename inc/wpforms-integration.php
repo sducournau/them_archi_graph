@@ -1148,15 +1148,14 @@ function archi_process_guestbook_form($fields, $entry, $form_data, $entry_id) {
     $post_id = wp_insert_post($post_data);
     
     if (is_wp_error($post_id)) {
-        error_log('Erreur création entrée livre d\'or: ' . $post_id->get_error_message());
+        if (WP_DEBUG && WP_DEBUG_LOG) {
+            error_log('Archi: Failed to create guestbook entry - ' . $post_id->get_error_message());
+        }
         return;
     }
     
     // Invalider le cache
     delete_transient('archi_graph_articles');
-    
-    // Log de succès
-    error_log("Entrée livre d'or créée avec succès: ID $post_id");
 }
 add_action('wpforms_process_complete', 'archi_process_guestbook_form', 10, 4);
 

@@ -628,9 +628,10 @@ class GraphEditor {
   rerenderNode(nodeId) {
     if (!this.graph.svg) return;
 
-    // Logique de re-render à implémenter selon votre structure
-    // Cette fonction devrait appeler les fonctions d'advancedShapes.js
-    // TODO: Implémenter le re-render complet du nœud
+    // Re-render node with updated shape
+    if (this.selectedNode) {
+      this.updateNodeVisual(this.selectedNode);
+    }
   }
 
   /**

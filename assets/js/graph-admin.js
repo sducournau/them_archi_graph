@@ -242,7 +242,7 @@
     editRelation: function (e) {
       e.preventDefault();
       const relationId = $(e.currentTarget).data("id");
-      // TODO: Ouvrir un modal pour modifier la relation
+      alert("Fonctionnalité d'édition de relation à venir");
     },
 
     /**
@@ -286,12 +286,12 @@
     },
 
     /**
-     * Configurer une catégorie
+     * Éditer une catégorie
      */
     editCategory: function (e) {
       e.preventDefault();
       const categoryId = $(e.currentTarget).data("id");
-      // TODO: Ouvrir un modal pour configurer la catégorie
+      alert("Fonctionnalité de configuration de catégorie à venir");
     },
 
     /**

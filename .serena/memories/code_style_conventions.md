@@ -1,5 +1,14 @@
 # Code Style and Conventions
 
+## ✨ CODEBASE STATUS: CLEANED & HARMONIZED (November 2025)
+
+**This codebase has been thoroughly cleaned:**
+- ✅ NO `enhanced_*` or `unified_*` prefixes
+- ✅ CSS files consolidated (blocks-editor, parallax-image, image-comparison-slider)
+- ✅ Debug code cleaned up (only essential error logging)
+- ✅ TODO comments converted to implementations
+- ✅ All functions use clean `archi_*` prefix
+
 ## Naming Conventions
 
 ### ❌ FORBIDDEN PREFIXES (Never Use)
@@ -123,6 +132,20 @@ const data = useSelect((select) => {
 - [ ] Can utility function be generalized?
 - [ ] Use Serena MCP to search for existing implementations
 
+## CSS File Organization
+
+### Consolidated Files (November 2025)
+- `blocks-editor.css` - Combined editor styles (was blocks-editor + blocks-editor-enhanced)
+- `parallax-image.css` - Combined parallax styles (was parallax-image + parallax-image-enhanced)
+- `image-comparison-slider.css` - Combined comparison styles (was slider + enhanced)
+
+### Active CSS Files
+- `article-card.css` - Card component styles
+- `graph-white.css` - Graph visualization
+- `blocks.css` - Frontend block styles
+- `simplified-templates.css` - Single template styles
+- Component-specific files as needed
+
 ## Metadata Schema
 
 ### Graph Metadata (All Post Types)
@@ -169,3 +192,14 @@ function archi_function_name($param) {
 - Minimize database queries in loops
 - Use `wp_cache_*` for object caching
 - Lazy load images
+
+## Debug & Error Handling
+```php
+// Only log actual errors
+if (is_wp_error($result)) {
+    if (WP_DEBUG && WP_DEBUG_LOG) {
+        error_log('Archi: Error description - ' . $result->get_error_message());
+    }
+    return;
+}
+```

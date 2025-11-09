@@ -343,3 +343,274 @@
 .archi-image-comparison-slider {
     animation: fadeIn 0.5s ease-out;
 }
+/**
+ * Image Comparison Slider Styles
+ * Before/After slider with full interactivity
+ */
+
+/* Base Container */
+.archi-image-comparison {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: ew-resize;
+}
+
+.archi-image-comparison.orientation-horizontal {
+  cursor: ns-resize;
+}
+
+/* Auto height with aspect ratio */
+.archi-image-comparison.height-mode-auto {
+  position: relative;
+  height: 0;
+}
+
+.archi-image-comparison.height-mode-auto > * {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Images */
+.archi-comparison-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.archi-comparison-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  pointer-events: none;
+}
+
+.archi-comparison-before {
+  z-index: 1;
+}
+
+.archi-comparison-after {
+  z-index: 2;
+}
+
+/* Labels */
+.archi-comparison-label {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.7);
+  color: #ffffff;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 4px;
+  pointer-events: none;
+  z-index: 10;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.archi-comparison-label-before {
+  top: 1rem;
+  left: 1rem;
+}
+
+.archi-comparison-label-after {
+  top: 1rem;
+  right: 1rem;
+}
+
+/* Handle */
+.archi-comparison-handle {
+  position: absolute;
+  z-index: 20;
+  transform: translate(-50%, 0);
+  cursor: ew-resize;
+}
+
+.orientation-vertical .archi-comparison-handle {
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  transform: translateX(-50%);
+}
+
+.orientation-horizontal .archi-comparison-handle {
+  left: 0;
+  right: 0;
+  height: 4px;
+  transform: translateY(-50%);
+  cursor: ns-resize;
+}
+
+/* Handle Icon */
+.archi-comparison-handle-icon {
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  background: inherit;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.orientation-vertical .archi-comparison-handle-icon {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.orientation-horizontal .archi-comparison-handle-icon {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.archi-comparison-handle-icon .dashicons {
+  width: 24px;
+  height: 24px;
+  font-size: 24px;
+  color: #000;
+  opacity: 0.9;
+}
+
+/* Hover Effects */
+.archi-comparison-handle:hover .archi-comparison-handle-icon {
+  transform: translate(-50%, -50%) scale(1.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Active State */
+.archi-image-comparison.is-dragging {
+  cursor: grabbing;
+}
+
+.archi-image-comparison.is-dragging .archi-comparison-handle-icon {
+  transform: translate(-50%, -50%) scale(1.15);
+}
+
+/* Transitions */
+.archi-comparison-after {
+  transition: clip-path 0.3s ease;
+}
+
+.archi-image-comparison:not(.is-dragging) .archi-comparison-handle {
+  transition: left 0.3s ease, top 0.3s ease;
+}
+
+/* Editor Styles */
+.archi-comparison-editor {
+  border: 2px dashed #ccc;
+  padding: 20px;
+  border-radius: 8px;
+  background: #f9f9f9;
+  min-height: 400px;
+}
+
+.archi-comparison-preview-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.archi-comparison-preview-container.orientation-horizontal {
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+
+.archi-comparison-preview-side {
+  position: relative;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.archi-comparison-preview-side img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.archi-comparison-preview-label {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.archi-comparison-preview-side.after .archi-comparison-preview-label {
+  left: auto;
+  right: 10px;
+}
+
+.archi-comparison-divider {
+  position: relative;
+  height: 2px;
+  background: linear-gradient(90deg, #3498db 0%, #2ecc71 100%);
+  margin: 20px 0;
+}
+
+.archi-comparison-info-overlay {
+  padding: 15px;
+  background: #e3f2fd;
+  border-left: 4px solid #2196f3;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #1565c0;
+  line-height: 1.6;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .archi-comparison-label {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+  }
+
+  .archi-comparison-handle-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .archi-comparison-handle-icon .dashicons {
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+  }
+
+  .archi-comparison-preview-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Accessibility */
+.archi-image-comparison:focus {
+  outline: 2px solid #2196f3;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .archi-comparison-after,
+  .archi-comparison-handle,
+  .archi-comparison-handle-icon {
+    transition: none;
+  }
+}

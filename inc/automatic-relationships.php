@@ -73,9 +73,6 @@ class Archi_Automatic_Relationships {
         // Invalider le cache global
         delete_transient('archi_relationship_cache');
         delete_transient('archi_graph_articles');
-        
-        // Log
-        error_log("Archi Relations: Recalculated relationships for post {$post_id} ({$post->post_title})");
     }
     
     /**

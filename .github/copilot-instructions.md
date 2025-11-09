@@ -1,5 +1,15 @@
 # GitHub Copilot Instructions for Archi-Graph Theme
 
+## ✨ CODEBASE STATUS: CLEANED & HARMONIZED (Nov 2025)
+
+**Recent Improvements:**
+- ✅ **NO** `enhanced_*` or `unified_*` prefixes found
+- ✅ CSS files consolidated: `blocks-editor.css`, `parallax-image.css`, `image-comparison-slider.css`
+- ✅ Debug statements cleaned (only essential error logging remains)
+- ✅ TODO comments converted to implementations or user-facing messages
+- ✅ All functions use clean `archi_*` prefix pattern
+- ✅ No redundant or duplicate files
+
 ## 🚨 MANDATORY RULE: ALWAYS USE SERENA MCP
 
 **THIS IS A NON-NEGOTIABLE REQUIREMENT FOR ALL OPERATIONS ON THIS PROJECT.**

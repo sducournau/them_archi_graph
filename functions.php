@@ -219,26 +219,10 @@ function archi_enqueue_scripts() {
         true
     );
     
-    // CSS parallax pour les blocs (global)
+    // Consolidated parallax CSS for blocks
     wp_enqueue_style(
         'archi-parallax-image',
         ARCHI_THEME_URI . '/assets/css/parallax-image.css',
-        [],
-        ARCHI_THEME_VERSION
-    );
-    
-    // Enhanced parallax image styles with transitions & animations
-    wp_enqueue_style(
-        'archi-parallax-image-enhanced',
-        ARCHI_THEME_URI . '/assets/css/parallax-image-enhanced.css',
-        ['archi-parallax-image'],
-        ARCHI_THEME_VERSION
-    );
-    
-    // Image comparison slider styles
-    wp_enqueue_style(
-        'archi-image-comparison-enhanced',
-        ARCHI_THEME_URI . '/assets/css/image-comparison-enhanced.css',
         [],
         ARCHI_THEME_VERSION
     );
@@ -455,19 +439,11 @@ add_action('admin_enqueue_scripts', 'archi_admin_scripts');
  * Charger les styles pour l'éditeur de blocs Gutenberg
  */
 function archi_enqueue_block_editor_assets() {
-    // Styles pour l'éditeur de blocs (preview des blocs)
+    // Consolidated editor styles for blocks preview
     wp_enqueue_style(
         'archi-blocks-editor',
         ARCHI_THEME_URI . '/assets/css/blocks-editor.css',
         [],
-        ARCHI_THEME_VERSION
-    );
-    
-    // ✅ NEW: Enhanced editor styles for better WYSIWYG experience
-    wp_enqueue_style(
-        'archi-blocks-editor-enhanced',
-        ARCHI_THEME_URI . '/assets/css/blocks-editor-enhanced.css',
-        ['archi-blocks-editor'],
         ARCHI_THEME_VERSION
     );
 }

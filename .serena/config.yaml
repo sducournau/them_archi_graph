@@ -1,0 +1,353 @@
+# Serena MCP Configuration for Archi-Graph WordPress Theme
+# This configuration helps AI assistants understand the codebase structure
+
+project:
+  name: "Archi-Graph WordPress Theme"
+  type: "wordpress-theme"
+  language: "php"
+  version: "1.0.0"
+  description: "WordPress theme for architectural projects with graph visualization, custom post types, and WPForms integration"
+
+structure:
+  primary_languages:
+    - php
+    - javascript
+    - jsx
+    - css
+    - scss
+
+  key_directories:
+    - path: "inc/"
+      description: "Core PHP functionality - CPTs, meta boxes, REST API, integrations"
+    - path: "assets/js/"
+      description: "JavaScript and React components for frontend and blocks"
+    - path: "assets/css/"
+      description: "Stylesheets for theme and blocks"
+    - path: "template-parts/"
+      description: "Reusable template components"
+    - path: "docs/"
+      description: "Theme documentation"
+
+  entry_points:
+    - file: "functions.php"
+      description: "Main theme bootstrap file"
+    - file: "inc/custom-post-types.php"
+      description: "Custom post type definitions (archi_project, archi_illustration)"
+    - file: "inc/wpforms-integration.php"
+      description: "WPForms integration and form processing"
+    - file: "inc/meta-boxes.php"
+      description: "Graph metadata and relationships meta boxes"
+    - file: "inc/rest-api.php"
+      description: "REST API endpoints for graph data"
+    - file: "assets/js/blocks/article-manager.jsx"
+      description: "React Gutenberg block for article management"
+
+patterns:
+  naming_conventions:
+    functions: "archi_snake_case"
+    hooks: "archi_hook_name"
+    post_types: "archi_posttype"
+    taxonomies: "archi_taxonomy"
+    meta_keys: "_archi_meta_key"
+    css_classes: "archi-kebab-case"
+    js_functions: "camelCase"
+
+  wordpress_specific:
+    text_domain: "archi-graph"
+    prefix: "archi_"
+
+  metadata_schema:
+    graph_common:
+      - "_archi_show_in_graph"
+      - "_archi_node_color"
+      - "_archi_node_size"
+      - "_archi_priority_level"
+      - "_archi_graph_position"
+      - "_archi_related_articles"
+
+    project_specific:
+      - "_archi_project_surface"
+      - "_archi_project_cost"
+      - "_archi_project_client"
+      - "_archi_project_location"
+      - "_archi_project_start_date"
+      - "_archi_project_end_date"
+      - "_archi_project_bet"
+      - "_archi_project_certifications"
+
+    illustration_specific:
+      - "_archi_illustration_technique"
+      - "_archi_illustration_dimensions"
+      - "_archi_illustration_software"
+      - "_archi_illustration_project_link"
+
+dependencies:
+  wordpress:
+    minimum_version: "6.0"
+
+  required_plugins:
+    - name: "WPForms"
+      reason: "Form creation and submission processing"
+      critical: true
+
+  npm_packages:
+    - "@wordpress/blocks"
+    - "@wordpress/components"
+    - "@wordpress/block-editor"
+    - "@wordpress/data"
+    - "react"
+    - "d3"
+
+code_standards:
+  php:
+    - "Follow WordPress Coding Standards"
+    - "Use get_post_meta() for metadata retrieval"
+    - "Sanitize all user inputs with sanitize_text_field(), esc_attr(), etc."
+    - "Use wp_nonce_field() for form security"
+    - "Check capabilities with current_user_can()"
+    - "Use translation functions: __(), _e(), esc_html__(), etc."
+
+  javascript:
+    - "Use ES6+ syntax"
+    - "Follow React best practices for hooks"
+    - "Use WordPress data store (@wordpress/data) for state management"
+    - "Localize strings for translation"
+
+  security:
+    - "Always verify nonces before processing forms"
+    - "Escape output with esc_html(), esc_attr(), esc_url()"
+    - "Sanitize input with sanitize_text_field(), absint(), etc."
+    - "Check user capabilities before sensitive operations"
+    - "Prevent direct file access with: if (!defined('ABSPATH')) exit;"
+
+architecture:
+  custom_post_types:
+    - slug: "archi_project"
+      label: "Architectural Projects"
+      supports:
+        [
+          "title",
+          "editor",
+          "thumbnail",
+          "excerpt",
+          "custom-fields",
+          "revisions",
+          "author",
+          "comments",
+        ]
+      taxonomies:
+        ["archi_project_type", "archi_project_status", "category", "post_tag"]
+
+    - slug: "archi_illustration"
+      label: "Illustrations"
+      supports:
+        ["title", "editor", "thumbnail", "excerpt", "custom-fields", "author"]
+      taxonomies: ["illustration_type", "category", "post_tag"]
+
+  taxonomies:
+    - slug: "archi_project_type"
+      hierarchical: true
+      terms:
+        [
+          "Résidentiel",
+          "Commercial",
+          "Industriel",
+          "Culturel",
+          "Éducatif",
+          "Santé",
+        ]
+
+    - slug: "archi_project_status"
+      hierarchical: false
+      terms: ["Étude", "Conception", "En cours", "Terminé", "Suspendu"]
+
+    - slug: "illustration_type"
+      hierarchical: true
+
+  wpforms_integration:
+    form_types:
+      - name: "Project Submission Form"
+        post_type: "archi_project"
+        fields: 42
+        sections:
+          [
+            "Basic Info",
+            "Technical Details",
+            "Location",
+            "Certifications",
+            "Media",
+          ]
+        processing_hook: "wpforms_process_complete"
+        handler: "archi_process_project_submission()"
+
+  gutenberg_blocks:
+    - name: "archi-graph/article-manager"
+      type: "react"
+      file: "assets/js/blocks/article-manager.jsx"
+      description: "Unified article management block"
+
+    - name: "archi-graph/article-info"
+      type: "javascript"
+      file: "assets/js/article-info-block.js"
+      description: "Article metadata display block"
+
+data_flow:
+  form_submission:
+    - step: "User submits WPForms form"
+    - step: "wpforms_process_complete hook triggers"
+    - step: "archi_process_form_entries() identifies form type"
+    - step: "archi_process_project_submission() or similar processes data"
+    - step: "wp_insert_post() creates post with 'pending' status"
+    - step: "update_post_meta() saves form fields as metadata"
+    - step: "wp_set_post_terms() assigns taxonomies"
+    - step: "archi_process_uploaded_files() handles media uploads"
+    - step: "Admin reviews and publishes"
+
+  graph_visualization:
+    - step: "GraphContainer.jsx mounts on frontend"
+    - step: "Fetches data from REST API: /wp-json/archi/v1/articles"
+    - step: "rest-api.php queries posts with _archi_show_in_graph = '1'"
+    - step: "Returns JSON with nodes, metadata, relationships"
+    - step: "D3.js renders interactive graph"
+    - step: "User interactions update via AJAX"
+
+testing:
+  diagnostic_files:
+    - "check-graph-meta.php"
+    - "deep-diagnostic.php"
+    - "test-api-direct.php"
+    - "debug-api-complet.php"
+
+  approach:
+    - "Use diagnostic scripts to verify metadata"
+    - "Check REST API responses"
+    - "Verify WPForms processing"
+    - "Test graph visualization rendering"
+
+common_tasks:
+  add_custom_field:
+    - "Add meta box field in inc/meta-boxes.php or inc/custom-post-types.php"
+    - "Add save logic in archi_save_meta_box_data() or archi_save_custom_meta_boxes()"
+    - "Add WPForms field if needed in wpforms-integration.php"
+    - "Update form processing to save the field"
+    - "Update REST API to include field in response (inc/rest-api.php)"
+
+  add_gutenberg_block:
+    - "Create block registration in inc/gutenberg-blocks.php"
+    - "Define attributes and render callback"
+    - "Add block editor JavaScript if needed"
+    - "Enqueue block assets in functions.php"
+    - "Add block styles in assets/css/"
+
+  modify_graph_behavior:
+    - "Update REST API endpoint in inc/rest-api.php"
+    - "Modify GraphContainer.jsx or related components"
+    - "Update metadata schema if needed"
+    - "Test with diagnostic scripts"
+
+notes:
+  - "The theme uses a hybrid approach: PHP for backend, React for complex blocks"
+  - "All graph-related metadata starts with '_archi_' prefix"
+  - "WPForms integration is critical - forms auto-create on theme activation"
+  - "The 'archi_article' post type was deprecated - use 'post' or 'archi_illustration'"
+  - "Graph visualization uses D3.js with force-directed layout"
+  - "Metadata is preserved from WPForms to allow data-driven displays"
+  - "Relationship system supports both automatic (category/tag) and manual links"
+
+code_quality_rules:
+  naming_conventions:
+    forbidden_prefixes:
+      - "unified_" # Do not use - creates confusion with standard code
+      - "enhanced_" # Do not use - implies multiple versions exist
+      - "new_" # Temporary only - refactor to proper name ASAP
+      - "improved_" # Do not use - all code should be improved by default
+      - "v2_" # Do not use - use git for versions, not code prefixes
+    
+    correct_patterns:
+      functions: "archi_action_subject()" # e.g., archi_render_card(), archi_get_metadata()
+      classes: ".archi-component-modifier" # e.g., .archi-card-large, .archi-button-primary
+      components: "ComponentName" # e.g., ArticleCard, GraphContainer (React)
+    
+    refactoring_required:
+      - pattern: "archi_unified_*"
+        action: "Rename to clean archi_* without prefix"
+        example: "archi_unified_render() → archi_render()"
+      
+      - pattern: "archi_enhanced_*"
+        action: "Merge with base function or rename"
+        example: "archi_enhanced_query() → archi_query_posts()"
+      
+      - pattern: ".archi-unified-*"
+        action: "Rename to semantic class name"
+        example: ".archi-unified-card → .archi-card"
+
+  code_consolidation:
+    principles:
+      - "One component per responsibility"
+      - "Merge similar functions instead of creating variants"
+      - "Use function parameters for variations, not separate functions"
+      - "Consolidate CSS classes - use modifiers, not duplicates"
+    
+    before_creating_new:
+      - check: "Does similar function exist in inc/ directory?"
+      - check: "Can existing component be extended with props?"
+      - check: "Are there duplicate CSS patterns?"
+      - check: "Can utility function be generalized?"
+    
+    consolidation_targets:
+      - location: "inc/article-card-component.php"
+        purpose: "Single source for card rendering"
+        use_instead_of: "Creating new card functions in gutenberg-blocks.php"
+      
+      - location: "assets/js/utils/"
+        purpose: "Shared utility functions"
+        use_instead_of: "Duplicating helpers in components"
+      
+      - location: "assets/js/components/"
+        purpose: "Reusable React components"
+        use_instead_of: "Creating inline components in blocks"
+
+  serena_mcp_usage:
+    mandatory_checks:
+      - "Use Serena MCP to analyze codebase before making changes"
+      - "Verify no duplicate functionality exists"
+      - "Check .serena/config.yaml for patterns"
+      - "Use mcp_gitkraken tools for git operations"
+    
+    workflow:
+      before_coding:
+        - "Query Serena for similar implementations"
+        - "Review architecture patterns in this config"
+        - "Check if refactoring needed before adding new code"
+      
+      during_coding:
+        - "Follow patterns defined in 'patterns' section"
+        - "Use existing utilities and components"
+        - "Maintain consistency with metadata_schema"
+      
+      after_coding:
+        - "Use mcp_gitkraken_git_status to review changes"
+        - "Ensure no forbidden prefixes introduced"
+        - "Update this config if new patterns added"
+
+refactoring_priorities:
+  high:
+    - description: "Remove all 'unified_' and 'enhanced_' prefixes from functions"
+      files_affected: ["inc/gutenberg-blocks.php", "inc/article-card-component.php"]
+    
+    - description: "Consolidate card rendering into single archi_render_article_card()"
+      files_affected: ["inc/gutenberg-blocks.php", "inc/article-card-component.php"]
+    
+    - description: "Merge duplicate CSS classes"
+      files_affected: ["assets/css/article-card.css", "assets/css/article-manager.css"]
+  
+  medium:
+    - description: "Consolidate utility functions in assets/js/utils/"
+      files_affected: ["assets/js/utils/*.js"]
+    
+    - description: "Remove redundant block registration code"
+      files_affected: ["inc/gutenberg-blocks.php"]
+  
+  low:
+    - description: "Standardize comment styles across PHP files"
+      files_affected: ["inc/*.php"]

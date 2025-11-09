@@ -1,0 +1,575 @@
+/**
+ * Styles pour le bloc Gestionnaire d'Article
+ * archi-graph/article-manager
+ */
+
+/* Conteneur principal */
+.archi-article-manager {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 20px 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Layouts */
+.archi-article-manager.archi-layout-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.archi-article-manager.archi-layout-list {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+}
+
+.archi-article-manager.archi-layout-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.archi-article-manager.archi-layout-minimal {
+  border: none;
+  box-shadow: none;
+  background: transparent;
+}
+
+/* Image featured */
+.archi-article-image {
+  position: relative;
+  overflow: hidden;
+}
+
+.archi-article-image.archi-position-top {
+  width: 100%;
+}
+
+.archi-article-image.archi-position-left,
+.archi-article-image.archi-position-right {
+  flex: 0 0 40%;
+}
+
+.archi-article-image.archi-position-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+}
+
+.archi-article-image.archi-position-background::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.3),
+    rgba(0, 0, 0, 0.7)
+  );
+  z-index: 1;
+}
+
+.archi-article-image img.archi-featured-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+.archi-layout-list .archi-article-image img {
+  height: 300px;
+}
+
+.archi-position-background img {
+  height: 100%;
+  min-height: 500px;
+}
+
+/* Contenu */
+.archi-article-content {
+  padding: 30px;
+  position: relative;
+  z-index: 2;
+}
+
+.archi-image-background .archi-article-content {
+  color: #fff;
+}
+
+.archi-image-background .archi-article-content h2,
+.archi-image-background .archi-article-content h3 {
+  color: #fff;
+}
+
+/* Header */
+.archi-article-header {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.archi-article-title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #2c3e50;
+  flex: 1;
+}
+
+.archi-image-background .archi-article-title {
+  color: #fff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.archi-post-type-badge {
+  display: inline-block;
+  padding: 6px 15px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #fff;
+  background: #3498db;
+}
+
+/* Excerpt et contenu */
+.archi-article-excerpt {
+  margin: 20px 0;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #555;
+}
+
+.archi-image-background .archi-article-excerpt {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.archi-article-full-content {
+  margin: 20px 0;
+  line-height: 1.8;
+}
+
+/* Métadonnées */
+.archi-article-metadata {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin: 25px 0;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 6px;
+}
+
+.archi-image-background .archi-article-metadata {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.archi-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.archi-meta-item .dashicons {
+  color: #3498db;
+  width: 18px;
+  height: 18px;
+  font-size: 18px;
+}
+
+.archi-image-background .archi-meta-item .dashicons {
+  color: #fff;
+}
+
+.archi-meta-label {
+  font-weight: 600;
+  color: #666;
+}
+
+.archi-image-background .archi-meta-label {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.archi-meta-value {
+  color: #333;
+}
+
+.archi-meta-value a {
+  color: #3498db;
+  text-decoration: none;
+}
+
+.archi-meta-value a:hover {
+  text-decoration: underline;
+}
+
+.archi-image-background .archi-meta-value {
+  color: #fff;
+}
+
+/* Taxonomies */
+.archi-article-taxonomies {
+  margin: 25px 0;
+}
+
+.archi-taxonomy-group {
+  margin-bottom: 15px;
+}
+
+.archi-taxonomy-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #555;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.archi-taxonomy-label .dashicons {
+  width: 18px;
+  height: 18px;
+  font-size: 18px;
+  color: #3498db;
+}
+
+.archi-taxonomy-terms {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.archi-term-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 15px;
+  font-size: 13px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.archi-category-badge {
+  background: #e3f2fd;
+  color: #1976d2;
+  border: 1px solid #90caf9;
+}
+
+.archi-category-badge:hover {
+  background: #1976d2;
+  color: #fff;
+}
+
+.archi-tag-badge {
+  background: #fff3e0;
+  color: #f57c00;
+  border: 1px solid #ffcc80;
+}
+
+.archi-tag-badge:hover {
+  background: #f57c00;
+  color: #fff;
+}
+
+/* Paramètres du graphique */
+.archi-article-graph-settings {
+  margin: 30px 0;
+  padding: 25px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 8px;
+  color: #fff;
+}
+
+.archi-article-graph-settings .archi-section-title {
+  margin: 0 0 20px 0;
+  font-size: 20px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #fff;
+}
+
+.archi-article-graph-settings .dashicons {
+  width: 24px;
+  height: 24px;
+  font-size: 24px;
+}
+
+.archi-graph-params {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.archi-graph-param {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.archi-param-label {
+  font-size: 13px;
+  opacity: 0.9;
+  font-weight: 500;
+}
+
+.archi-param-value {
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.archi-status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.archi-status-active {
+  background: #4caf50;
+  color: #fff;
+}
+
+.archi-status-inactive {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.archi-color-preview {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.archi-priority-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.archi-priority-low {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.archi-priority-normal {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.archi-priority-high {
+  background: rgba(255, 235, 59, 0.3);
+  color: #fff;
+}
+
+.archi-graph-actions {
+  margin-top: 20px;
+}
+
+.archi-graph-actions .button {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  padding: 8px 20px;
+  border-radius: 6px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.archi-graph-actions .button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+/* Détails spécifiques */
+.archi-article-project-details,
+.archi-article-illustration-details {
+  margin: 30px 0;
+  padding: 25px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #3498db;
+}
+
+.archi-section-title {
+  margin: 0 0 20px 0;
+  font-size: 20px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #2c3e50;
+}
+
+.archi-section-title .dashicons {
+  width: 24px;
+  height: 24px;
+  font-size: 24px;
+  color: #3498db;
+}
+
+.archi-details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.archi-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.archi-detail-item.archi-detail-full {
+  grid-column: 1 / -1;
+}
+
+.archi-detail-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.archi-detail-value {
+  font-size: 16px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.archi-detail-value .dashicons {
+  width: 18px;
+  height: 18px;
+  font-size: 18px;
+  color: #3498db;
+}
+
+.archi-detail-value a {
+  color: #3498db;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.archi-detail-value a:hover {
+  text-decoration: underline;
+}
+
+/* État vide */
+.archi-article-manager-empty {
+  padding: 60px 30px;
+  text-align: center;
+  color: #999;
+  font-style: italic;
+  background: #f8f9fa;
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .archi-article-manager.archi-layout-list {
+    flex-direction: column;
+  }
+
+  .archi-article-manager.archi-layout-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .archi-article-image.archi-position-left,
+  .archi-article-image.archi-position-right {
+    flex: 1;
+    width: 100%;
+  }
+
+  .archi-article-content {
+    padding: 20px;
+  }
+
+  .archi-article-title {
+    font-size: 22px;
+  }
+
+  .archi-article-metadata {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .archi-graph-params {
+    grid-template-columns: 1fr;
+  }
+
+  .archi-details-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Mode édition (dans Gutenberg) */
+.block-editor .archi-article-manager {
+  pointer-events: none;
+}
+
+.block-editor .archi-settings-preview {
+  background: #fff;
+  padding: 15px;
+  border-radius: 4px;
+  margin-top: 15px;
+}
+
+.block-editor .archi-settings-preview h4 {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  color: #1e1e1e;
+}
+
+.block-editor .archi-settings-preview ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.block-editor .archi-settings-preview li {
+  padding: 4px 0;
+  font-size: 13px;
+  color: #4caf50;
+}
+
+.block-editor .archi-graph-info {
+  font-size: 13px;
+}
+
+.block-editor .archi-graph-info p {
+  margin: 8px 0;
+}

@@ -1,0 +1,345 @@
+/**
+ * Bloc Comparaison d'Images Avant/Après
+ * Styles pour le slider interactif
+ */
+
+/* Container principal */
+.archi-image-comparison-slider {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    margin: 2rem auto;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== MODES DE HAUTEUR ===== */
+
+/* Mode pleine hauteur d'écran */
+.archi-image-comparison-slider.height-full-viewport {
+    height: 100vh;
+    margin: 0;
+    border-radius: 0;
+}
+
+.archi-image-comparison-slider.height-full-viewport .comparison-container {
+    height: 100vh;
+}
+
+/* Mode hauteur personnalisée */
+.archi-image-comparison-slider.height-custom .comparison-container {
+    height: 100%;
+}
+
+/* Mode auto utilise l'aspect ratio (défaut) */
+.archi-image-comparison-slider.height-auto .comparison-container {
+    height: auto;
+}
+
+/* ===== FIN MODES DE HAUTEUR ===== */
+
+.comparison-container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    cursor: ew-resize;
+}
+
+/* Orientation horizontale */
+.archi-image-comparison-slider.orientation-horizontal .comparison-container {
+    cursor: ns-resize;
+}
+
+/* Ratios d'aspect (utilisés seulement en mode height-auto) */
+.archi-image-comparison-slider.height-auto.aspect-ratio-16-9 .comparison-container {
+    aspect-ratio: 16 / 9;
+}
+
+.archi-image-comparison-slider.height-auto.aspect-ratio-4-3 .comparison-container {
+    aspect-ratio: 4 / 3;
+}
+
+.archi-image-comparison-slider.height-auto.aspect-ratio-1-1 .comparison-container {
+    aspect-ratio: 1 / 1;
+}
+
+.archi-image-comparison-slider.height-auto.aspect-ratio-3-4 .comparison-container {
+    aspect-ratio: 3 / 4;
+}
+
+.archi-image-comparison-slider.height-auto.aspect-ratio-original .comparison-container {
+    aspect-ratio: auto;
+}
+
+/* Images */
+.comparison-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.comparison-image img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    user-select: none;
+    pointer-events: none;
+}
+
+/* Image Avant (clippée) */
+.before-image {
+    z-index: 2;
+    clip-path: inset(0 50% 0 0);
+    transition: clip-path 0.05s ease-out;
+}
+
+/* Image Après (arrière-plan) */
+.after-image {
+    z-index: 1;
+}
+
+/* Étiquettes */
+.image-label {
+    position: absolute;
+    top: 20px;
+    padding: 8px 16px;
+    background: rgba(0, 0, 0, 0.75);
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-radius: 4px;
+    z-index: 10;
+    pointer-events: none;
+    backdrop-filter: blur(4px);
+}
+
+.before-label {
+    left: 20px;
+}
+
+.after-label {
+    right: 20px;
+}
+
+/* Orientation horizontale - ajuster les étiquettes */
+.archi-image-comparison-slider.orientation-horizontal .image-label {
+    left: 20px;
+    right: auto;
+}
+
+.archi-image-comparison-slider.orientation-horizontal .before-label {
+    top: 20px;
+}
+
+.archi-image-comparison-slider.orientation-horizontal .after-label {
+    top: auto;
+    bottom: 20px;
+}
+
+/* Handle du slider */
+.comparison-slider-handle {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 4px;
+    height: 100%;
+    background: var(--handle-color, #ffffff);
+    z-index: 3;
+    transform: translateX(-50%);
+    cursor: ew-resize;
+    transition: opacity 0.3s ease;
+}
+
+/* Orientation horizontale */
+.archi-image-comparison-slider.orientation-horizontal .comparison-slider-handle {
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    transform: translateY(-50%);
+    cursor: ns-resize;
+}
+
+/* Ligne du handle */
+.handle-line {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 2px;
+    height: 100%;
+    background: var(--handle-color, #ffffff);
+    transform: translateX(-50%);
+}
+
+.archi-image-comparison-slider.orientation-horizontal .handle-line {
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    transform: translateY(-50%);
+}
+
+/* Cercle du handle */
+.handle-circle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 48px;
+    height: 48px;
+    background: var(--handle-color, #ffffff);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.handle-circle svg {
+    width: 24px;
+    height: 24px;
+    color: #333;
+}
+
+/* États hover et dragging */
+.comparison-slider-handle:hover .handle-circle,
+.archi-image-comparison-slider.is-dragging .handle-circle {
+    transform: translate(-50%, -50%) scale(1.15);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.archi-image-comparison-slider.is-dragging .comparison-container {
+    cursor: grabbing !important;
+}
+
+.archi-image-comparison-slider.is-dragging .before-image {
+    transition: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .archi-image-comparison-slider {
+        margin: 1.5rem auto;
+        border-radius: 6px;
+    }
+    
+    .image-label {
+        font-size: 12px;
+        padding: 6px 12px;
+        top: 12px;
+    }
+    
+    .before-label,
+    .after-label {
+        left: 12px;
+        right: auto;
+    }
+    
+    .after-label {
+        left: auto;
+        right: 12px;
+    }
+    
+    .archi-image-comparison-slider.orientation-horizontal .before-label {
+        top: 12px;
+    }
+    
+    .archi-image-comparison-slider.orientation-horizontal .after-label {
+        bottom: 12px;
+    }
+    
+    .handle-circle {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .handle-circle svg {
+        width: 20px;
+        height: 20px;
+    }
+    
+    /* Ajustements mobiles pour pleine hauteur */
+    .archi-image-comparison-slider.height-full-viewport {
+        height: 100svh; /* Safe viewport height sur mobile */
+    }
+    
+    .archi-image-comparison-slider.height-full-viewport .comparison-container {
+        height: 100svh;
+    }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .comparison-slider-handle,
+    .handle-circle,
+    .before-image {
+        transition: none !important;
+    }
+}
+
+/* Print styles */
+@media print {
+    .archi-image-comparison-slider {
+        break-inside: avoid;
+    }
+    
+    .comparison-slider-handle {
+        display: none;
+    }
+    
+    .before-image {
+        clip-path: inset(0 50% 0 0) !important;
+    }
+}
+
+/* Éditeur Gutenberg */
+.archi-image-comparison-editor {
+    padding: 20px;
+    background: #f9f9f9;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+}
+
+.archi-image-comparison-editor h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #1e1e1e;
+}
+
+.archi-image-comparison-editor h4 {
+    margin-bottom: 10px;
+    color: #333;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.archi-image-comparison-editor img {
+    border-radius: 4px;
+}
+
+/* Animation de chargement */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.archi-image-comparison-slider {
+    animation: fadeIn 0.5s ease-out;
+}

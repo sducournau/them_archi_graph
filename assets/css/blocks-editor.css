@@ -1,0 +1,854 @@
+/* Styles pour l'éditeur Gutenberg */
+
+/* ==========================================================================
+   Contenu centré dans l'éditeur - Aligné avec centered-content.css
+   ========================================================================== */
+
+/* Conteneur principal de l'éditeur avec largeur centrée */
+.editor-styles-wrapper .wp-block {
+    max-width: 800px;
+}
+
+/* Les blocs pleine largeur doivent ignorer la contrainte */
+.editor-styles-wrapper .wp-block[data-align="full"],
+.editor-styles-wrapper .wp-block.alignfull,
+.editor-styles-wrapper .archi-image-full-width,
+.editor-styles-wrapper .archi-images-columns-2,
+.editor-styles-wrapper .archi-images-columns-3 {
+    max-width: none;
+}
+
+/* Editor visualization */
+.editor-styles-wrapper .archi-cover-block-editor,
+.editor-styles-wrapper .archi-cover-preview {
+    position: relative;
+    width: 100%;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 2px dashed #ddd;
+    margin: 1em 0;
+}
+
+.editor-styles-wrapper .archi-cover-preview {
+    border: none;
+}
+
+/* Cover block full-width in editor */
+.editor-styles-wrapper .archi-cover-block-editor.alignfull,
+.editor-styles-wrapper .archi-cover-block-editor.alignwide {
+    width: calc(100% + 60px);
+    max-width: none;
+    margin-left: -30px;
+    margin-right: -30px;
+}
+
+.editor-styles-wrapper .archi-cover-block-editor.alignfull .archi-cover-preview {
+    width: 100%;
+}
+
+/* Parallax indicator in editor */
+.editor-styles-wrapper .archi-cover-preview.has-parallax::before {
+    content: "⚡ Parallax";
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(76, 175, 80, 0.9);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    z-index: 100;
+}
+
+/* Content positioning classes */
+.archi-cover-preview.is-position-top {
+    align-items: flex-start;
+    padding-top: 2em;
+}
+
+.archi-cover-preview.is-position-center {
+    align-items: center;
+}
+
+.archi-cover-preview.is-position-bottom {
+    align-items: flex-end;
+    padding-bottom: 2em;
+}
+
+/* Overlay in editor */
+.archi-cover-overlay {
+    pointer-events: none;
+}
+
+/* Content styling in editor */
+.archi-cover-content .block-editor-rich-text__editable {
+    color: white !important;
+}
+
+/* ==========================================================================
+   Général - Interface éditeur
+   ========================================================================== */
+
+.archi-block-preview {
+  padding: 1.5rem;
+  border: 1px solid #e2e4e7;
+  border-radius: 8px;
+  background: #fff;
+  margin: 1rem 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.archi-block-preview h3 {
+  margin: 0 0 1rem 0;
+  color: #1e1e1e;
+  border-bottom: 2px solid #0073aa;
+  padding-bottom: 0.5rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.archi-block-preview h4 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   Bloc Graphique - Aperçu éditeur
+   ========================================================================== */
+
+.archi-graph-preview {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  color: #666;
+  border-radius: 8px;
+  border: 2px dashed #ddd;
+  transition: all 0.3s ease;
+}
+
+.archi-graph-preview:hover {
+  border-color: #0073aa;
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+}
+
+.archi-graph-preview::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+      circle at 20% 30%,
+      rgba(0, 115, 170, 0.1) 0%,
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 80% 40%,
+      rgba(231, 76, 60, 0.1) 0%,
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 40% 70%,
+      rgba(52, 152, 219, 0.1) 0%,
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 60% 20%,
+      rgba(46, 204, 113, 0.1) 0%,
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 70% 80%,
+      rgba(155, 89, 182, 0.1) 0%,
+      transparent 30%
+    );
+  pointer-events: none;
+  animation: archi-graph-animation 4s ease-in-out infinite;
+}
+
+@keyframes archi-graph-animation {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+.archi-graph-preview h3 {
+  border: none;
+  margin-bottom: 0.5rem;
+  position: relative;
+  z-index: 2;
+}
+
+.archi-graph-preview p {
+  margin: 0.25rem 0;
+  position: relative;
+  z-index: 2;
+  font-size: 0.9rem;
+}
+
+/* ==========================================================================
+   Aperçus de blocs - Grilles et cartes
+   ========================================================================== */
+
+.archi-preview-grid {
+  display: grid;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.archi-preview-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 1rem;
+  background: #fafafa;
+  transition: all 0.3s ease;
+}
+
+.archi-preview-card:hover {
+  border-color: #0073aa;
+  box-shadow: 0 2px 8px rgba(0, 115, 170, 0.1);
+}
+
+.archi-preview-image {
+  height: 120px;
+  background: linear-gradient(45deg, #f0f0f0 25%, transparent 25%),
+    linear-gradient(-45deg, #f0f0f0 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #f0f0f0 75%),
+    linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
+  background-size: 20px 20px;
+  background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  font-size: 2rem;
+}
+
+.archi-preview-content h4 {
+  color: #333;
+  font-size: 1rem;
+  margin: 0 0 0.5rem 0;
+}
+
+.archi-preview-meta {
+  font-size: 0.8rem;
+  color: #666;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+}
+
+.archi-preview-excerpt {
+  font-size: 0.85rem;
+  color: #666;
+  margin: 0.5rem 0;
+  line-height: 1.4;
+}
+
+.archi-category-preview {
+  display: inline-block;
+  background: #e9ecef;
+  color: #495057;
+  padding: 0.2rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   Configuration des blocs - Panneau d'inspecteur
+   ========================================================================== */
+
+.components-panel__body .archi-spec-item,
+.components-panel__body .archi-timeline-item {
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background: #fafafa;
+}
+
+.archi-spec-item-header,
+.archi-timeline-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.archi-spec-fields {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.archi-spec-fields.two-columns {
+  grid-template-columns: 1fr 1fr;
+}
+
+.archi-spec-fields.three-columns {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+/* ==========================================================================
+   Boutons et contrôles personnalisés
+   ========================================================================== */
+
+.archi-add-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.archi-remove-button {
+  color: #d63638 !important;
+  border-color: #d63638 !important;
+}
+
+.archi-remove-button:hover {
+  background: #d63638 !important;
+  color: #fff !important;
+}
+
+/* ==========================================================================
+   Timeline - Aperçu éditeur
+   ========================================================================== */
+
+.archi-timeline-preview {
+  position: relative;
+  padding: 1rem;
+  background: linear-gradient(
+    to right,
+    transparent 49%,
+    #e0e0e0 49%,
+    #e0e0e0 51%,
+    transparent 51%
+  );
+}
+
+.archi-timeline-preview-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.archi-timeline-preview-item:nth-child(even) {
+  flex-direction: row-reverse;
+}
+
+.archi-timeline-preview-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #0073aa;
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 2px #e0e0e0;
+  flex-shrink: 0;
+  margin: 0 1rem;
+  z-index: 2;
+}
+
+.archi-timeline-preview-content {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 1rem;
+  max-width: 250px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.archi-timeline-preview-date {
+  font-size: 0.8rem;
+  color: #0073aa;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.archi-timeline-preview-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  color: #333;
+}
+
+.archi-timeline-preview-desc {
+  font-size: 0.8rem;
+  color: #666;
+  line-height: 1.4;
+}
+
+/* ==========================================================================
+   Avant/Après - Aperçu éditeur
+   ========================================================================== */
+
+.archi-before-after-preview {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.archi-image-upload-area {
+  height: 200px;
+  border: 2px dashed #ddd;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.archi-image-upload-area:hover {
+  border-color: #0073aa;
+  background-color: #f0f8ff;
+}
+
+.archi-image-upload-area.has-image {
+  border-style: solid;
+  border-color: #0073aa;
+}
+
+.archi-upload-placeholder {
+  text-align: center;
+  color: #666;
+  padding: 1rem;
+}
+
+.archi-upload-placeholder div:first-child {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.archi-comparison-success {
+  padding: 1rem;
+  background: linear-gradient(45deg, #e8f5e8, #f0fff0);
+  border: 1px solid #4caf50;
+  border-radius: 6px;
+  text-align: center;
+  color: #2e7d32;
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   Spécifications techniques - Aperçu éditeur
+   ========================================================================== */
+
+.archi-specs-preview-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  background: #fff;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.archi-specs-preview-table th,
+.archi-specs-preview-table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.archi-specs-preview-table th {
+  background: #f8f9fa;
+  font-weight: 600;
+  color: #495057;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.archi-specs-preview-table td {
+  font-size: 0.9rem;
+}
+
+.archi-specs-preview-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.archi-spec-preview-card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: transform 0.2s ease;
+}
+
+.archi-spec-preview-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.archi-spec-preview-icon {
+  font-size: 1.5rem;
+  color: #0073aa;
+  width: 32px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.archi-spec-preview-content {
+  flex: 1;
+}
+
+.archi-spec-preview-label {
+  font-size: 0.8rem;
+  color: #666;
+  margin-bottom: 0.25rem;
+  font-weight: 500;
+}
+
+.archi-spec-preview-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.archi-spec-preview-unit {
+  font-weight: normal;
+  color: #666;
+  font-size: 0.85rem;
+}
+
+/* ==========================================================================
+   États vides et messages
+   ========================================================================== */
+
+.archi-empty-state {
+  padding: 3rem 1rem;
+  text-align: center;
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  color: #666;
+  background: #fafafa;
+}
+
+.archi-empty-state-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.archi-empty-state h4 {
+  margin: 0 0 1rem 0;
+  color: #333;
+}
+
+.archi-empty-state p {
+  margin: 0 0 1.5rem 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.archi-success-state {
+  padding: 1rem;
+  background: linear-gradient(135deg, #e8f5e8 0%, #f0fff0 100%);
+  border: 1px solid #4caf50;
+  border-radius: 6px;
+  text-align: center;
+  color: #2e7d32;
+}
+
+.archi-warning-state {
+  padding: 1rem;
+  background: linear-gradient(135deg, #fff8e1 0%, #fffde7 100%);
+  border: 1px solid #ff9800;
+  border-radius: 6px;
+  text-align: center;
+  color: #f57c00;
+}
+
+/* ==========================================================================
+   Responsive - Éditeur mobile
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .archi-block-preview {
+    padding: 1rem;
+  }
+
+  .archi-preview-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .archi-before-after-preview {
+    grid-template-columns: 1fr;
+  }
+
+  .archi-spec-fields.two-columns,
+  .archi-spec-fields.three-columns {
+    grid-template-columns: 1fr;
+  }
+
+  .archi-specs-preview-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .archi-timeline-preview-item,
+  .archi-timeline-preview-item:nth-child(even) {
+    flex-direction: row;
+  }
+
+  .archi-timeline-preview-content {
+    max-width: none;
+  }
+}
+
+/* ==========================================================================
+   Animations et transitions
+   ========================================================================== */
+
+.archi-block-preview,
+.archi-preview-card,
+.archi-spec-preview-card,
+.archi-image-upload-area {
+  transition: all 0.3s ease;
+}
+
+.archi-preview-card:hover,
+.archi-spec-preview-card:hover {
+  transform: translateY(-2px);
+}
+
+.archi-fade-in {
+  animation: archi-fade-in 0.5s ease-in;
+}
+
+@keyframes archi-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================================================
+   Icônes et symboles personnalisés
+   ========================================================================== */
+
+.archi-icon-placeholder {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  background: currentColor;
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+}
+
+.archi-icon-graph {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'/%3E%3C/svg%3E");
+}
+
+.archi-icon-project {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z'/%3E%3C/svg%3E");
+}
+
+.archi-icon-timeline {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z'/%3E%3Cpath d='M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z'/%3E%3C/svg%3E");
+}
+
+/* ==========================================================================
+   Styles spécifiques pour les blocs de spécifications techniques
+   ========================================================================== */
+
+/* Catégorie de blocs personnalisée */
+.wp-block[data-type^="archi-graph/"] {
+  margin: 1.5rem 0;
+}
+
+/* Inspector Controls - Panneau latéral */
+.archi-specs-inspector-panel .components-base-control {
+  margin-bottom: 1.5rem;
+}
+
+.archi-specs-inspector-panel .components-base-control__label {
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+}
+
+.archi-specs-inspector-panel .components-base-control__help {
+  font-size: 0.875rem;
+  color: #64748b;
+  font-style: italic;
+}
+
+/* Badge pour le type de bloc */
+.archi-specs-project::before {
+  content: "Projet";
+  background: #f5576c;
+}
+
+.archi-specs-illustration::before {
+  content: "Illustration";
+  background: #00f2fe;
+  color: #000;
+}
+
+.archi-specs-article::before {
+  content: "Article";
+  background: #38f9d7;
+  color: #000;
+}
+
+/* Gestion des spécifications (bloc article générique) */
+.archi-spec-editor-item {
+  position: relative;
+  padding: 1rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  transition: all 0.2s ease;
+}
+
+.archi-spec-editor-item:hover {
+  border-color: #cbd5e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.archi-spec-editor-item .components-base-control {
+  margin-bottom: 0.75rem;
+}
+
+.archi-spec-editor-item .components-base-control:last-child {
+  margin-bottom: 0;
+}
+
+.archi-spec-editor-item .components-button.is-destructive {
+  margin-top: 0.5rem;
+}
+
+/* Bouton d'ajout de spécification */
+.archi-add-spec-button {
+  width: 100%;
+  justify-content: center;
+  margin-top: 1rem;
+  border: 2px dashed #cbd5e0;
+  background: transparent;
+  transition: all 0.2s ease;
+}
+
+.archi-add-spec-button:hover {
+  border-color: #667eea;
+  color: #667eea;
+  background: #f0f4ff;
+}
+
+/* Bloc sélectionné */
+.wp-block.is-selected .archi-specs-block-editor {
+  border-color: #667eea;
+  background: #fafbff;
+}
+
+/* Bloc vide */
+.archi-specs-block-editor.is-empty {
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.archi-specs-block-editor.is-empty .archi-specs-empty {
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+/* SelectControl personnalisé */
+.archi-display-style-select .components-select-control__input {
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #cbd5e0;
+  background: white;
+  transition: all 0.2s;
+}
+
+.archi-display-style-select .components-select-control__input:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Tooltips et aide contextuelle */
+.archi-help-tooltip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: #eff6ff;
+  border-left: 3px solid #3b82f6;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  color: #1e40af;
+  margin: 1rem 0;
+}
+
+.archi-help-tooltip svg {
+  flex-shrink: 0;
+  color: #3b82f6;
+}
+
+/* Messages d'erreur et validation */
+.archi-validation-error {
+  color: #dc2626;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.archi-validation-error svg {
+  width: 16px;
+  height: 16px;
+}
+
+.components-base-control.has-error input,
+.components-base-control.has-error textarea,
+.components-base-control.has-error select {
+  border-color: #dc2626;
+}
+
+.components-base-control.has-error input:focus,
+.components-base-control.has-error textarea:focus,
+.components-base-control.has-error select:focus {
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}

@@ -1,0 +1,118 @@
+/**
+ * CSS Fixes - Ensure proper styling across the site
+ * This file contains emergency fixes for common CSS issues
+ */
+
+/* ===== FORCE WHITE BACKGROUNDS ===== */
+body,
+body.page,
+body.page-template,
+body.page-template-default,
+body.single,
+body.archive,
+body.blog,
+#page,
+#page-wrapper,
+.site,
+.site-content,
+#primary,
+#main,
+.page-container,
+.content-area {
+    background-color: #ffffff !important;
+    background-image: none !important;
+}
+
+/* Remove any gradient backgrounds except footer */
+body:not(.home):not(.front-page) * {
+    background-image: none !important;
+}
+
+/* Keep footer gradient */
+.site-footer {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
+
+/* ===== PREVENT COLOR BLEEDING ===== */
+.entry-content,
+.page-content,
+.article-content,
+.page-content-area {
+    background-color: transparent;
+    color: #2c3e50;
+}
+
+/* ===== ENSURE PROPER TEXT COLORS ===== */
+body {
+    color: #2c3e50;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #1a1a1a;
+}
+
+a {
+    color: #1a73e8;
+}
+
+a:hover {
+    color: #0d47a1;
+}
+
+/* ===== FIX HEADER AND FOOTER ===== */
+.site-header {
+    background-color: #ffffff !important;
+    color: #2c3e50;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.site-header a {
+    color: #2c3e50;
+}
+
+.site-footer {
+    color: #ffffff;
+}
+
+.site-footer a {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* ===== RESPONSIVE FIXES ===== */
+@media (max-width: 768px) {
+    body,
+    .page-container,
+    .site-content {
+        background-color: #ffffff !important;
+    }
+}
+
+/* ===== PRINT FIXES ===== */
+@media print {
+    body,
+    .page-container,
+    .site-content {
+        background-color: #ffffff !important;
+        color: #000000;
+    }
+}
+
+/* ===== ACCESSIBILITY FIXES ===== */
+*:focus-visible {
+    outline: 2px solid #1a73e8;
+    outline-offset: 2px;
+}
+
+/* ===== GUTENBERG EDITOR FIXES ===== */
+.block-editor-page,
+.editor-styles-wrapper {
+    background-color: #ffffff !important;
+}
+
+/* ===== PREVENT UNWANTED TRANSFORMS ===== */
+.page-content,
+.entry-content,
+.article-content {
+    transform: none !important;
+    filter: none !important;
+}

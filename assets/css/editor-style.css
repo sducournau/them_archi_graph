@@ -1,0 +1,827 @@
+/**
+ * Styles pour l'éditeur Gutenberg
+ * Assure une expérience WYSIWYG cohérente avec le frontend
+ */
+
+/* ====================
+   GLOBAL EDITOR STYLES
+   ==================== */
+
+.editor-styles-wrapper {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #1a1a1a;
+}
+
+/* ====================
+   CONTENU CENTRÉ DANS L'ÉDITEUR
+   Aligné avec centered-content.css du frontend
+   ==================== */
+
+/* Conteneur de l'éditeur avec largeur centrée comme sur le frontend */
+.editor-styles-wrapper .block-editor-block-list__layout {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+/* Typographie du contenu alignée avec frontend */
+.editor-styles-wrapper {
+    font-size: 18px;
+    line-height: 1.8;
+    color: #333;
+}
+
+.editor-styles-wrapper p {
+    margin-bottom: 1.5em;
+    text-align: justify;
+}
+
+/* Typographie */
+.editor-styles-wrapper h1,
+.editor-styles-wrapper h2,
+.editor-styles-wrapper h3,
+.editor-styles-wrapper h4,
+.editor-styles-wrapper h5,
+.editor-styles-wrapper h6 {
+    font-weight: 700;
+    line-height: 1.3;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    color: #222;
+}
+
+.editor-styles-wrapper h1 { font-size: 2.5rem; }
+.editor-styles-wrapper h2 { 
+    font-size: 28px;
+    font-weight: 600;
+    margin-top: 2em;
+    margin-bottom: 1em;
+    color: #222;
+}
+.editor-styles-wrapper h3 { 
+    font-size: 22px;
+    font-weight: 600;
+    margin-top: 1.5em;
+    margin-bottom: 0.75em;
+    color: #333;
+}
+.editor-styles-wrapper h4 { font-size: 1.5rem; }
+.editor-styles-wrapper h5 { font-size: 1.25rem; }
+.editor-styles-wrapper h6 { font-size: 1rem; }
+
+.editor-styles-wrapper p {
+    margin-bottom: 1em;
+}
+
+/* Images par défaut dans l'éditeur (centrées comme le frontend) */
+.editor-styles-wrapper img:not(.archi-full-width):not(.archi-column-image) {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 2em auto;
+}
+
+.editor-styles-wrapper a {
+    color: #1a73e8;
+    text-decoration: none;
+}
+
+.editor-styles-wrapper a:hover {
+    text-decoration: underline;
+}
+
+/* ====================
+   BLOCS PERSONNALISÉS
+   ==================== */
+
+/* Introduction Paragraph */
+.archi-intro-paragraph {
+    font-size: 1.25rem;
+    line-height: 1.8;
+    color: #34495e;
+    margin-bottom: 2rem;
+}
+
+/* Hero Sections */
+.archi-page-hero .wp-block-cover__inner-container,
+.archi-project-hero .wp-block-cover__inner-container {
+    padding: 4rem 2rem;
+}
+
+.archi-project-hero-title {
+    font-size: 3rem !important;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+/* Featured Image */
+.archi-featured-image {
+    margin-bottom: 2rem;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.archi-featured-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* ====================
+   ARTICLES & POSTS
+   ==================== */
+
+/* Article Footer */
+.archi-article-footer {
+    background: #f8f9fa;
+    padding: 2rem;
+    border-radius: 8px;
+    margin-top: 3rem;
+}
+
+.archi-related-title {
+    color: #2c3e50;
+    margin-bottom: 1rem;
+}
+
+/* Article Gallery */
+.archi-article-gallery {
+    margin: 2rem 0;
+}
+
+.archi-article-gallery .wp-block-image {
+    margin-bottom: 1rem;
+}
+
+/* ====================
+   PROJETS
+   ==================== */
+
+/* Project Plans */
+.archi-project-plans {
+    margin: 2rem 0;
+}
+
+.archi-plan-image {
+    border: 1px solid #e1e8ed;
+    padding: 1rem;
+    background: #ffffff;
+    border-radius: 4px;
+}
+
+/* Project Gallery */
+.archi-project-gallery {
+    margin: 2rem 0;
+}
+
+.archi-project-gallery .blocks-gallery-item {
+    margin-bottom: 1rem;
+}
+
+/* Project Credits */
+.archi-project-credits {
+    padding: 2rem;
+    margin-top: 3rem;
+    border-radius: 8px;
+    border-left: 4px solid #3498db;
+}
+
+/* Technical Specs Styling in Editor */
+.archi-specs-table {
+    width: 100%;
+    margin: 2rem 0;
+}
+
+.archi-specs-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.archi-specs-table th,
+.archi-specs-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e1e8ed;
+}
+
+.archi-specs-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.archi-specs-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 2rem 0;
+}
+
+.archi-spec-card {
+    background: #ffffff;
+    border: 1px solid #e1e8ed;
+    border-radius: 8px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.archi-spec-label {
+    font-size: 0.875rem;
+    color: #65676b;
+    font-weight: 500;
+}
+
+.archi-spec-value {
+    font-size: 1.25rem;
+    color: #2c3e50;
+    font-weight: 700;
+}
+
+.archi-spec-unit {
+    font-size: 0.875rem;
+    color: #65676b;
+    font-weight: 400;
+}
+
+/* ====================
+   ILLUSTRATIONS
+   ==================== */
+
+/* Main Illustration Image */
+.archi-illustration-main-image {
+    margin-bottom: 2rem;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* Illustration Variations */
+.archi-illustration-variations {
+    margin: 2rem 0;
+}
+
+.archi-illustration-variations .blocks-gallery-item {
+    border: 1px solid #e1e8ed;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+/* Detail Images */
+.archi-detail-image {
+    border: 1px solid #e1e8ed;
+    padding: 0.5rem;
+    background: #ffffff;
+    border-radius: 4px;
+}
+
+/* Related Project Section */
+.archi-related-project {
+    padding: 2rem;
+    margin-top: 3rem;
+    border-radius: 8px;
+    border-left: 4px solid #e67e22;
+}
+
+/* ====================
+   SECTIONS SPÉCIALES
+   ==================== */
+
+/* Text + Image Section */
+.archi-text-image-section {
+    padding: 2rem 0;
+}
+
+.archi-text-image-section .wp-block-columns {
+    align-items: center;
+}
+
+/* CTA Section */
+.archi-cta-section {
+    padding: 3rem 2rem;
+    text-align: center;
+    border-radius: 8px;
+    margin: 3rem 0;
+}
+
+/* ====================
+   TIMELINE
+   ==================== */
+
+.archi-timeline {
+    position: relative;
+    padding: 2rem 0;
+}
+
+.archi-timeline-line {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 100%;
+    background: #e1e8ed;
+}
+
+.archi-timeline-item {
+    display: flex;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.archi-timeline-marker {
+    flex-shrink: 0;
+    width: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 0.5rem;
+}
+
+.archi-timeline-dot {
+    width: 16px;
+    height: 16px;
+    background: #3498db;
+    border: 3px solid #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px #3498db;
+}
+
+.archi-timeline-content {
+    flex: 1;
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-left: 1rem;
+}
+
+.archi-timeline-date {
+    font-size: 0.875rem;
+    color: #65676b;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.archi-timeline-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.archi-timeline-description {
+    color: #34495e;
+    line-height: 1.6;
+}
+
+/* ====================
+   BEFORE/AFTER
+   ==================== */
+
+.archi-before-after {
+    position: relative;
+    margin: 2rem 0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.archi-comparison-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #f8f9fa;
+}
+
+.archi-image-before,
+.archi-image-after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.archi-image-before img,
+.archi-image-after img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.archi-image-label {
+    position: absolute;
+    top: 1rem;
+    padding: 0.5rem 1rem;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    font-weight: 600;
+    border-radius: 4px;
+    font-size: 0.875rem;
+}
+
+.archi-label-before {
+    left: 1rem;
+}
+
+.archi-label-after {
+    right: 1rem;
+}
+
+.archi-comparison-slider {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 100%;
+    background: #ffffff;
+    cursor: ew-resize;
+}
+
+.archi-slider-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 48px;
+    height: 48px;
+    background: #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.archi-slider-arrow {
+    font-size: 20px;
+    color: #2c3e50;
+}
+
+/* ====================
+   ARTICLE MANAGER BLOCK
+   ==================== */
+
+.archi-manager {
+    background: #ffffff;
+    border: 1px solid #e1e8ed;
+    border-radius: 8px;
+    padding: 2rem;
+    margin: 2rem 0;
+}
+
+.archi-header {
+    margin-bottom: 1.5rem;
+}
+
+.archi-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.archi-post-type-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.archi-excerpt {
+    font-size: 1.125rem;
+    line-height: 1.8;
+    color: #34495e;
+    margin-bottom: 1.5rem;
+}
+
+.archi-metadata {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e1e8ed;
+}
+
+.archi-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: #65676b;
+}
+
+.archi-meta-item .dashicons {
+    color: #3498db;
+}
+
+.archi-meta-label {
+    font-weight: 600;
+}
+
+.archi-meta-value {
+    color: #2c3e50;
+}
+
+/* Taxonomies */
+.archi-taxonomies {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e1e8ed;
+}
+
+.archi-taxonomy-group {
+    margin-bottom: 1rem;
+}
+
+.archi-taxonomy-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.archi-taxonomy-terms {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.archi-term-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 16px;
+    font-size: 0.875rem;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.archi-category-badge {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.archi-category-badge:hover {
+    background: #1976d2;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.archi-tag-badge {
+    background: #f3e5f5;
+    color: #7b1fa2;
+}
+
+.archi-tag-badge:hover {
+    background: #7b1fa2;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+/* Graph Settings */
+.archi-graph-settings {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.archi-section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+}
+
+.archi-graph-params {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.archi-graph-param {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.archi-param-label {
+    font-size: 0.875rem;
+    color: #65676b;
+    font-weight: 500;
+}
+
+.archi-param-value {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.archi-status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.archi-status-active {
+    background: #d4edda;
+    color: #155724;
+}
+
+.archi-status-inactive {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.archi-color-preview {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    border: 1px solid #e1e8ed;
+}
+
+.archi-priority-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.archi-priority-low {
+    background: #e8f4f8;
+    color: #0277bd;
+}
+
+.archi-priority-normal {
+    background: #f3e5f5;
+    color: #7b1fa2;
+}
+
+.archi-priority-high {
+    background: #fff3e0;
+    color: #e65100;
+}
+
+.archi-priority-featured {
+    background: #fce4ec;
+    color: #c2185b;
+}
+
+/* Project & Illustration Details */
+.archi-project-details,
+.archi-illustration-details {
+    background: #ffffff;
+    border: 1px solid #e1e8ed;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.archi-details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.archi-detail-item {
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.archi-detail-item.archi-detail-full {
+    grid-column: 1 / -1;
+}
+
+.archi-detail-label {
+    font-size: 0.875rem;
+    color: #65676b;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.archi-detail-value {
+    font-size: 1rem;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+/* ====================
+   RESPONSIVE
+   ==================== */
+
+@media (max-width: 768px) {
+    .editor-styles-wrapper h1 { font-size: 2rem; }
+    .editor-styles-wrapper h2 { font-size: 1.75rem; }
+    .editor-styles-wrapper h3 { font-size: 1.5rem; }
+    
+    .archi-project-hero-title {
+        font-size: 2rem !important;
+    }
+    
+    .archi-specs-cards,
+    .archi-graph-params,
+    .archi-details-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .archi-metadata {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .archi-timeline-line {
+        left: 20px;
+    }
+    
+    .archi-timeline-item {
+        padding-left: 40px;
+    }
+}
+
+/* ====================
+   EDITOR NOTICE
+   ==================== */
+
+.archi-editor-notice {
+    border-left-color: #3498db !important;
+}
+
+.archi-editor-notice ul {
+    margin: 0.5rem 0 0 1.5rem;
+    list-style: none;
+}
+
+.archi-editor-notice li {
+    margin-bottom: 0.5rem;
+    position: relative;
+    padding-left: 0;
+}
+
+.archi-editor-notice li:before {
+    display: none;
+}
+
+/* ====================
+   COLOR PALETTE
+   ==================== */
+
+.has-archi-blue-color {
+    color: #3498db;
+}
+
+.has-archi-blue-background-color {
+    background-color: #3498db;
+}
+
+.has-archi-green-color {
+    color: #2ecc71;
+}
+
+.has-archi-green-background-color {
+    background-color: #2ecc71;
+}
+
+.has-archi-orange-color {
+    color: #e67e22;
+}
+
+.has-archi-orange-background-color {
+    background-color: #e67e22;
+}
+
+.has-light-gray-color {
+    color: #ecf0f1;
+}
+
+.has-light-gray-background-color {
+    background-color: #ecf0f1;
+}
+
+.has-dark-gray-color {
+    color: #34495e;
+}
+
+.has-dark-gray-background-color {
+    background-color: #34495e;
+}

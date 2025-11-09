@@ -1,0 +1,144 @@
+/**
+ * CSS d'urgence pour forcer la visibilité du graphe
+ * Ce fichier utilise !important partout pour surcharger tous les autres styles
+ */
+
+/* FORCER LE CONTENEUR À ÊTRE VISIBLE */
+#graph-container,
+.graph-container {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: 100% !important;
+  height: 100vh !important;
+  min-height: 800px !important;
+  max-height: none !important;
+  position: relative !important;
+  z-index: 10 !important;
+  background: white !important;
+  overflow: visible !important;
+}
+
+/* FORCER LE WRAPPER À ÊTRE VISIBLE */
+.graph-wrapper {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 800px !important;
+  position: relative !important;
+  z-index: 10 !important;
+}
+
+/* FORCER LE SVG À ÊTRE VISIBLE */
+svg.graph-svg,
+.graph-svg,
+#graph-container svg,
+.graph-container svg {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 800px !important;
+  max-height: none !important;
+  position: relative !important;
+  z-index: 10 !important;
+  background: white !important;
+}
+
+/* FORCER TOUS LES ENFANTS DU SVG À ÊTRE VISIBLES */
+.graph-svg *,
+svg.graph-svg * {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* FORCER LES GROUPES À ÊTRE VISIBLES */
+.graph-group,
+.graph-svg .graph-group,
+g.graph-group {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* FORCER LES NOEUDS À ÊTRE VISIBLES */
+.graph-node,
+.graph-svg .graph-node,
+g.graph-node {
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: all !important;
+}
+
+/* FORCER LES IMAGES DES NOEUDS */
+.node-image,
+image.node-image {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* MASQUER LES CERCLES DE FOND - on utilise seulement les PNG transparents */
+.node-background,
+circle.node-background {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+/* FORCER LES LIENS À ÊTRE VISIBLES */
+.graph-link,
+.graph-svg .graph-link,
+line.graph-link {
+  visibility: visible !important;
+  opacity: 0.6 !important;
+  stroke-opacity: 0.6 !important;
+  stroke-width: 2 !important;
+}
+
+/* MASQUER LE LOADER ABSOLUMENT */
+#graph-loading,
+.graph-loading,
+.graph-loading-inline {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  position: absolute !important;
+  left: -9999px !important;
+}
+
+/* FORCER LE CONTAINER PARENT */
+.graph-homepage-container {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: 100% !important;
+  min-height: 100vh !important;
+  position: relative !important;
+  z-index: 1 !important;
+  background: white !important;
+}
+
+/* FORCER LE MAIN CONTENT */
+body.home main,
+body.home #site-content,
+body.home .site-content {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: 100% !important;
+  min-height: 100vh !important;
+}
+
+/* DEBUG: Bordures temporairement désactivées */
+/* 
+#graph-container {
+  border: 3px solid red !important;
+  box-sizing: border-box !important;
+}
+
+.graph-svg {
+  border: 2px solid blue !important;
+}
+*/

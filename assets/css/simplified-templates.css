@@ -1,0 +1,365 @@
+/**
+ * CSS pour les templates simplifiés (single.php, single-archi_project.php, single-archi_illustration.php)
+ * Version: 1.0.0
+ */
+
+/* ========================================
+   HEADERS SIMPLES (sans image)
+======================================== */
+
+.article-header-simple,
+.project-header-simple,
+.illustration-header-simple {
+    padding: 60px 20px 40px;
+    text-align: center;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-bottom: 3px solid #2c3e50;
+}
+
+.article-title-simple,
+.project-title-simple,
+.illustration-title-simple {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0 0 20px;
+    line-height: 1.2;
+}
+
+.article-categories-simple,
+.project-categories-simple,
+.illustration-categories-simple {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.category-badge-simple {
+    background: #3498db;
+    color: #fff;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ========================================
+   GRILLE DE SPÉCIFICATIONS PROJET
+======================================== */
+
+.project-specs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin: 40px 0;
+    padding: 40px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border-left: 4px solid #3498db;
+}
+
+.spec-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.spec-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #7f8c8d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.spec-value {
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: #2c3e50;
+    line-height: 1.4;
+}
+
+/* ========================================
+   SECTIONS ARTICLES/PROJETS/ILLUSTRATIONS SIMILAIRES
+======================================== */
+
+.related-articles-simple,
+.related-projects-simple,
+.related-illustrations-simple {
+    margin: 60px 0;
+    padding: 40px 0;
+    border-top: 2px solid #ecf0f1;
+}
+
+.related-title-simple {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+/* ========================================
+   GRILLE D'ARTICLES SIMILAIRES
+======================================== */
+
+.related-grid-simple {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.related-card-simple {
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.related-card-simple:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.related-link-simple {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* ========================================
+   IMAGE DES CARTES
+======================================== */
+
+.related-image-simple {
+    position: relative;
+    width: 100%;
+    height: 240px;
+    overflow: hidden;
+    background: #ecf0f1;
+}
+
+.related-image-simple img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.related-card-simple:hover .related-image-simple img {
+    transform: scale(1.08);
+}
+
+/* ========================================
+   CONTENU DES CARTES
+======================================== */
+
+.related-content-simple {
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.related-card-title-simple {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0;
+    line-height: 1.4;
+    transition: color 0.3s ease;
+}
+
+.related-card-simple:hover .related-card-title-simple {
+    color: #3498db;
+}
+
+/* ========================================
+   CONTENEURS PRINCIPAUX
+======================================== */
+
+.article-container,
+.project-container,
+.illustration-container {
+    background: #fff;
+}
+
+.archi-content-section {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 60px 40px;
+}
+
+/* ========================================
+   RESPONSIVE - TABLETTE
+======================================== */
+
+@media (max-width: 768px) {
+    /* Headers simples */
+    .article-header-simple,
+    .project-header-simple,
+    .illustration-header-simple {
+        padding: 40px 20px 30px;
+    }
+
+    .article-title-simple,
+    .project-title-simple,
+    .illustration-title-simple {
+        font-size: 1.875rem;
+    }
+
+    /* Grille de spécifications */
+    .project-specs-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 30px 20px;
+    }
+
+    /* Grille articles similaires - 2 colonnes sur tablette */
+    .related-grid-simple {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .related-image-simple {
+        height: 200px;
+    }
+
+    .related-card-title-simple {
+        font-size: 1rem;
+    }
+
+    .related-title-simple {
+        font-size: 1.5rem;
+    }
+
+    .archi-content-section {
+        padding: 40px 20px;
+    }
+}
+
+/* ========================================
+   RESPONSIVE - MOBILE
+======================================== */
+
+@media (max-width: 480px) {
+    /* Headers simples */
+    .article-header-simple,
+    .project-header-simple,
+    .illustration-header-simple {
+        padding: 30px 15px 20px;
+    }
+
+    .article-title-simple,
+    .project-title-simple,
+    .illustration-title-simple {
+        font-size: 1.5rem;
+    }
+
+    .category-badge-simple {
+        font-size: 0.75rem;
+        padding: 5px 12px;
+    }
+
+    /* Grille de spécifications */
+    .project-specs-grid {
+        padding: 20px 15px;
+        gap: 15px;
+    }
+
+    .spec-label {
+        font-size: 0.75rem;
+    }
+
+    .spec-value {
+        font-size: 1rem;
+    }
+
+    /* Grille articles similaires - 1 colonne sur mobile */
+    .related-grid-simple {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .related-image-simple {
+        height: 180px;
+    }
+
+    .related-content-simple {
+        padding: 15px;
+    }
+
+    .related-card-title-simple {
+        font-size: 0.9375rem;
+    }
+
+    .related-title-simple {
+        font-size: 1.25rem;
+        margin-bottom: 20px;
+    }
+
+    .archi-content-section {
+        padding: 30px 15px;
+    }
+
+    .related-articles-simple,
+    .related-projects-simple,
+    .related-illustrations-simple {
+        margin: 40px 0;
+        padding: 30px 0;
+    }
+}
+
+/* ========================================
+   ÉTAT SANS IMAGE
+======================================== */
+
+.related-card-simple:not(:has(.related-image-simple)) .related-content-simple {
+    padding: 30px 20px;
+    min-height: 120px;
+}
+
+/* ========================================
+   ACCESSIBILITÉ
+======================================== */
+
+.related-card-simple:focus-within {
+    outline: 3px solid #3498db;
+    outline-offset: 2px;
+}
+
+.related-link-simple:focus {
+    outline: none;
+}
+
+/* ========================================
+   PRINT STYLES
+======================================== */
+
+@media print {
+    .related-articles-simple,
+    .related-projects-simple,
+    .related-illustrations-simple {
+        page-break-before: always;
+    }
+
+    .related-card-simple {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+
+    .related-card-simple:hover {
+        transform: none;
+    }
+}

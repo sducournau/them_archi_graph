@@ -1,0 +1,609 @@
+/* 
+ * Style pour la page d'accueil avec graphique - Fond blanc
+ * Surcharge des styles du graphique pour un look moderne et épuré
+ */
+
+/* Override du fond du graphique */
+.graph-homepage-container {
+  background: #ffffff !important;
+  background-image: none !important;
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.graph-container {
+  background: #ffffff !important;
+  width: 100% !important;
+  height: calc(100vh - 100px) !important;
+  min-height: 600px !important;
+  position: relative !important;
+  z-index: 1 !important;
+  display: block !important;
+}
+
+/* Assurer que le graphe SVG est visible */
+.graph-container > div {
+  position: relative !important;
+  z-index: 1 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 600px !important;
+  display: block !important;
+}
+
+/* Title overlay - Désactivé pour un look plus épuré */
+.title-overlay {
+  display: none;
+}
+
+/* Style moderne pour les instructions */
+.graph-instructions {
+  background: #ffffff;
+  border: 1px solid #e1e8ed;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+.graph-instructions .instructions-content h2 {
+  color: #1a1a1a;
+}
+
+.graph-instructions .instructions-content .btn {
+  background: #1a73e8;
+  color: #ffffff;
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.graph-instructions .instructions-content .btn:hover {
+  background: #0d47a1;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+}
+
+/* Loading spinner sur fond blanc */
+.graph-loading-inline {
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+}
+
+/* Masquer le loader quand il a la classe hidden */
+.graph-loading-inline.hidden,
+#graph-loading.hidden {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+.loading-spinner {
+  text-align: center;
+}
+
+.loading-spinner .spinner {
+  width: 50px;
+  height: 50px;
+  margin: 0 auto 1rem;
+  border: 4px solid #f0f2f5;
+  border-top-color: #1a73e8;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-spinner p {
+  color: #65676b;
+  font-size: 0.9rem;
+}
+
+/* Légende modernisée - Version épurée */
+.graph-legend {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  background: #ffffff;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  max-width: 220px;
+  z-index: 10;
+}
+
+.graph-legend h3 {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #5a6c7d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.legend-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  font-size: 0.85rem;
+  color: #2c3e50;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+}
+
+.legend-item:hover {
+  transform: translateX(2px);
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 0.6rem;
+  border: 2px solid #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+.legend-label {
+  flex: 1;
+  font-size: 0.85rem;
+  color: #2c3e50;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.legend-count {
+  font-size: 0.7rem;
+  color: #5a6c7d;
+  background: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-weight: 500;
+  margin-left: 0.4rem;
+}
+
+/* Panel d'informations */
+.graph-info-panel {
+  background: #ffffff;
+  border-left: 1px solid #e1e8ed;
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.05);
+}
+
+.graph-info-panel .close-panel {
+  background: #f8f9fa;
+  color: #1a1a1a;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  line-height: 1;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.graph-info-panel .close-panel:hover {
+  background: #e9ecef;
+}
+
+.graph-info-panel .panel-content #panel-title {
+  color: #1a1a1a;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.graph-info-panel .panel-content #panel-excerpt {
+  color: #495057;
+  line-height: 1.6;
+}
+
+.graph-info-panel .panel-content .btn-primary {
+  background: #1a73e8;
+  color: #ffffff;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  text-decoration: none;
+  display: inline-block;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.graph-info-panel .panel-content .btn-primary:hover {
+  background: #0d47a1;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+}
+
+/* Contrôles du graphique (si présents dans le header) */
+.graph-controls {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.graph-controls .btn-secondary {
+  background: #f8f9fa;
+  color: #1a1a1a;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: 1px solid #e1e8ed;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.graph-controls .btn-secondary:hover {
+  background: #e9ecef;
+  border-color: #ced4da;
+}
+
+.graph-controls .category-filter {
+  padding: 0.5rem 1rem;
+  border: 1px solid #e1e8ed;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #1a1a1a;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.graph-controls .category-filter:hover,
+.graph-controls .category-filter:focus {
+  border-color: #1a73e8;
+  outline: none;
+}
+
+/* Ajustement du header pour la page graphique */
+body.home .site-header {
+  background-color: #ffffff;
+  border-bottom: 1px solid #e1e8ed;
+}
+
+body.home .site-header .site-title a {
+  color: #1a1a1a;
+}
+
+/* S'assurer que le site-content ne cache pas le graphe */
+body.home #site-content,
+body.home .site-content,
+body.graph-homepage #site-content,
+body.graph-homepage .site-content {
+  position: relative !important;
+  z-index: 1 !important;
+  overflow: visible !important;
+  display: block !important;
+}
+
+/* Forcer l'affichage du main content sur la page d'accueil */
+body.home main,
+body.graph-homepage main,
+body.front-page main {
+  display: block !important;
+  width: 100% !important;
+  min-height: 100vh !important;
+  position: relative !important;
+}
+
+/* Masquer le loader une fois le graphe chargé */
+.graph-container.loaded .graph-loading-inline {
+  display: none !important;
+}
+
+/* Graph wrapper improvements */
+.graph-wrapper {
+  position: relative !important;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 5 !important;
+}
+
+.graph-svg {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  position: relative !important;
+  z-index: 5 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Force toutes les classes de graphe à être visibles */
+svg.graph-svg,
+.graph-container svg,
+#graph-container svg {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: 100% !important;
+  height: 100% !important;
+  position: relative !important;
+  z-index: 5 !important;
+}
+
+/* S'assurer que tous les éléments SVG sont visibles */
+.graph-svg * {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Nœuds du graphique - ajustements pour fond blanc */
+.graph-node {
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
+  transition: filter 0.3s ease;
+}
+
+.graph-node:hover {
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.25));
+}
+
+.graph-node .node-image {
+  cursor: pointer;
+  /* Pas de clip-path - on affiche l'image PNG entière avec fond transparent */
+  overflow: visible !important;
+  object-fit: contain !important;
+}
+
+/* Liens entre nœuds - plus visibles sur fond blanc */
+.graph-link {
+  stroke: #cbd5e0;
+  stroke-width: 1.5px;
+  opacity: 0.4;
+  transition: all 0.3s ease;
+}
+
+.graph-link:hover {
+  stroke: #1a73e8;
+  opacity: 0.8;
+  stroke-width: 2.5px;
+}
+
+/* Stats overlay - Simplifié */
+.graph-stats {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: #ffffff;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  font-size: 0.85rem;
+  color: #5a6c7d;
+  z-index: 10;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  font-weight: 500;
+}
+
+.graph-stats span {
+  color: #2c3e50;
+}
+
+/* Tooltip (ancienne version - désactivée) */
+.node-tooltip {
+  display: none; /* Désactivé - on utilise maintenant les labels intégrés */
+}
+
+/* Labels de titre intégrés au graphe - Rouge sur fond blanc */
+.node-title-label {
+  transition: opacity 0.25s ease;
+  opacity: 0;
+  /* L'opacité est contrôlée par JavaScript au survol */
+}
+
+.node-title-text {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  text-rendering: optimizeLegibility;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.node-title-text tspan {
+  dominant-baseline: middle;
+}
+
+/* Animation de l'image au survol */
+.graph-node .node-image {
+  transition: all 0.2s ease;
+}
+
+/* Amélioration de la visibilité du texte rouge */
+.node-title-text {
+  paint-order: stroke fill;
+}
+
+/* Contraste amélioré pour le texte rouge */
+@media (prefers-contrast: high) {
+  .node-title-text {
+    font-weight: 900;
+    letter-spacing: 1px;
+  }
+}
+
+/* Clusters de catégories */
+.category-cluster {
+  fill: rgba(26, 115, 232, 0.05);
+  stroke: rgba(26, 115, 232, 0.2);
+  stroke-width: 2px;
+}
+
+/* Fallback sans JavaScript */
+.no-js-fallback {
+  max-width: 800px;
+  margin: 3rem auto;
+  padding: 2rem;
+  text-align: center;
+  background: #f8f9fa;
+  border-radius: 12px;
+}
+
+.no-js-fallback h2 {
+  color: #1a1a1a;
+  margin-bottom: 1rem;
+}
+
+.no-js-fallback p {
+  color: #65676b;
+}
+
+.articles-fallback {
+  margin-top: 3rem;
+}
+
+.articles-fallback h3 {
+  color: #1a1a1a;
+  margin-bottom: 1.5rem;
+}
+
+.articles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.article-card {
+  background: #ffffff;
+  border: 1px solid #e1e8ed;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.article-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+}
+
+.article-card .article-thumbnail {
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+}
+
+.article-card .article-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.article-card .article-content {
+  padding: 1.5rem;
+}
+
+.article-card h4 {
+  margin: 0 0 0.75rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.article-card h4 a {
+  color: #1a1a1a;
+  text-decoration: none;
+}
+
+.article-card h4 a:hover {
+  color: #1a73e8;
+}
+
+.article-card p {
+  color: #495057;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .graph-legend {
+    left: 0.5rem;
+    bottom: 0.5rem;
+    max-width: 150px;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .graph-legend h3 {
+    font-size: 0.65rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .legend-item {
+    gap: 0.4rem;
+    padding: 0.2rem 0.3rem;
+  }
+
+  .legend-color {
+    width: 8px;
+    height: 8px;
+  }
+
+  .legend-label {
+    font-size: 0.7rem;
+  }
+
+  .legend-count {
+    font-size: 0.6rem;
+    padding: 1px 4px;
+  }
+
+  .graph-info-panel {
+    width: 100%;
+  }
+
+  .graph-controls {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .title-overlay h1 {
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+  }
+
+  .title-overlay p {
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+  }
+
+  .graph-stats {
+    top: 0.5rem;
+    right: 0.5rem;
+    padding: 0.4rem 0.75rem;
+    font-size: 0.65rem;
+  }
+
+  .graph-controls .btn-secondary,
+  .graph-controls .category-filter {
+    width: 100%;
+  }
+}

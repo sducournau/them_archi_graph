@@ -1,0 +1,1199 @@
+// Variables SCSS pour le thème
+$primary-color: #3498db;
+$secondary-color: #2c3e50;
+$accent-color: #e74c3c;
+$success-color: #27ae60;
+$warning-color: #f39c12;
+$info-color: #17a2b8;
+
+// Couleurs du graphique
+$graph-bg-primary: #667eea;
+$graph-bg-secondary: #764ba2;
+$node-shadow: rgba(0, 0, 0, 0.3);
+$tooltip-bg: rgba(44, 62, 80, 0.95);
+$cluster-bg: rgba(255, 255, 255, 0.1);
+
+// Typographie
+$font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+  Ubuntu, Cantarell, sans-serif;
+$font-family-mono: "SF Mono", Monaco, Inconsolata, "Roboto Mono", Consolas,
+  "Courier New", monospace;
+
+// Espacements
+$spacer-xs: 0.25rem;
+$spacer-sm: 0.5rem;
+$spacer-md: 1rem;
+$spacer-lg: 1.5rem;
+$spacer-xl: 3rem;
+
+// Breakpoints
+$breakpoint-sm: 576px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+$breakpoint-xl: 1200px;
+
+// Animations
+$transition-base: all 0.3s ease;
+$transition-fast: all 0.15s ease;
+$transition-slow: all 0.5s ease;
+
+// Z-index
+$z-tooltip: 1000;
+$z-modal: 1050;
+$z-loading: 1100;
+
+// Mixins utiles
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin button-reset {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  cursor: pointer;
+}
+
+@mixin card-shadow {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+@mixin responsive-font(
+  $min-size,
+  $max-size,
+  $min-width: 320px,
+  $max-width: 1200px
+) {
+  font-size: calc(
+    #{$min-size} + (#{$max-size} - #{$min-size}) * ((100vw - #{$min-width}) /
+          (#{$max-width} - #{$min-width}))
+  );
+}
+
+// Reset de base
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: $font-family-base;
+  line-height: 1.6;
+  color: $secondary-color;
+  background-color: #ffffff;
+}
+
+// Container principal
+#page-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+}
+
+// Page d'accueil graphique - pas de background visible
+body.graph-homepage,
+body.home {
+  #page-wrapper {
+    background: #ffffff;
+  }
+
+  .site-header {
+    background: #ffffff;
+    color: #2c3e50;
+    border-bottom: 1px solid #e1e8ed;
+  }
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 $spacer-md;
+
+  @media (min-width: $breakpoint-sm) {
+    padding: 0 $spacer-lg;
+  }
+}
+
+// === HEADER ===
+.site-header {
+  background: #ffffff;
+  color: #2c3e50;
+  padding: 1rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 1px solid #e1e8ed;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: $spacer-md;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  .site-branding {
+    .site-title {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 600;
+
+      a {
+        color: #2c3e50;
+        text-decoration: none;
+        transition: color 0.3s ease;
+
+        &:hover {
+          color: $primary-color;
+        }
+      }
+    }
+
+    .site-description {
+      margin: 0;
+      opacity: 0.9;
+      font-size: 0.9rem;
+    }
+  }
+
+  .main-navigation {
+    .menu-toggle {
+      @include button-reset;
+      display: none;
+      padding: $spacer-sm;
+      color: white;
+
+      @media (max-width: $breakpoint-md - 1px) {
+        display: flex;
+        align-items: center;
+        gap: $spacer-xs;
+      }
+
+      .menu-toggle-icon {
+        width: 24px;
+        height: 2px;
+        background: currentColor;
+        position: relative;
+
+        &::before,
+        &::after {
+          content: "";
+          position: absolute;
+          width: 100%;
+          height: 2px;
+          background: currentColor;
+          left: 0;
+        }
+
+        &::before {
+          top: -6px;
+        }
+        &::after {
+          top: 6px;
+        }
+      }
+    }
+
+    .primary-menu {
+      display: flex;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      gap: $spacer-lg;
+
+      @media (max-width: $breakpoint-md - 1px) {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: inherit;
+        padding: $spacer-md;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+        padding: $spacer-xs $spacer-sm;
+        border-radius: 4px;
+        transition: $transition-base;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.2);
+        }
+      }
+    }
+  }
+}
+
+// Contrôles du graphique dans le header
+.graph-controls {
+  display: flex;
+  align-items: center;
+  gap: $spacer-sm;
+  flex-wrap: wrap;
+
+  .btn {
+    @include button-reset;
+    padding: $spacer-xs $spacer-sm;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: $transition-base;
+
+    &.btn-secondary {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+    }
+
+    &.btn-primary {
+      background: $accent-color;
+      color: white;
+
+      &:hover {
+        background: darken($accent-color, 10%);
+      }
+    }
+  }
+
+  .category-filter {
+    padding: $spacer-xs $spacer-sm;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 0.9rem;
+
+    &:focus {
+      outline: none;
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    option {
+      background: $secondary-color;
+      color: white;
+    }
+  }
+}
+
+// === CONTENU PRINCIPAL ===
+.site-content {
+  flex: 1;
+}
+
+// === PAGE D'ACCUEIL GRAPHIQUE ===
+.graph-homepage-container {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 80px); // Ajuster selon la hauteur du header
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.graph-instructions {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: $z-modal;
+  background: white;
+  padding: $spacer-xl;
+  border-radius: 12px;
+  @include card-shadow;
+  max-width: 500px;
+  text-align: center;
+
+  .instructions-content {
+    h2 {
+      margin-top: 0;
+      color: $secondary-color;
+      font-size: 1.5rem;
+    }
+
+    ul {
+      text-align: left;
+      list-style: none;
+      padding: 0;
+      margin: $spacer-lg 0;
+
+      li {
+        padding: $spacer-sm 0;
+        font-size: 1.1rem;
+
+        &::before {
+          margin-right: $spacer-sm;
+        }
+      }
+    }
+
+    .btn {
+      @include button-reset;
+      background: $primary-color;
+      color: white;
+      padding: $spacer-sm $spacer-lg;
+      border-radius: 6px;
+      font-weight: 600;
+      transition: $transition-base;
+
+      &:hover {
+        background: darken($primary-color, 10%);
+        transform: translateY(-1px);
+      }
+    }
+  }
+}
+
+// Container du graphique
+.graph-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  background: #ffffff;
+
+  svg {
+    background: #ffffff;
+  }
+}
+
+.graph-wrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: #ffffff;
+}
+
+.graph-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: grab;
+  background: #ffffff;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+// Éléments du graphique SVG
+.graph-node {
+  cursor: grab;
+  filter: drop-shadow(0 4px 8px $node-shadow);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  z-index: 10;
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  .node-image {
+    // Image PNG avec fond transparent - affichée en entier sans découpage
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform-origin: 50% 50%;
+    transform-box: fill-box;
+    overflow: visible !important;
+    object-fit: contain !important; // Garantit que l'image apparaît en entier
+    
+    // Support pour les images inversées
+    &.inverted {
+      filter: invert(1);
+    }
+
+    // GIF animation control
+    &.gif-playing {
+      // Add a subtle pulsing glow effect when GIF is playing
+      filter: drop-shadow(0 0 8px rgba(52, 152, 219, 0.4));
+    }
+  }
+
+  // Le cercle de fond est supprimé - on utilise uniquement les PNG transparents
+  .node-background {
+    display: none;
+  }
+
+  .priority-badge {
+    stroke: white;
+    stroke-width: 2;
+  }
+
+  &:hover {
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3));
+
+    .node-image {
+      transform: scale(1.1);
+    }
+
+    .node-background {
+      opacity: 1;
+    }
+  }
+
+  // État sélectionné
+  &.selected {
+    .node-image {
+      transform: scale(2.5);
+      z-index: 1000;
+    }
+  }
+
+  // Bordures colorées par catégorie
+  &.telecommunications .node-image {
+    border-color: $primary-color;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.3);
+  }
+
+  &.architecture .node-image {
+    border-color: $accent-color;
+    box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.3);
+  }
+
+  &.technology .node-image {
+    border-color: $success-color;
+    box-shadow: 0 0 0 2px rgba(39, 174, 96, 0.3);
+  }
+
+  &.design .node-image {
+    border-color: $warning-color;
+    box-shadow: 0 0 0 2px rgba(243, 156, 18, 0.3);
+  }
+}
+
+// Lignes de connexion avec animations
+.connection-line {
+  stroke: rgba(140, 140, 140, 0.35);
+  stroke-width: 1;
+  stroke-dasharray: 8, 8;
+  animation: dash 30s linear infinite;
+  stroke-linecap: round;
+  z-index: 1;
+  opacity: 0.5;
+
+  &.weak {
+    stroke: rgba(160, 160, 160, 0.25);
+    stroke-width: 1;
+    stroke-dasharray: 12, 8;
+    opacity: 0.4;
+  }
+
+  &.medium {
+    stroke: rgba(120, 120, 120, 0.35);
+    stroke-width: 1.5;
+    stroke-dasharray: 6, 6;
+    opacity: 0.5;
+  }
+
+  &.strong {
+    stroke: rgba(90, 90, 90, 0.45);
+    stroke-width: 2;
+    stroke-dasharray: 3, 3;
+    opacity: 0.6;
+  }
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: -100;
+  }
+}
+
+.category-cluster {
+  pointer-events: none;
+
+  .cluster-hull {
+    fill-opacity: 0.08;
+    stroke-width: 2;
+    stroke-opacity: 0.25;
+    stroke-dasharray: 5, 5;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      fill-opacity: 0.12;
+      stroke-opacity: 0.35;
+    }
+  }
+
+  .cluster-background {
+    fill: $cluster-bg;
+    stroke: rgba(255, 255, 255, 0.2);
+    stroke-width: 2;
+    rx: 20;
+    ry: 20;
+    fill-opacity: 0.1;
+    stroke-opacity: 0.3;
+    transition: all 0.5s ease;
+  }
+
+  .cluster-label {
+    font-family: $font-family-base;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.05em;
+    fill: currentColor;
+    opacity: 0.8;
+    text-anchor: middle;
+    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8),
+                 -1px -1px 2px rgba(255, 255, 255, 0.8);
+    paint-order: stroke fill;
+  }
+
+  .cluster-count {
+    font-family: $font-family-base;
+    font-weight: 600;
+    font-size: 11px;
+    fill: currentColor;
+    opacity: 0.7;
+    text-anchor: middle;
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+  }
+}
+
+// Particules flottantes - Désactivées pour un look plus épuré
+.floating-particles {
+  display: none;
+}
+
+// Titre en arrière-plan (overlay) - Simplifié et désactivé par défaut
+.title-overlay {
+  display: none; // Désactivé pour un look plus épuré
+  position: absolute;
+  top: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #f8f9fa;
+  text-align: center;
+  z-index: 1;
+  opacity: 0.03;
+  pointer-events: none;
+
+  h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    margin: 0;
+    text-transform: uppercase;
+  }
+
+  p {
+    font-size: 0.85rem;
+    font-weight: 400;
+    margin: 0.5rem 0 0 0;
+    letter-spacing: 0.1em;
+  }
+}
+
+// Légende des catégories - Simplifiée
+.graph-legend {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  color: #2c3e50;
+  z-index: 100;
+  border: 1px solid #e8e8e8;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  max-width: 220px;
+
+  h3 {
+    margin: 0 0 0.75rem 0;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #5a6c7d;
+  }
+
+  .legend-items {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    font-size: 0.85rem;
+    color: #2c3e50;
+    transition: all 0.2s ease;
+    cursor: pointer;
+
+    &:hover {
+      transform: translateX(2px);
+    }
+
+    .legend-color {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 0.6rem;
+      border: 2px solid #ffffff;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      flex-shrink: 0;
+    }
+  }
+}
+
+// Contrôles du graphique (zoom, reset, etc.) - Simplifiés
+.graph-controls-overlay {
+  position: absolute;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  display: flex;
+  gap: 0.5rem;
+  z-index: 100;
+
+  .control-btn {
+    background: #ffffff;
+    border: 1px solid #e8e8e8;
+    border-radius: 8px;
+    width: 40px;
+    height: 40px;
+    color: #2c3e50;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    font-size: 16px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    font-weight: 600;
+
+    &:hover {
+      background: #f8f9fa;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border-color: #d1d5db;
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+// === TOOLTIP ===
+.node-tooltip {
+  position: fixed;
+  background: #ffffff;
+  color: #2c3e50;
+  padding: $spacer-md;
+  border-radius: 8px;
+  min-width: 250px;
+  max-width: 300px;
+  border: 1px solid #e8e8e8;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  z-index: $z-tooltip;
+
+  .tooltip-content {
+    position: relative;
+  }
+
+  .tooltip-header {
+    display: flex;
+    gap: $spacer-sm;
+    margin-bottom: $spacer-sm;
+
+    .tooltip-thumbnail {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .tooltip-title-section {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .tooltip-title {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 600;
+      line-height: 1.3;
+      word-wrap: break-word;
+    }
+
+    .tooltip-date {
+      font-size: 0.8rem;
+      opacity: 0.8;
+    }
+  }
+
+  .tooltip-excerpt {
+    margin: $spacer-sm 0;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    opacity: 0.9;
+  }
+
+  .tooltip-categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacer-xs;
+    margin: $spacer-sm 0;
+
+    .tooltip-category-tag {
+      padding: 2px 6px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+  }
+
+  .tooltip-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacer-xs;
+    margin: $spacer-sm 0;
+
+    .tooltip-tag {
+      font-size: 0.75rem;
+      opacity: 0.8;
+      color: #bdc3c7;
+    }
+
+    .tooltip-tag-more {
+      font-size: 0.75rem;
+      opacity: 0.6;
+    }
+  }
+
+  .tooltip-footer {
+    margin-top: $spacer-sm;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    padding-top: $spacer-sm;
+
+    .tooltip-hint {
+      font-size: 0.8rem;
+      opacity: 0.7;
+      font-style: italic;
+    }
+  }
+
+  .tooltip-arrow {
+    position: absolute;
+    bottom: -8px;
+    left: 20px;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid $tooltip-bg;
+  }
+}
+
+// === LÉGENDE ===
+.graph-legend {
+  position: absolute;
+  top: $spacer-lg;
+  right: $spacer-lg;
+  background: rgba(255, 255, 255, 0.95);
+  padding: $spacer-md;
+  border-radius: 8px;
+  @include card-shadow;
+  min-width: 200px;
+  backdrop-filter: blur(10px);
+
+  h3 {
+    margin: 0 0 $spacer-sm 0;
+    font-size: 1rem;
+    color: $secondary-color;
+  }
+
+  .legend-items {
+    display: flex;
+    flex-direction: column;
+    gap: $spacer-xs;
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: $spacer-sm;
+      padding: $spacer-xs;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: $transition-base;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.05);
+      }
+
+      .legend-color {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      .legend-label {
+        font-size: 0.9rem;
+        flex: 1;
+      }
+
+      .legend-count {
+        font-size: 0.8rem;
+        opacity: 0.7;
+        background: #f8f9fa;
+        padding: 2px 6px;
+        border-radius: 10px;
+      }
+    }
+  }
+}
+
+// === PANNEAU D'INFORMATIONS ===
+.graph-info-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 350px;
+  height: 100%;
+  background: #ffffff;
+  border-left: 1px solid #e1e8ed;
+  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.05);
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 50;
+  overflow-y: auto;
+
+  &:not(.hidden) {
+    transform: translateX(0);
+  }
+
+  .close-panel {
+    @include button-reset;
+    position: absolute;
+    top: $spacer-sm;
+    right: $spacer-sm;
+    width: 32px;
+    height: 32px;
+    @include flex-center;
+    border-radius: 50%;
+    background: #f8f9fa;
+    color: $secondary-color;
+    font-size: 1.2rem;
+    line-height: 1;
+    transition: $transition-base;
+
+    &:hover {
+      background: #e9ecef;
+    }
+  }
+
+  .panel-content {
+    padding: $spacer-xl $spacer-lg;
+
+    #panel-thumbnail {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: $spacer-md;
+    }
+
+    #panel-title {
+      margin: 0 0 $spacer-sm 0;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: $secondary-color;
+      line-height: 1.3;
+    }
+
+    #panel-excerpt {
+      margin: $spacer-sm 0 $spacer-lg 0;
+      color: #6c757d;
+      line-height: 1.5;
+    }
+
+    .panel-categories {
+      display: flex;
+      flex-wrap: wrap;
+      gap: $spacer-xs;
+      margin-bottom: $spacer-md;
+
+      .category-tag {
+        padding: 4px 8px;
+        border-radius: 16px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: white;
+      }
+    }
+
+    .panel-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: $spacer-xs;
+      margin-bottom: $spacer-lg;
+
+      .tag-item {
+        padding: 2px 8px;
+        background: #f8f9fa;
+        color: #6c757d;
+        border-radius: 12px;
+        font-size: 0.8rem;
+      }
+    }
+
+    #panel-link {
+      @include button-reset;
+      display: inline-block;
+      background: $primary-color;
+      color: white;
+      padding: $spacer-sm $spacer-lg;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: $transition-base;
+
+      &:hover {
+        background: darken($primary-color, 10%);
+        transform: translateY(-1px);
+      }
+    }
+  }
+}
+
+// === ÉTATS DE CHARGEMENT ===
+.graph-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.9);
+  @include flex-center;
+  z-index: $z-loading;
+
+  &.hidden {
+    display: none;
+  }
+
+  .loading-spinner {
+    text-align: center;
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid $primary-color;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto $spacer-md;
+    }
+
+    p {
+      margin: 0;
+      color: $secondary-color;
+      font-weight: 500;
+    }
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+// === STATISTIQUES DU GRAPHIQUE ===
+.graph-stats {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: #ffffff;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: #5a6c7d;
+  border: 1px solid #e8e8e8;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  font-weight: 500;
+
+  span {
+    color: #2c3e50;
+  }
+}
+
+// === ERREURS ===
+.graph-error {
+  @include flex-center;
+  flex-direction: column;
+  height: 100%;
+  text-align: center;
+  padding: $spacer-xl;
+  background: #ffffff;
+
+  h3 {
+    margin-bottom: $spacer-md;
+    color: #2c3e50;
+    font-size: 1.5rem;
+  }
+
+  p {
+    margin-bottom: $spacer-lg;
+    color: #5a6c7d;
+    line-height: 1.6;
+  }
+
+  .btn {
+    background: #1a73e8;
+    color: #ffffff;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s ease;
+    border: none;
+    font-weight: 600;
+
+    &:hover {
+      background: #0d47a1;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+    }
+  }
+
+  .btn {
+    @include button-reset;
+    background: $primary-color;
+    color: white;
+    padding: $spacer-sm $spacer-lg;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: $transition-base;
+
+    &:hover {
+      background: darken($primary-color, 10%);
+    }
+  }
+}
+
+// === FALLBACK NO-JS ===
+.no-js-fallback {
+  @include flex-center;
+  flex-direction: column;
+  height: 100%;
+  text-align: center;
+  padding: $spacer-xl;
+  background: #f8f9fa;
+
+  h2 {
+    margin-bottom: $spacer-md;
+    color: $secondary-color;
+  }
+
+  p {
+    margin-bottom: $spacer-lg;
+    color: #6c757d;
+    max-width: 400px;
+  }
+
+  .btn {
+    @include button-reset;
+    background: $primary-color;
+    color: white;
+    padding: $spacer-sm $spacer-lg;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: $transition-base;
+
+    &:hover {
+      background: darken($primary-color, 10%);
+      transform: translateY(-1px);
+    }
+  }
+}
+
+// === RESPONSIVE ===
+@media (max-width: $breakpoint-lg - 1px) {
+  .graph-legend {
+    position: static;
+    margin: $spacer-md;
+    width: auto;
+  }
+
+  .graph-info-panel {
+    width: 100%;
+    height: auto;
+    position: fixed;
+    bottom: 0;
+    top: auto;
+    right: 0;
+    border-left: none;
+    border-top: 1px solid #e9ecef;
+    transform: translateY(100%);
+
+    &:not(.hidden) {
+      transform: translateY(0);
+    }
+  }
+}
+
+@media (max-width: $breakpoint-md - 1px) {
+  .graph-controls {
+    flex-direction: column;
+    align-items: stretch;
+
+    .btn,
+    .category-filter {
+      text-align: center;
+    }
+  }
+
+  .graph-stats {
+    position: static;
+    margin: $spacer-md;
+    text-align: center;
+  }
+}
+
+// === ACCESSIBILITÉ ===
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+// Focus visible pour l'accessibilité
+.graph-node:focus-visible,
+.btn:focus-visible,
+button:focus-visible,
+select:focus-visible {
+  outline: 2px solid $primary-color;
+  outline-offset: 2px;
+}
+
+// Import des styles pour les îles organiques et le panneau latéral
+@import 'organic-islands.css';

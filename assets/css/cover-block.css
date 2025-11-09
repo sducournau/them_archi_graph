@@ -1,0 +1,365 @@
+/**
+ * Bloc Couverture (Cover Block) - Style WordPress standard
+ * Compatible avec les classes wp-block-cover natives
+ */
+
+/* ========================================
+   BLOC COUVERTURE PRINCIPAL
+======================================== */
+
+.wp-block-cover,
+.archi-cover-block,
+.wp-block-archi-graph-cover-block {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1em;
+    overflow: hidden;
+    /* Full width */
+    width: 100vw;
+    max-width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    margin-top: 3em;
+    margin-bottom: 3em;
+}
+
+/* Editor visualization */
+.editor-styles-wrapper .archi-cover-block-editor,
+.editor-styles-wrapper .archi-cover-preview {
+    position: relative;
+    width: 100%;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 2px dashed #ddd;
+    margin: 1em 0;
+}
+
+.editor-styles-wrapper .archi-cover-preview {
+    border: none;
+}
+
+/* ========================================
+   IMAGE DE FOND
+======================================== */
+
+.wp-block-cover__image-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    z-index: 0;
+}
+
+/* Effet parallax - Enhanced system compatible */
+.wp-block-cover.has-parallax .wp-block-cover__image-background {
+    /* Use absolute positioning for transform-based parallax */
+    position: absolute;
+    /* GPU acceleration */
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+    will-change: transform;
+    /* Extend height for parallax effect */
+    height: 120%;
+    top: -10%;
+}
+
+/* ========================================
+   OVERLAY (FOND SOMBRE)
+======================================== */
+
+.wp-block-cover__background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #000;
+    z-index: 1;
+}
+
+/* Opacité de l'overlay */
+.has-background-dim {
+    opacity: 0.5;
+}
+
+.has-background-dim-0 {
+    opacity: 0;
+}
+
+.has-background-dim-10 {
+    opacity: 0.1;
+}
+
+.has-background-dim-20 {
+    opacity: 0.2;
+}
+
+.has-background-dim-30 {
+    opacity: 0.3;
+}
+
+.has-background-dim-40 {
+    opacity: 0.4;
+}
+
+.has-background-dim-50 {
+    opacity: 0.5;
+}
+
+.has-background-dim-60 {
+    opacity: 0.6;
+}
+
+.has-background-dim-70 {
+    opacity: 0.7;
+}
+
+.has-background-dim-80 {
+    opacity: 0.8;
+}
+
+.has-background-dim-90 {
+    opacity: 0.9;
+}
+
+.has-background-dim-100 {
+    opacity: 1;
+}
+
+/* ========================================
+   CONTENEUR INTÉRIEUR (CONTENU)
+======================================== */
+
+.wp-block-cover__inner-container {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 800px;
+    color: #fff;
+    text-align: center;
+    padding: 2em;
+}
+
+.wp-block-cover__inner-container.is-layout-flow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ========================================
+   POSITIONNEMENT DU CONTENU
+======================================== */
+
+/* Position par défaut (centre) */
+.wp-block-cover.is-position-center-center {
+    align-items: center;
+    justify-content: center;
+}
+
+/* Position en haut */
+.wp-block-cover.is-position-top-center {
+    align-items: flex-start;
+    padding-top: 3em;
+}
+
+/* Position en bas */
+.wp-block-cover.is-position-bottom-center {
+    align-items: flex-end;
+    padding-bottom: 3em;
+}
+
+/* ========================================
+   TYPOGRAPHIE DU CONTENU
+======================================== */
+
+.wp-block-cover__inner-container .cover-title,
+.wp-block-cover__inner-container .wp-block-heading {
+    color: #fff;
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0 0 0.5em;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.wp-block-cover__inner-container .cover-subtitle,
+.wp-block-cover__inner-container p {
+    color: #fff;
+    font-size: 1.25rem;
+    font-weight: 300;
+    line-height: 1.6;
+    margin: 0;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    max-width: 700px;
+}
+
+.has-text-align-center {
+    text-align: center;
+}
+
+/* ========================================
+   VARIANTES DE HAUTEUR
+======================================== */
+
+.wp-block-cover.is-height-small,
+.archi-cover-block.is-height-small {
+    min-height: 300px;
+}
+
+.wp-block-cover.is-height-medium,
+.archi-cover-block.is-height-medium {
+    min-height: 400px;
+}
+
+.wp-block-cover.is-height-large,
+.archi-cover-block.is-height-large {
+    min-height: 600px;
+}
+
+.wp-block-cover.is-height-full,
+.archi-cover-block.is-height-full {
+    min-height: 100vh;
+}
+
+/* Custom heights */
+.archi-cover-block[data-min-height] {
+    min-height: var(--cover-min-height, 400px);
+}
+
+/* Full width alignment */
+.alignfull.wp-block-archi-graph-cover-block,
+.alignfull .archi-cover-block {
+    width: 100vw;
+    max-width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+}
+
+/* ========================================
+   RESPONSIVE - TABLETTE
+======================================== */
+
+@media (max-width: 768px) {
+    .wp-block-cover,
+    .archi-cover-block {
+        min-height: 350px;
+        margin-top: 2em;
+        margin-bottom: 2em;
+    }
+
+    .wp-block-cover__inner-container {
+        padding: 1.5em;
+    }
+
+    .wp-block-cover__inner-container .cover-title,
+    .wp-block-cover__inner-container .wp-block-heading {
+        font-size: 2rem;
+    }
+
+    .wp-block-cover__inner-container .cover-subtitle,
+    .wp-block-cover__inner-container p {
+        font-size: 1.125rem;
+    }
+
+    .wp-block-cover.is-position-top-center {
+        padding-top: 2em;
+    }
+
+    .wp-block-cover.is-position-bottom-center {
+        padding-bottom: 2em;
+    }
+}
+
+/* ========================================
+   RESPONSIVE - MOBILE
+======================================== */
+
+@media (max-width: 480px) {
+    .wp-block-cover,
+    .archi-cover-block {
+        min-height: 280px;
+        margin-top: 1.5em;
+        margin-bottom: 1.5em;
+    }
+
+    .wp-block-cover__inner-container {
+        padding: 1em;
+    }
+
+    .wp-block-cover__inner-container .cover-title,
+    .wp-block-cover__inner-container .wp-block-heading {
+        font-size: 1.5rem;
+        margin-bottom: 0.3em;
+    }
+
+    .wp-block-cover__inner-container .cover-subtitle,
+    .wp-block-cover__inner-container p {
+        font-size: 1rem;
+    }
+
+    .wp-block-cover.is-position-top-center {
+        padding-top: 1.5em;
+    }
+
+    .wp-block-cover.is-position-bottom-center {
+        padding-bottom: 1.5em;
+    }
+}
+
+/* ========================================
+   ANIMATIONS
+======================================== */
+
+.wp-block-cover__inner-container {
+    animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ========================================
+   ACCESSIBILITÉ
+======================================== */
+
+.wp-block-cover:focus-within {
+    outline: 3px solid #3498db;
+    outline-offset: 2px;
+}
+
+/* ========================================
+   PRINT STYLES
+======================================== */
+
+@media print {
+    .wp-block-cover,
+    .archi-cover-block {
+        page-break-inside: avoid;
+    }
+
+    .wp-block-cover__background {
+        opacity: 0.3 !important;
+    }
+}

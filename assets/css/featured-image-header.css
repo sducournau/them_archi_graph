@@ -1,0 +1,253 @@
+/**
+ * Featured Image Header Styles
+ * Non-fullscreen header for articles, projects, and illustrations
+ */
+
+/* Common Header Styles */
+.article-header,
+.project-header,
+.illustration-header {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 3rem 2rem 2rem;
+    text-align: center;
+}
+
+/* Categories badges */
+.article-categories,
+.project-categories,
+.illustration-categories {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.category-badge {
+    display: inline-block;
+    padding: 0.4rem 1rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-radius: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.category-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* Titles */
+.article-title,
+.project-title,
+.illustration-title {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0 0 1rem 0;
+    color: #2d3748;
+}
+
+/* Project location */
+.project-location {
+    font-size: 1.25rem;
+    color: #718096;
+    margin: 0 0 2rem 0;
+    font-weight: 300;
+}
+
+/* Featured Image Container */
+.article-featured-image,
+.project-featured-image,
+.illustration-featured-image {
+    margin: 2rem 0 0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    max-height: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f7fafc;
+}
+
+.article-featured-image img,
+.project-featured-image img,
+.illustration-featured-image img {
+    width: 100%;
+    height: auto;
+    max-height: 600px;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.article-featured-image:hover img,
+.project-featured-image:hover img,
+.illustration-featured-image:hover img {
+    transform: scale(1.02);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .article-header,
+    .project-header,
+    .illustration-header {
+        padding: 2rem 1.5rem 1.5rem;
+    }
+
+    .article-title,
+    .project-title,
+    .illustration-title {
+        font-size: 1.75rem;
+    }
+
+    .project-location {
+        font-size: 1rem;
+    }
+
+    .article-featured-image,
+    .project-featured-image,
+    .illustration-featured-image {
+        border-radius: 8px;
+        max-height: 400px;
+        margin-top: 1.5rem;
+    }
+
+    .article-featured-image img,
+    .project-featured-image img,
+    .illustration-featured-image img {
+        max-height: 400px;
+    }
+}
+
+@media (max-width: 480px) {
+    .article-header,
+    .project-header,
+    .illustration-header {
+        padding: 1.5rem 1rem 1rem;
+    }
+
+    .category-badge {
+        font-size: 0.75rem;
+        padding: 0.3rem 0.8rem;
+    }
+
+    .article-featured-image,
+    .project-featured-image,
+    .illustration-featured-image {
+        border-radius: 6px;
+        max-height: 300px;
+        margin-top: 1rem;
+    }
+
+    .article-featured-image img,
+    .project-featured-image img,
+    .illustration-featured-image img {
+        max-height: 300px;
+    }
+}
+
+/* Optional: Add animation on page load */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.article-header,
+.project-header,
+.illustration-header {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.article-featured-image,
+.project-featured-image,
+.illustration-featured-image {
+    animation: fadeInUp 0.8s ease-out 0.2s both;
+}
+
+/* ====================================
+   PARALLAX EFFECTS FOR FEATURED IMAGES
+   ==================================== */
+
+/* Parallax Scroll - Utilise transform pour un effet smooth */
+.archi-hero-fullscreen.parallax-scroll {
+    overflow: hidden;
+}
+
+.archi-hero-fullscreen.parallax-scroll .hero-media {
+    transform: translateY(0);
+    transition: transform 0.1s linear;
+    will-change: transform;
+}
+
+/* Parallax Fixed - Utilise background-attachment: fixed */
+.archi-hero-fullscreen.parallax-fixed {
+    background-attachment: fixed;
+    background-size: cover;
+    background-position: center;
+}
+
+.archi-hero-fullscreen.parallax-fixed .hero-media {
+    display: none; /* On utilise le background à la place */
+}
+
+/* Alternative: Si on veut garder l'img avec position fixed */
+.archi-hero-fullscreen.parallax-fixed.use-img .hero-media {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    object-fit: cover;
+    z-index: -1;
+}
+
+/* Parallax Zoom - L'image zoome progressivement au scroll */
+.archi-hero-fullscreen.parallax-zoom .hero-media {
+    transform: scale(1);
+    transition: transform 0.3s ease-out;
+    will-change: transform;
+}
+
+/* Performance: Désactiver parallax sur mobile et préférence réduite */
+@media (max-width: 768px) {
+    .archi-hero-fullscreen.parallax-scroll .hero-media,
+    .archi-hero-fullscreen.parallax-zoom .hero-media {
+        transform: none !important;
+    }
+    
+    .archi-hero-fullscreen.parallax-fixed {
+        background-attachment: scroll;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .archi-hero-fullscreen.parallax-scroll .hero-media,
+    .archi-hero-fullscreen.parallax-zoom .hero-media {
+        transform: none !important;
+        transition: none !important;
+    }
+    
+    .archi-hero-fullscreen.parallax-fixed {
+        background-attachment: scroll;
+    }
+}
+
+/* Overlay avec opacité personnalisée */
+.archi-hero-fullscreen .hero-overlay {
+    opacity: 0.3; /* Valeur par défaut */
+    transition: opacity 0.3s ease;
+}

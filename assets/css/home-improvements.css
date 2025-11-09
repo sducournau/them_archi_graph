@@ -1,0 +1,445 @@
+/**
+ * Home Page Improvements - Enhanced Graph Visualization
+ * Additional styles for improved user experience
+ */
+
+/* ===========================
+   HERO WELCOME SECTION
+   =========================== */
+.graph-hero-welcome {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 249, 250, 0.95) 100%);
+    z-index: 1000;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+    pointer-events: none;
+}
+
+.graph-hero-welcome.fade-out {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.hero-content {
+    text-align: center;
+    max-width: 700px;
+    padding: 2rem;
+    animation: heroFadeIn 0.8s ease-out;
+}
+
+@keyframes heroFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hero-title {
+    font-size: 3rem;
+    font-weight: 800;
+    color: #1a1a1a;
+    margin: 0 0 1rem 0;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+}
+
+.hero-description {
+    font-size: 1.25rem;
+    color: #5a6c7d;
+    margin: 0 0 1.5rem 0;
+    line-height: 1.6;
+}
+
+.hero-instruction {
+    font-size: 1rem;
+    color: #1a73e8;
+    margin: 0;
+    font-weight: 500;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.6;
+    }
+}
+
+/* ===========================
+   GRAPH STATISTICS
+   =========================== */
+.graph-stats {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: #ffffff;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    color: #5a6c7d;
+    border: 1px solid #e8e8e8;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    font-weight: 500;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.graph-stats:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.stats-label {
+    color: #5a6c7d;
+    font-size: 0.8rem;
+}
+
+.stats-value {
+    color: #1a73e8;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.stats-separator {
+    color: #e1e8ed;
+    font-weight: 400;
+}
+
+/* ===========================
+   ENHANCED INFO PANEL
+   =========================== */
+.graph-info-panel {
+    width: 400px;
+    box-shadow: -8px 0 24px rgba(0, 0, 0, 0.08);
+}
+
+.graph-info-panel .panel-content {
+    padding: 2rem 1.5rem;
+}
+
+.panel-meta {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin: 0.5rem 0 1rem 0;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e9ecef;
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.panel-date::before {
+    content: "📅";
+    margin-right: 0.3rem;
+}
+
+.panel-author::before {
+    content: "✍️";
+    margin-right: 0.3rem;
+}
+
+.panel-actions {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e9ecef;
+}
+
+#panel-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.9rem 1.5rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+#panel-link:hover {
+    gap: 0.75rem;
+}
+
+.panel-categories {
+    margin-bottom: 1rem;
+}
+
+.category-tag {
+    display: inline-block;
+    padding: 0.4rem 0.9rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+    color: white;
+    transition: all 0.2s ease;
+}
+
+.category-tag:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.panel-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.tag-item {
+    padding: 0.3rem 0.8rem;
+    background: #f8f9fa;
+    color: #6c757d;
+    border-radius: 14px;
+    font-size: 0.75rem;
+    transition: all 0.2s ease;
+}
+
+.tag-item:hover {
+    background: #e9ecef;
+    color: #495057;
+}
+
+/* ===========================
+   QUICK ACTIONS BUTTON
+   =========================== */
+.quick-actions-btn {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 0.9rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(26, 115, 232, 0.4);
+    font-weight: 600;
+    font-size: 0.95rem;
+    z-index: 999;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
+}
+
+.quick-actions-btn:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 24px rgba(26, 115, 232, 0.5);
+}
+
+.quick-actions-btn:active {
+    transform: translateY(-1px) scale(1.02);
+}
+
+.quick-actions-btn .icon {
+    font-size: 1.2rem;
+    animation: spark 1.5s ease-in-out infinite;
+}
+
+@keyframes spark {
+    0%, 100% {
+        transform: scale(1) rotate(0deg);
+    }
+    50% {
+        transform: scale(1.1) rotate(10deg);
+    }
+}
+
+.quick-actions-btn .label {
+    font-weight: 600;
+}
+
+/* ===========================
+   ENHANCED LEGEND
+   =========================== */
+.graph-legend {
+    transition: all 0.3s ease;
+}
+
+.graph-legend:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+}
+
+.legend-item {
+    padding: 0.4rem 0.6rem;
+    border-radius: 6px;
+    margin: 0 -0.6rem;
+}
+
+.legend-item:hover {
+    background: #f8f9fa;
+}
+
+.legend-item.active {
+    background: #e3f2fd;
+    border-left: 3px solid #1a73e8;
+    padding-left: calc(0.6rem - 3px);
+}
+
+/* ===========================
+   ENHANCED GRAPH NODES
+   =========================== */
+.graph-node {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.graph-node.highlighted {
+    filter: drop-shadow(0 0 12px rgba(26, 115, 232, 0.6));
+}
+
+.graph-node.dimmed {
+    opacity: 0.3;
+    filter: grayscale(80%);
+}
+
+/* ===========================
+   LOADING ENHANCEMENTS
+   =========================== */
+.graph-loading-inline .spinner {
+    animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-spinner p {
+    animation: loadingPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes loadingPulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* ===========================
+   RESPONSIVE DESIGN
+   =========================== */
+@media (max-width: 1024px) {
+    .graph-stats {
+        top: auto;
+        bottom: 1rem;
+        right: 1rem;
+        font-size: 0.75rem;
+    }
+
+    .graph-info-panel {
+        width: 100%;
+        max-height: 60vh;
+    }
+
+    .hero-title {
+        font-size: 2rem;
+    }
+
+    .hero-description {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .graph-legend {
+        bottom: 5rem;
+        left: 1rem;
+        max-width: calc(100% - 2rem);
+    }
+
+    .quick-actions-btn {
+        bottom: 1.5rem;
+        right: 1.5rem;
+        padding: 0.8rem 1.2rem;
+        font-size: 0.85rem;
+    }
+
+    .hero-title {
+        font-size: 1.75rem;
+    }
+
+    .hero-description {
+        font-size: 0.95rem;
+    }
+
+    .hero-instruction {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .quick-actions-btn .label {
+        display: none;
+    }
+
+    .quick-actions-btn {
+        padding: 0.9rem;
+        border-radius: 50%;
+    }
+
+    .graph-legend {
+        bottom: 4rem;
+    }
+}
+
+/* ===========================
+   ACCESSIBILITY
+   =========================== */
+@media (prefers-reduced-motion: reduce) {
+    .graph-hero-welcome,
+    .hero-content,
+    .control-btn,
+    .graph-node,
+    .legend-item,
+    .quick-actions-btn,
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+.quick-actions-btn:focus-visible {
+    outline: 3px solid #1a73e8;
+    outline-offset: 2px;
+}
+
+/* ===========================
+   PRINT STYLES
+   =========================== */
+@media print {
+    .graph-stats,
+    .quick-actions-btn,
+    .graph-legend,
+    .graph-info-panel,
+    .graph-hero-welcome {
+        display: none !important;
+    }
+
+    .graph-container {
+        height: 100vh !important;
+    }
+}

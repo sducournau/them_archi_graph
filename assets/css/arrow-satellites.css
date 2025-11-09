@@ -1,0 +1,172 @@
+/**
+ * Arrow Satellites Styling
+ * Styles pour les GIFs de flèches satellites autour des nodes du graph
+ */
+
+/* Groupe de satellites - conteneur */
+.satellites-group {
+  pointer-events: none !important;
+  user-select: none;
+  transition: opacity 0.3s ease;
+}
+
+/* Satellite individuel */
+.arrow-satellite {
+  pointer-events: none !important;
+  user-select: none;
+  cursor: default !important;
+}
+
+/* Image GIF de flèche */
+.arrow-gif {
+  pointer-events: none !important;
+  user-select: none;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  opacity: 0.85;
+  transition: opacity 0.3s ease;
+}
+
+/* Animation au survol du node - les satellites deviennent plus visibles */
+.graph-node:hover .satellites-group .arrow-gif {
+  opacity: 1;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.8));
+}
+
+/* Animation au clic du node - les satellites pulsent */
+.graph-node.selected .satellites-group .arrow-gif {
+  animation: arrow-pulse 2s ease-in-out infinite;
+}
+
+/* ========================================
+   STYLES SPÉCIFIQUES PAR CATÉGORIE
+   ======================================== */
+
+/* Catégorie Architecture - Flèches bleues */
+.satellites-group[data-category="architecture"] .arrow-gif {
+  opacity: 0.9;
+  filter: hue-rotate(180deg) brightness(1.1);
+}
+
+.graph-node:hover .satellites-group[data-category="architecture"] .arrow-gif {
+  filter: hue-rotate(180deg) brightness(1.3) drop-shadow(0 0 6px rgba(52, 152, 219, 0.9));
+}
+
+/* Catégorie Design - Flèches violettes */
+.satellites-group[data-category="design"] .arrow-gif {
+  opacity: 0.85;
+  filter: hue-rotate(270deg) saturate(1.2);
+}
+
+.graph-node:hover .satellites-group[data-category="design"] .arrow-gif {
+  filter: hue-rotate(270deg) saturate(1.4) drop-shadow(0 0 6px rgba(155, 89, 182, 0.9));
+}
+
+/* Catégorie Illustration - Flèches rouges intenses */
+.satellites-group[data-category="illustration"] .arrow-gif {
+  opacity: 0.95;
+  filter: saturate(1.5) brightness(1.1);
+}
+
+.graph-node:hover .satellites-group[data-category="illustration"] .arrow-gif {
+  filter: saturate(1.7) brightness(1.3) drop-shadow(0 0 8px rgba(231, 76, 60, 0.9));
+}
+
+/* Catégorie Featured - Flèches dorées éclatantes */
+.satellites-group[data-category="featured"] .arrow-gif {
+  opacity: 1;
+  filter: hue-rotate(45deg) brightness(1.3) saturate(1.5);
+  animation: featured-glow 2s ease-in-out infinite;
+}
+
+.graph-node:hover .satellites-group[data-category="featured"] .arrow-gif {
+  filter: hue-rotate(45deg) brightness(1.5) saturate(1.7) drop-shadow(0 0 10px rgba(241, 196, 15, 1));
+}
+
+@keyframes featured-glow {
+  0%, 100% {
+    filter: hue-rotate(45deg) brightness(1.3) saturate(1.5);
+  }
+  50% {
+    filter: hue-rotate(50deg) brightness(1.5) saturate(1.7);
+  }
+}
+
+/* Catégorie Default - Style standard */
+.satellites-group[data-category="default"] .arrow-gif {
+  opacity: 0.85;
+  /* Pas de filtre spécial, utilise les couleurs originales */
+}
+
+@keyframes arrow-pulse {
+  0%, 100% {
+    opacity: 0.85;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+/* Pour les nodes avec priorité haute, satellites plus visibles */
+.graph-node[data-priority="high"] .satellites-group .arrow-gif,
+.graph-node[data-priority="featured"] .satellites-group .arrow-gif {
+  opacity: 0.95;
+}
+
+/* Mode sombre - ajuster l'opacité */
+@media (prefers-color-scheme: dark) {
+  .arrow-gif {
+    opacity: 0.7;
+  }
+  
+  .graph-node:hover .satellites-group .arrow-gif {
+    opacity: 0.95;
+  }
+}
+
+/* Responsive - réduire sur petits écrans */
+@media (max-width: 768px) {
+  .arrow-satellite {
+    transform: scale(0.8);
+  }
+  
+  .arrow-gif {
+    opacity: 0.6;
+  }
+}
+
+/* Animation d'entrée pour les nouveaux satellites */
+.arrow-satellite {
+  animation: satellite-enter 0.5s ease-out;
+}
+
+@keyframes satellite-enter {
+  0% {
+    opacity: 0;
+    transform: scale(0) rotate(0deg);
+  }
+  60% {
+    transform: scale(1.2) rotate(180deg);
+  }
+  100% {
+    opacity: 0.85;
+    transform: scale(1) rotate(360deg);
+  }
+}
+
+/* Amélioration de performance - forcer l'accélération matérielle */
+.satellites-group,
+.arrow-satellite {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Désactiver complètement tous les événements de pointeur */
+.satellites-group *,
+.arrow-satellite *,
+.arrow-gif {
+  pointer-events: none !important;
+}

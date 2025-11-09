@@ -1,0 +1,999 @@
+/**
+ * Enhanced Editor Styles for Gutenberg Blocks
+ * 
+ * Provides better visual previews and WYSIWYG experience in the block editor
+ * for custom Archi-Graph blocks
+ */
+
+/* ==========================================================================
+   General Block Enhancements
+   ========================================================================== */
+
+.block-editor-block-list__layout .wp-block {
+  margin-top: 28px;
+  margin-bottom: 28px;
+}
+
+/* ==========================================================================
+   Article Manager Block
+   ========================================================================== */
+
+.archi-manager {
+  background: #f8f9fa;
+  border: 2px solid #e1e4e8;
+  border-radius: 8px;
+  padding: 20px;
+  transition: all 0.2s ease;
+}
+
+.archi-manager:hover {
+  border-color: #0073aa;
+  box-shadow: 0 2px 8px rgba(0, 115, 170, 0.1);
+}
+
+.archi-manager .components-card {
+  box-shadow: none;
+  border: none;
+}
+
+.archi-manager .components-card__header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e1e1e;
+}
+
+.archi-settings-preview {
+  background: white;
+  padding: 15px;
+  border-radius: 4px;
+  margin-top: 15px;
+  border-left: 4px solid #4caf50;
+}
+
+.archi-settings-preview h4 {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #23282d;
+}
+
+.archi-settings-preview ul {
+  margin: 0;
+  padding-left: 20px;
+  list-style: none;
+}
+
+.archi-settings-preview li {
+  margin-bottom: 8px;
+  color: #555;
+  font-size: 13px;
+}
+
+.archi-settings-preview li::before {
+  content: "✓";
+  color: #4caf50;
+  font-weight: bold;
+  display: inline-block;
+  width: 1.2em;
+  margin-left: -1.2em;
+}
+
+/* ==========================================================================
+   Parallax Image Block
+   ========================================================================== */
+
+.archi-parallax-image-editor {
+  position: relative;
+}
+
+.archi-parallax-image-editor .components-placeholder {
+  min-height: 300px;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  background: #fafafa;
+}
+
+.archi-parallax-image-editor .components-placeholder:hover {
+  border-color: #0073aa;
+  background: #f5f9fc;
+}
+
+.archi-parallax-image-editor .components-placeholder__label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #23282d;
+}
+
+.archi-parallax-image-editor .components-placeholder__instructions {
+  color: #757575;
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+/* Parallax Effect Badge */
+.archi-parallax-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(76, 175, 80, 0.9);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  backdrop-filter: blur(4px);
+  z-index: 10;
+}
+
+.archi-parallax-badge.effect-none {
+  background: rgba(153, 153, 153, 0.9);
+}
+
+.archi-parallax-badge.effect-fixed {
+  background: rgba(33, 150, 243, 0.9);
+}
+
+.archi-parallax-badge.effect-scroll {
+  background: rgba(76, 175, 80, 0.9);
+}
+
+.archi-parallax-badge.effect-zoom {
+  background: rgba(255, 152, 0, 0.9);
+}
+
+/* Image Preview Enhancement */
+.archi-parallax-image-editor img {
+  transition: transform 0.3s ease;
+}
+
+.archi-parallax-image-editor:hover img {
+  transform: scale(1.02);
+}
+
+/* ==========================================================================
+   Image Comparison Slider Block
+   ========================================================================== */
+
+.archi-image-comparison-editor {
+  border: 2px solid #e1e4e8;
+  border-radius: 8px;
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  position: relative;
+}
+
+.archi-image-comparison-editor::before {
+  content: "↔️ Image Comparison Slider";
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #667eea;
+  backdrop-filter: blur(4px);
+}
+
+.archi-image-comparison-editor .components-placeholder {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 4px;
+  min-height: 250px;
+}
+
+/* ==========================================================================
+   Interactive Map Block
+   ========================================================================== */
+
+.archi-map-editor {
+  border: 2px dashed #e1e4e8;
+  border-radius: 8px;
+  padding: 20px;
+  background: #f8f9fa;
+  position: relative;
+  min-height: 300px;
+}
+
+.archi-map-editor::before {
+  content: "🗺️";
+  font-size: 48px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.2;
+}
+
+.archi-map-preview {
+  background: white;
+  border-radius: 4px;
+  padding: 20px;
+  text-align: center;
+  min-height: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.archi-map-preview h3 {
+  margin: 0 0 10px 0;
+  color: #23282d;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.archi-map-preview p {
+  margin: 0;
+  color: #757575;
+  font-size: 13px;
+}
+
+/* ==========================================================================
+   D3 Charts (Timeline, Bar Chart)
+   ========================================================================== */
+
+.archi-d3-chart-editor {
+  border: 2px solid #e1e4e8;
+  border-radius: 8px;
+  padding: 20px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.archi-chart-preview {
+  background: white;
+  border-radius: 4px;
+  padding: 30px;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.archi-chart-icon {
+  font-size: 64px;
+  margin-bottom: 20px;
+  opacity: 0.3;
+}
+
+.archi-chart-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #23282d;
+  margin-bottom: 10px;
+}
+
+.archi-chart-description {
+  font-size: 13px;
+  color: #757575;
+  text-align: center;
+  max-width: 400px;
+}
+
+/* Timeline specific */
+.archi-timeline-editor {
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+}
+
+/* Bar chart specific */
+.archi-bar-chart-editor {
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+}
+
+/* ==========================================================================
+   Cover Block Enhancement
+   ========================================================================== */
+
+.archi-cover-block-editor {
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  min-height: 400px;
+}
+
+.archi-cover-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(2px);
+}
+
+.archi-cover-content {
+  color: white;
+  text-align: center;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  padding: 20px;
+}
+
+/* ==========================================================================
+   Fullsize Parallax Image
+   ========================================================================== */
+
+.archi-fullsize-parallax-editor {
+  border: 3px solid #0073aa;
+  border-radius: 8px;
+  padding: 30px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 400px;
+  position: relative;
+  overflow: hidden;
+}
+
+.archi-fullsize-parallax-editor::before {
+  content: "🖼️ FULLSIZE PARALLAX";
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #667eea;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* ==========================================================================
+   General Editor Improvements
+   ========================================================================== */
+
+/* Better placeholder visibility */
+.components-placeholder {
+  transition: all 0.2s ease;
+}
+
+.components-placeholder:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Inspector Control Enhancements */
+.components-panel__body-title {
+  font-weight: 600;
+}
+
+.components-toggle-control .components-toggle-control__label {
+  font-weight: 500;
+}
+
+/* Media Upload Button Enhancement */
+.components-button.is-secondary {
+  transition: all 0.2s ease;
+}
+
+.components-button.is-secondary:hover {
+  background: #0073aa;
+  color: white;
+  border-color: #0073aa;
+}
+
+/* ==========================================================================
+   Responsive Adjustments
+   ========================================================================== */
+
+@media (max-width: 782px) {
+  .archi-manager,
+  .archi-parallax-image-editor,
+  .archi-image-comparison-editor {
+    padding: 15px;
+  }
+
+  .archi-settings-preview {
+    padding: 12px;
+  }
+
+  .archi-chart-preview {
+    padding: 20px;
+  }
+}
+
+/* ==========================================================================
+   Dark Mode Support (if enabled)
+   ========================================================================== */
+
+.is-dark-theme .archi-manager {
+  background: #1e1e1e;
+  border-color: #3c3c3c;
+}
+
+.is-dark-theme .archi-settings-preview {
+  background: #2c2c2c;
+  color: #e1e4e8;
+}
+
+.is-dark-theme .archi-settings-preview h4,
+.is-dark-theme .archi-manager .components-card__header h3 {
+  color: #e1e4e8;
+}
+
+.is-dark-theme .archi-map-editor,
+.is-dark-theme .archi-d3-chart-editor {
+  background: #1e1e1e;
+  border-color: #3c3c3c;
+}
+
+.is-dark-theme .archi-map-preview,
+.is-dark-theme .archi-chart-preview {
+  background: #2c2c2c;
+}
+
+.is-dark-theme .archi-chart-title,
+.is-dark-theme .archi-map-preview h3 {
+  color: #e1e4e8;
+}
+
+.is-dark-theme .archi-chart-description,
+.is-dark-theme .archi-map-preview p {
+  color: #a0a0a0;
+}
+
+/* ==========================================================================
+   Animation Enhancements
+   ========================================================================== */
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.archi-manager,
+.archi-parallax-image-editor,
+.archi-d3-chart-editor {
+  animation: slideInUp 0.3s ease-out;
+}
+
+/* Loading state */
+.archi-block-loading {
+  position: relative;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.archi-block-loading::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  margin: -20px 0 0 -20px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #0073aa;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==========================================================================
+   Image Comparison Slider Block - Enhanced Editor Preview
+   ========================================================================== */
+
+.archi-comparison-editor {
+  position: relative;
+  min-height: 400px;
+  border: 2px dashed #0073aa;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #f0f0f0 50%, #e0e0e0 50%);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.archi-comparison-editor:hover {
+  border-color: #005177;
+  box-shadow: 0 4px 12px rgba(0, 115, 170, 0.15);
+}
+
+.archi-comparison-editor.has-before-image {
+  background: none;
+}
+
+.archi-comparison-preview-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  height: 100%;
+  min-height: 400px;
+}
+
+.archi-comparison-preview-side {
+  position: relative;
+  background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.archi-comparison-preview-side img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.archi-comparison-preview-label {
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 115, 170, 0.9);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  backdrop-filter: blur(4px);
+  z-index: 10;
+}
+
+.archi-comparison-preview-side.before .archi-comparison-preview-label {
+  background: rgba(244, 67, 54, 0.9);
+}
+
+.archi-comparison-preview-side.after .archi-comparison-preview-label {
+  background: rgba(76, 175, 80, 0.9);
+}
+
+.archi-comparison-divider {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, #0073aa 0%, #005177 100%);
+  transform: translateX(-50%);
+  z-index: 5;
+}
+
+.archi-comparison-divider::before {
+  content: "↔";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #0073aa;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(0, 115, 170, 0.3);
+}
+
+.archi-comparison-info-overlay {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.95);
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #23282d;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  max-width: 80%;
+}
+
+.archi-comparison-info-overlay strong {
+  color: #0073aa;
+}
+
+/* Horizontal orientation */
+.archi-comparison-editor.orientation-horizontal .archi-comparison-preview-container {
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+
+.archi-comparison-editor.orientation-horizontal .archi-comparison-divider {
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  transform: translateY(-50%);
+}
+
+.archi-comparison-editor.orientation-horizontal .archi-comparison-divider::before {
+  content: "↕";
+}
+
+/* ==========================================================================
+   D3 Blocks - Enhanced Editor Preview
+   ========================================================================== */
+
+.archi-d3-editor {
+  background: white;
+  border: 2px solid #e1e4e8;
+  border-radius: 8px;
+  padding: 20px;
+  min-height: 300px;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.archi-d3-editor:hover {
+  border-color: #9c27b0;
+  box-shadow: 0 4px 12px rgba(156, 39, 176, 0.1);
+}
+
+.archi-d3-preview-badge {
+  background: linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  display: inline-block;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(156, 39, 176, 0.3);
+}
+
+.archi-d3-preview-container {
+  background: #fafafa;
+  border-radius: 4px;
+  padding: 20px;
+  min-height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.archi-d3-placeholder {
+  text-align: center;
+  color: #757575;
+}
+
+.archi-d3-placeholder-icon {
+  font-size: 64px;
+  margin-bottom: 15px;
+  opacity: 0.5;
+}
+
+.archi-d3-placeholder-text {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.archi-d3-placeholder-hint {
+  font-size: 12px;
+  color: #999;
+}
+
+/* D3 Timeline specific */
+.archi-d3-timeline-preview {
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    transparent 48%, 
+    #e1e4e8 48%, 
+    #e1e4e8 52%, 
+    transparent 52%, 
+    transparent 100%
+  );
+  position: relative;
+}
+
+.archi-d3-timeline-node {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background: #9c27b0;
+  border: 3px solid white;
+  border-radius: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 2px 8px rgba(156, 39, 176, 0.3);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.archi-d3-timeline-node:hover {
+  width: 20px;
+  height: 20px;
+  background: #7b1fa2;
+}
+
+/* D3 Bar Chart specific */
+.archi-d3-barchart-preview {
+  width: 100%;
+  height: 200px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  padding: 10px;
+  gap: 8px;
+}
+
+.archi-d3-bar {
+  flex: 1;
+  background: linear-gradient(180deg, #9c27b0 0%, #7b1fa2 100%);
+  border-radius: 4px 4px 0 0;
+  min-height: 30px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.archi-d3-bar:hover {
+  background: linear-gradient(180deg, #7b1fa2 0%, #6a1b9a 100%);
+  transform: translateY(-5px);
+}
+
+.archi-d3-bar::after {
+  content: attr(data-value);
+  position: absolute;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  font-weight: 600;
+  color: #555;
+}
+
+/* ==========================================================================
+   Interactive Map Block - Enhanced Editor Preview
+   ========================================================================== */
+
+.archi-map-editor {
+  position: relative;
+  min-height: 400px;
+  background: linear-gradient(135deg, #e8f4f8 0%, #d1e7f0 100%);
+  border: 2px solid #4fc3f7;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.archi-map-editor:hover {
+  border-color: #29b6f6;
+  box-shadow: 0 4px 12px rgba(79, 195, 247, 0.2);
+}
+
+.archi-map-grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    repeating-linear-gradient(0deg, 
+      rgba(79, 195, 247, 0.1) 0px, 
+      rgba(79, 195, 247, 0.1) 1px, 
+      transparent 1px, 
+      transparent 50px
+    ),
+    repeating-linear-gradient(90deg, 
+      rgba(79, 195, 247, 0.1) 0px, 
+      rgba(79, 195, 247, 0.1) 1px, 
+      transparent 1px, 
+      transparent 50px
+    );
+  opacity: 0.5;
+}
+
+.archi-map-placeholder {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 2;
+}
+
+.archi-map-placeholder-icon {
+  font-size: 64px;
+  margin-bottom: 15px;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+.archi-map-placeholder-text {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 15px 25px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #23282d;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.archi-map-placeholder-hint {
+  font-size: 12px;
+  font-weight: normal;
+  color: #757575;
+  margin-top: 8px;
+}
+
+.archi-map-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(79, 195, 247, 0.95);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 2px 8px rgba(79, 195, 247, 0.3);
+  z-index: 3;
+}
+
+.archi-map-coordinates {
+  position: absolute;
+  bottom: 15px;
+  left: 15px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 10px 15px;
+  border-radius: 6px;
+  font-family: monospace;
+  font-size: 11px;
+  color: #555;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 3;
+}
+
+.archi-map-coordinates strong {
+  color: #4fc3f7;
+}
+
+/* Map markers preview */
+.archi-map-marker {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  background: #ff5252;
+  border: 3px solid white;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg) translate(-50%, -50%);
+  box-shadow: 0 3px 10px rgba(255, 82, 82, 0.4);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.archi-map-marker:hover {
+  width: 36px;
+  height: 36px;
+  background: #e53935;
+}
+
+.archi-map-marker::after {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* ==========================================================================
+   Cover Block Enhancements
+   ========================================================================== */
+
+.archi-cover-editor {
+  position: relative;
+  min-height: 400px;
+  background: #f5f5f5;
+  border: 2px solid #e1e4e8;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.archi-cover-overlay-preview {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.archi-cover-content-preview {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 30px;
+  border-radius: 8px;
+  max-width: 600px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* ==========================================================================
+   General Block Selection Enhancements
+   ========================================================================== */
+
+.block-editor-block-list__block.is-selected .archi-block-editor {
+  outline: 2px solid #0073aa;
+  outline-offset: 2px;
+}
+
+.archi-block-editor {
+  transition: all 0.2s ease;
+}
+
+.archi-block-editor:hover {
+  box-shadow: 0 2px 8px rgba(0, 115, 170, 0.1);
+}
+
+/* Block type indicators */
+.archi-block-type-indicator {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  z-index: 100;
+  backdrop-filter: blur(4px);
+}
+
+/* Interactive preview mode toggle */
+.archi-preview-mode-toggle {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 100;
+}
+
+.archi-preview-mode-toggle:hover {
+  background: #0073aa;
+  color: white;
+  border-color: #0073aa;
+}
+
+.archi-preview-mode-toggle.active {
+  background: #4caf50;
+  color: white;
+  border-color: #4caf50;
+}

@@ -1,0 +1,399 @@
+/**
+ * Animations et effets pour les blocs Gutenberg
+ * Améliore l'expérience utilisateur dans l'éditeur
+ */
+
+/* ============================================
+   ANIMATIONS GÉNÉRALES
+   ============================================ */
+
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-10px);
+    }
+    60% {
+        transform: translateY(-5px);
+    }
+}
+
+/* ============================================
+   ACTIVATION DE BLOC
+   ============================================ */
+
+.block-editor-block-list__block.is-selected .archi-block-wrapper {
+    animation: slideInUp 0.3s ease-out;
+    box-shadow: 0 0 0 2px var(--wp-admin-theme-color, #007cba);
+    border-radius: 4px;
+}
+
+.block-editor-block-list__block.is-selected .archi-block-wrapper::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border: 2px solid var(--wp-admin-theme-color, #007cba);
+    border-radius: 4px;
+    pointer-events: none;
+    animation: pulse 2s infinite;
+}
+
+/* ============================================
+   FEEDBACK VISUEL DES CONTRÔLES
+   ============================================ */
+
+.components-panel__body.is-opened {
+    animation: slideInDown 0.2s ease-out;
+}
+
+.components-toggle-control input:checked + .components-form-toggle {
+    animation: bounce 0.5s ease;
+}
+
+.components-range-control__slider:focus {
+    box-shadow: 0 0 0 2px var(--wp-admin-theme-color, #007cba);
+    transition: box-shadow 0.2s ease;
+}
+
+/* ============================================
+   ÉTATS DE CHARGEMENT
+   ============================================ */
+
+.archi-block-loading {
+    position: relative;
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.archi-block-loading::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 40px;
+    height: 40px;
+    margin: -20px 0 0 -20px;
+    border: 4px solid #f3f3f3;
+    border-top-color: var(--wp-admin-theme-color, #007cba);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    z-index: 100;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ============================================
+   NOTIFICATIONS & TOASTS
+   ============================================ */
+
+.archi-block-notification {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    padding: 15px 20px;
+    background: #fff;
+    border-left: 4px solid var(--wp-admin-theme-color, #007cba);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+    z-index: 9999;
+    animation: slideInUp 0.3s ease-out;
+    max-width: 300px;
+}
+
+.archi-block-notification.success {
+    border-left-color: #00a32a;
+}
+
+.archi-block-notification.error {
+    border-left-color: #d63638;
+}
+
+.archi-block-notification.warning {
+    border-left-color: #f0b849;
+}
+
+.archi-block-notification.dismissing {
+    animation: slideInDown 0.3s ease-out reverse;
+}
+
+/* ============================================
+   HOVER STATES
+   ============================================ */
+
+.archi-block-control:hover {
+    background: #f0f0f0;
+    transition: background 0.2s ease;
+}
+
+.archi-block-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+}
+
+.archi-block-button:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================
+   DRAG & DROP FEEDBACK
+   ============================================ */
+
+.archi-draggable {
+    cursor: move;
+    transition: opacity 0.2s ease;
+}
+
+.archi-draggable:hover {
+    opacity: 0.8;
+}
+
+.archi-draggable.is-dragging {
+    opacity: 0.5;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.archi-drop-zone {
+    border: 2px dashed #ddd;
+    background: #f9f9f9;
+    transition: all 0.2s ease;
+}
+
+.archi-drop-zone.is-drag-over {
+    border-color: var(--wp-admin-theme-color, #007cba);
+    background: #e6f2ff;
+}
+
+/* ============================================
+   VALIDATION ERRORS
+   ============================================ */
+
+.archi-field-error {
+    border-color: #d63638 !important;
+    animation: shake 0.5s;
+}
+
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    10%, 30%, 50%, 70%, 90% {
+        transform: translateX(-5px);
+    }
+    20%, 40%, 60%, 80% {
+        transform: translateX(5px);
+    }
+}
+
+.archi-error-message {
+    color: #d63638;
+    font-size: 12px;
+    margin-top: 5px;
+    animation: fadeIn 0.3s ease;
+}
+
+/* ============================================
+   COLLAPSIBLE SECTIONS
+   ============================================ */
+
+.archi-collapsible-header {
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.archi-collapsible-header:hover {
+    background: #f0f0f0;
+}
+
+.archi-collapsible-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.archi-collapsible-content.is-open {
+    max-height: 1000px;
+    animation: slideInDown 0.3s ease;
+}
+
+/* ============================================
+   PROGRESS INDICATORS
+   ============================================ */
+
+.archi-progress-bar {
+    width: 100%;
+    height: 4px;
+    background: #e0e0e0;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.archi-progress-bar-fill {
+    height: 100%;
+    background: var(--wp-admin-theme-color, #007cba);
+    transition: width 0.3s ease;
+    border-radius: 2px;
+}
+
+.archi-progress-bar-fill.animated {
+    animation: progressPulse 1.5s infinite;
+}
+
+@keyframes progressPulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+/* ============================================
+   TOOLTIPS
+   ============================================ */
+
+.archi-tooltip {
+    position: relative;
+}
+
+.archi-tooltip::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-5px);
+    padding: 8px 12px;
+    background: #1e1e1e;
+    color: #fff;
+    font-size: 12px;
+    white-space: nowrap;
+    border-radius: 4px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 1000;
+}
+
+.archi-tooltip:hover::after {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-8px);
+}
+
+/* ============================================
+   MODAL ANIMATIONS
+   ============================================ */
+
+.archi-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    animation: fadeIn 0.3s ease;
+}
+
+.archi-modal {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    max-width: 600px;
+    width: 90%;
+    animation: slideInUp 0.3s ease;
+}
+
+.archi-modal.closing {
+    animation: slideInDown 0.3s ease reverse;
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
+
+@media (max-width: 782px) {
+    .archi-block-notification {
+        bottom: 20px;
+        right: 20px;
+        left: 20px;
+        max-width: none;
+    }
+    
+    .archi-modal {
+        width: 95%;
+        margin: 20px;
+    }
+}
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+
+/* Respecter les préférences de mouvement réduit */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Focus visible pour l'accessibilité clavier */
+.archi-block-control:focus-visible,
+.archi-block-button:focus-visible {
+    outline: 2px solid var(--wp-admin-theme-color, #007cba);
+    outline-offset: 2px;
+}

@@ -1,0 +1,413 @@
+/**
+ * Bloc Image Parallax Universel
+ * CSS consolidé combinant parallax-blocks.css et fullsize-parallax-image.css
+ * Optimisé et harmonisé pour tous les effets parallax
+ */
+
+/* ============================================
+   CONTAINER PRINCIPAL
+   ============================================ */
+
+.archi-parallax-image {
+    position: relative;
+    width: 100%;
+    margin: 0;
+    overflow: hidden;
+}
+
+/* ============================================
+   MODES DE HAUTEUR
+   ============================================ */
+
+.archi-parallax-image.height-full-viewport {
+    height: 100vh;
+    min-height: 600px;
+}
+
+.archi-parallax-image.height-custom {
+    /* Hauteur définie par style inline */
+    min-height: 300px;
+}
+
+.archi-parallax-image.height-auto {
+    height: auto;
+    min-height: 400px;
+}
+
+/* ============================================
+   STRUCTURE IMAGE
+   ============================================ */
+
+.fullsize-image-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.image-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.parallax-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    transition: transform 0.1s ease-out;
+}
+
+/* ============================================
+   OBJECT FIT VARIANTS
+   ============================================ */
+
+.object-fit-cover .parallax-image {
+    object-fit: cover;
+}
+
+.object-fit-contain .parallax-image {
+    object-fit: contain;
+}
+
+.object-fit-fill .parallax-image {
+    object-fit: fill;
+}
+
+/* ============================================
+   EFFET FOND FIXE (background-attachment)
+   ============================================ */
+
+.parallax-fixed .fullsize-image-container {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+.parallax-fixed .image-wrapper {
+    display: none; /* On utilise background-image via JS */
+}
+
+/* Alternative: utiliser l'image comme fond fixe */
+.parallax-fixed.use-bg-image {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+.parallax-fixed.use-bg-image .image-wrapper {
+    display: none;
+}
+
+/* ============================================
+   EFFET SCROLL PARALLAX (transform)
+   ============================================ */
+
+.parallax-scroll .parallax-image {
+    transform: scale(1.2);
+    will-change: transform;
+    transition: transform 0.1s ease-out;
+}
+
+/* Le transform sera géré par parallax-scroll.js */
+
+/* ============================================
+   EFFET ZOOM
+   ============================================ */
+
+.parallax-zoom .parallax-image {
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: scale(1);
+}
+
+.parallax-zoom.has-zoom:hover .parallax-image {
+    transform: scale(1.15);
+}
+
+/* ============================================
+   PAS D'EFFET
+   ============================================ */
+
+.parallax-none .parallax-image {
+    transform: none;
+    transition: none;
+    position: relative;
+}
+
+/* ============================================
+   OVERLAY
+   ============================================ */
+
+.image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* ============================================
+   TEXTE SUPERPOSÉ
+   ============================================ */
+
+.image-text {
+    position: absolute;
+    z-index: 3;
+    font-size: clamp(1.5rem, 4vw, 3rem);
+    font-weight: 700;
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+    padding: 2rem;
+    max-width: 90%;
+    line-height: 1.2;
+}
+
+/* Positions du texte */
+.image-text.text-position-center {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.image-text.text-position-top {
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+}
+
+.image-text.text-position-bottom {
+    bottom: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+}
+
+.image-text.text-position-top-left {
+    top: 10%;
+    left: 5%;
+    text-align: left;
+}
+
+.image-text.text-position-top-right {
+    top: 10%;
+    right: 5%;
+    text-align: right;
+}
+
+.image-text.text-position-bottom-left {
+    bottom: 10%;
+    left: 5%;
+    text-align: left;
+}
+
+.image-text.text-position-bottom-right {
+    bottom: 10%;
+    right: 5%;
+    text-align: right;
+}
+
+/* Style du texte */
+.image-text h1,
+.image-text h2,
+.image-text h3 {
+    color: inherit;
+    margin-bottom: 0.5rem;
+}
+
+.image-text p {
+    color: inherit;
+    font-size: clamp(1rem, 2vw, 1.5rem);
+    line-height: 1.6;
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.archi-parallax-image {
+    animation: fadeInScale 0.6s ease-out;
+}
+
+/* ============================================
+   RESPONSIVE - TABLET
+   ============================================ */
+
+@media (max-width: 1024px) {
+    .archi-parallax-image.height-full-viewport {
+        height: 70vh;
+        min-height: 500px;
+    }
+    
+    .image-text {
+        font-size: clamp(1.25rem, 3.5vw, 2.5rem);
+        padding: 1.5rem;
+    }
+}
+
+/* ============================================
+   RESPONSIVE - MOBILE
+   ============================================ */
+
+@media (max-width: 768px) {
+    .archi-parallax-image.height-full-viewport {
+        height: 60vh;
+        min-height: 400px;
+    }
+    
+    /* Désactiver parallax scroll sur mobile (performance) */
+    .parallax-scroll .parallax-image {
+        transform: scale(1) !important;
+        will-change: auto;
+    }
+    
+    /* Désactiver fond fixe sur mobile */
+    .parallax-fixed .fullsize-image-container,
+    .parallax-fixed.use-bg-image {
+        background-attachment: scroll !important;
+    }
+    
+    .parallax-fixed .image-wrapper {
+        display: block;
+    }
+    
+    .image-text {
+        font-size: clamp(1rem, 3vw, 2rem);
+        padding: 1rem;
+        max-width: 95%;
+    }
+    
+    /* Simplifier les positions sur mobile */
+    .image-text.text-position-top-left,
+    .image-text.text-position-top-right {
+        top: 5%;
+        left: 5%;
+        right: 5%;
+        text-align: center;
+        transform: none;
+    }
+    
+    .image-text.text-position-bottom-left,
+    .image-text.text-position-bottom-right {
+        bottom: 5%;
+        left: 5%;
+        right: 5%;
+        text-align: center;
+        transform: none;
+    }
+}
+
+/* ============================================
+   ACCESSIBILITÉ
+   ============================================ */
+
+/* Respect des préférences utilisateur pour le mouvement réduit */
+@media (prefers-reduced-motion: reduce) {
+    .parallax-image,
+    .parallax-scroll .parallax-image,
+    .parallax-zoom .parallax-image {
+        transform: none !important;
+        transition: none !important;
+        will-change: auto !important;
+    }
+    
+    .parallax-fixed .fullsize-image-container,
+    .parallax-fixed.use-bg-image {
+        background-attachment: scroll !important;
+    }
+    
+    .archi-parallax-image {
+        animation: none !important;
+    }
+}
+
+/* ============================================
+   IMPRESSION
+   ============================================ */
+
+@media print {
+    .archi-parallax-image {
+        height: auto !important;
+        min-height: 300px;
+        page-break-inside: avoid;
+        animation: none !important;
+    }
+    
+    .parallax-image {
+        transform: none !important;
+        position: relative !important;
+    }
+    
+    .image-overlay {
+        display: none;
+    }
+    
+    .parallax-fixed .fullsize-image-container {
+        background-attachment: scroll !important;
+    }
+}
+
+/* ============================================
+   ÉDITEUR GUTENBERG
+   ============================================ */
+
+.archi-parallax-image-editor {
+    padding: 20px;
+    background: #f9f9f9;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+}
+
+.archi-parallax-image-editor h3 {
+    margin-top: 0;
+    color: #1e1e1e;
+    font-size: 16px;
+}
+
+/* ============================================
+   OPTIMISATIONS PERFORMANCE
+   ============================================ */
+
+/* Will-change pour les animations */
+.parallax-scroll .image-wrapper {
+    will-change: transform;
+}
+
+.parallax-zoom .parallax-image {
+    will-change: transform;
+}
+
+/* Hardware acceleration */
+.parallax-fixed .fullsize-image-container,
+.parallax-scroll .parallax-image {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+/* Smooth scrolling pour les navigateurs qui le supportent */
+@supports (scroll-behavior: smooth) {
+    .parallax-scroll .fullsize-image-container {
+        scroll-behavior: smooth;
+    }
+}

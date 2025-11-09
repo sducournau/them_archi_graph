@@ -1,0 +1,52 @@
+/**
+ * Fix pour le Hero Fullscreen
+ * Permet au hero de prendre toute la largeur malgré les containers parents
+ */
+
+/* Supprimer les marges et padding des containers pour les pages avec hero fullscreen */
+body.single-post .article-container,
+body.single-archi_project .project-container,
+body.single-archi_illustration .illustration-container {
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* Le hero fullscreen doit sortir du container */
+.archi-hero-fullscreen {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    left: 0;
+    right: 0;
+}
+
+/* Assurer que le hero est bien en fullscreen même avec admin bar */
+body.admin-bar .archi-hero-fullscreen {
+    height: calc(100vh - 32px);
+    margin-top: 32px;
+}
+
+@media screen and (max-width: 782px) {
+    body.admin-bar .archi-hero-fullscreen {
+        height: calc(100vh - 46px);
+        margin-top: 46px;
+    }
+}
+
+/* Reset des marges pour l'article après le hero */
+.single-article,
+.single-project,
+.single-illustration {
+    margin: 0;
+    padding: 0;
+}
+
+/* Le contenu après le hero doit avoir les marges normales */
+.archi-content-section {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+}

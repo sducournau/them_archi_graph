@@ -1,0 +1,355 @@
+/**
+ * Styles pour le livre d'or
+ */
+
+/* ==========================================================================
+   Page Livre d'Or et Entrées
+   ========================================================================== */
+
+/* Container principal */
+.page-guestbook,
+.single-guestbook {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+/* En-tête de page */
+.page-guestbook .page-header {
+    position: relative;
+    overflow: hidden;
+}
+
+.page-guestbook .page-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.05) 0%, rgba(46, 204, 113, 0.05) 100%);
+    z-index: -1;
+}
+
+/* Formulaire WPForms personnalisé pour le livre d'or */
+.archi-guestbook-form .wpforms-field-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.archi-guestbook-form .wpforms-field {
+    margin-bottom: 25px;
+}
+
+.archi-guestbook-form .wpforms-field-label {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 8px;
+}
+
+.archi-guestbook-form input[type="text"],
+.archi-guestbook-form input[type="email"],
+.archi-guestbook-form textarea,
+.archi-guestbook-form select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 5px;
+    font-size: 15px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.archi-guestbook-form input[type="text"]:focus,
+.archi-guestbook-form input[type="email"]:focus,
+.archi-guestbook-form textarea:focus,
+.archi-guestbook-form select:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    outline: none;
+}
+
+.archi-guestbook-form textarea {
+    min-height: 150px;
+    resize: vertical;
+}
+
+.archi-guestbook-form .wpforms-submit-container {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.archi-guestbook-form .wpforms-submit {
+    background: linear-gradient(135deg, #3498db 0%, #2ecc71 100%);
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.archi-guestbook-form .wpforms-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+/* Messages de confirmation/erreur */
+.wpforms-confirmation-container-full {
+    background: #d4edda;
+    border: 2px solid #c3e6cb;
+    color: #155724;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    margin: 30px 0;
+}
+
+.wpforms-error {
+    background: #f8d7da;
+    border: 2px solid #f5c6cb;
+    color: #721c24;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+/* Cartes d'entrées */
+.guestbook-entry-card {
+    position: relative;
+}
+
+.guestbook-entry-card::before {
+    content: '"';
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    font-size: 80px;
+    color: rgba(52, 152, 219, 0.1);
+    font-family: Georgia, serif;
+    line-height: 1;
+}
+
+/* Graphique badge animé */
+.graph-badge {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.6;
+    }
+}
+
+/* Effet de survol sur les tags d'articles */
+.article-tag {
+    position: relative;
+    overflow: hidden;
+}
+
+.article-tag::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.5s;
+}
+
+.article-tag:hover::before {
+    left: 100%;
+}
+
+/* Avatar avec dégradé variable */
+.author-avatar {
+    position: relative;
+    overflow: hidden;
+}
+
+.author-avatar::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.guestbook-entry-card:hover .author-avatar::after {
+    opacity: 1;
+}
+
+/* Pagination stylisée */
+.guestbook-pagination .page-numbers {
+    font-weight: 600;
+}
+
+.guestbook-pagination .page-numbers.dots {
+    background: transparent;
+    cursor: default;
+}
+
+.guestbook-pagination .page-numbers.dots:hover {
+    background: transparent;
+    color: #34495e;
+}
+
+/* Single Guestbook Entry */
+.single-guestbook .entry-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.single-guestbook .entry-title {
+    font-size: 36px;
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+.single-guestbook .guestbook-author-info {
+    justify-content: center;
+}
+
+.single-guestbook .entry-content {
+    font-size: 18px;
+    line-height: 1.8;
+    color: #34495e;
+    max-width: 800px;
+    margin: 0 auto 40px;
+}
+
+/* Cartes d'articles liés dans single */
+.linked-article-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.linked-article-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.05) 0%, rgba(46, 204, 113, 0.05) 100%);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.linked-article-card:hover::before {
+    opacity: 1;
+}
+
+/* Badge de type d'article avec couleurs spécifiques */
+.post-type-label {
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.linked-article-card[data-type="archi_project"] .post-type-label {
+    background: #e67e22;
+}
+
+.linked-article-card[data-type="archi_illustration"] .post-type-label {
+    background: #9b59b6;
+}
+
+.linked-article-card[data-type="post"] .post-type-label {
+    background: #3498db;
+}
+
+/* Responsive amélioré */
+@media (max-width: 1024px) {
+    .linked-articles-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .page-title {
+        font-size: 28px;
+    }
+    
+    .guestbook-entry-card::before {
+        font-size: 50px;
+        top: 10px;
+        left: 10px;
+    }
+    
+    .author-avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+    }
+    
+    .single-guestbook .entry-title {
+        font-size: 24px;
+    }
+}
+
+/* Mode sombre (optionnel) */
+@media (prefers-color-scheme: dark) {
+    .page-guestbook,
+    .single-guestbook {
+        background: #1a1a1a;
+        color: #e0e0e0;
+    }
+    
+    .guestbook-entry-card {
+        background: #2c2c2c;
+        border-color: #404040;
+    }
+    
+    .page-header {
+        color: #e0e0e0;
+    }
+    
+    .entry-content {
+        color: #d0d0d0;
+    }
+}
+
+/* Animations d'entrée */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.guestbook-entry-card {
+    animation: slideInUp 0.5s ease-out;
+}
+
+.guestbook-entry-card:nth-child(1) { animation-delay: 0.1s; }
+.guestbook-entry-card:nth-child(2) { animation-delay: 0.2s; }
+.guestbook-entry-card:nth-child(3) { animation-delay: 0.3s; }
+.guestbook-entry-card:nth-child(4) { animation-delay: 0.4s; }
+.guestbook-entry-card:nth-child(5) { animation-delay: 0.5s; }
+
+/* Print styles */
+@media print {
+    .guestbook-form-section,
+    .entry-actions,
+    .guestbook-pagination,
+    .back-to-guestbook {
+        display: none;
+    }
+    
+    .guestbook-entry-card {
+        page-break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+}

@@ -509,10 +509,9 @@ function archi_get_related_articles($request) {
  * 
  * @param array $article_a Premier article
  * @param array $article_b Deuxième article
- * @param bool $use_enhanced Utiliser le calculateur enrichi (legacy parameter, ignored)
  * @return array Score et détails
  */
-function archi_calculate_proximity_score($article_a, $article_b, $use_enhanced = true) {
+function archi_calculate_proximity_score($article_a, $article_b) {
     // Utiliser le calculateur de proximité si disponible
     if (class_exists('Archi_Proximity_Calculator')) {
         return Archi_Proximity_Calculator::calculate_proximity($article_a, $article_b);

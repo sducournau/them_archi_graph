@@ -217,8 +217,7 @@ class Archi_Blocks_Loader {
             ARCHI_THEME_VERSION
         );
         
-        // ✅ Parallax script removed - using enhanced version from functions.php instead
-        // This prevents conflicts between parallax-scroll.js and parallax-enhanced.js
+        // ✅ Parallax script loaded from functions.php (assets/js/parallax.js)
     }
     
     /**

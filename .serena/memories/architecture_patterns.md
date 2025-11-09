@@ -244,7 +244,7 @@ Positions saved back to database
 ```
 
 ### Relationship Scoring Algorithm
-**File**: `inc/enhanced-proximity-calculator.php`
+**File**: `inc/proximity-calculator.php`
 
 ```php
 Shared Categories: 40 points (each)

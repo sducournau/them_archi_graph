@@ -117,7 +117,7 @@
     transition: transform 0.1s ease-out;
 }
 
-/* Le transform sera géré par parallax-scroll.js */
+/* Transform effects managed by parallax.js */
 
 /* ============================================
    EFFET ZOOM

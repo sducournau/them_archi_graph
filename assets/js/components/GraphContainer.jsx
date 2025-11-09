@@ -464,7 +464,6 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
     updateNodes(g, filteredArticles, simulation);
 
     // Les îles architecturales remplacent les clusters de catégories
-    // console.log("Updating clusters...");
     // updateClusters(g, categories, filteredArticles);
 
     // Îles architecturales par catégories activées

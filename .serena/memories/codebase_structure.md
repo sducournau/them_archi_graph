@@ -22,7 +22,7 @@
 - `admin-enhancements.php` - Admin UI improvements
 - `article-card-component.php` - Unified card rendering function
 - `automatic-relationships.php` - Auto-link posts by category/tag
-- `enhanced-proximity-calculator.php` - Relationship scoring algorithm
+- `proximity-calculator.php` - Relationship scoring algorithm
 - `graph-management.php` - Graph configuration
 - `relationships-dashboard.php` - Admin dashboard for relationships
 - `sample-data-generator.php` - Test data creation

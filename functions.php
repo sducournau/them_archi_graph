@@ -210,10 +210,10 @@ function archi_enqueue_scripts() {
         true
     );
     
-    // ✅ Enhanced parallax scroll with GPU acceleration
+    // ✅ Parallax scroll with GPU acceleration
     wp_enqueue_script(
-        'archi-parallax-enhanced',
-        ARCHI_THEME_URI . '/assets/js/parallax-enhanced.js',
+        'archi-parallax',
+        ARCHI_THEME_URI . '/assets/js/parallax.js',
         [],
         ARCHI_THEME_VERSION,
         true
@@ -246,7 +246,7 @@ function archi_enqueue_scripts() {
     ];
     
     wp_localize_script(
-        'archi-parallax-enhanced',
+        'archi-parallax',
         'archiCustomizerSettings',
         $customizer_settings
     );

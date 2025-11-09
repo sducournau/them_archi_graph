@@ -697,6 +697,13 @@ function archi_featured_image_meta_box_callback($post) {
     $fullscreen = get_post_meta($post->ID, '_archi_featured_image_fullscreen', true);
     $parallax = get_post_meta($post->ID, '_archi_featured_image_parallax', true) ?: 'none';
     $overlay_opacity = get_post_meta($post->ID, '_archi_featured_image_overlay_opacity', true) ?: 0.3;
+    $custom_fullscreen_image = get_post_meta($post->ID, '_archi_custom_fullscreen_image', true);
+    
+    // Récupérer l'URL de l'image si elle existe
+    $custom_image_url = '';
+    if ($custom_fullscreen_image) {
+        $custom_image_url = wp_get_attachment_image_url($custom_fullscreen_image, 'medium');
+    }
     
     ?>
     <table class="form-table">
@@ -712,6 +719,38 @@ function archi_featured_image_meta_box_callback($post) {
                 </label>
                 <p class="description">
                     <?php _e('Affiche l\'image à la une en hero fullscreen en haut de l\'article', 'archi-graph'); ?>
+                </p>
+            </td>
+        </tr>
+        
+        <tr>
+            <td>
+                <label for="archi_custom_fullscreen_image">
+                    <?php _e('Image fullscreen personnalisée', 'archi-graph'); ?>
+                </label><br>
+                <div style="margin-top: 10px;">
+                    <input type="hidden" 
+                           id="archi_custom_fullscreen_image" 
+                           name="archi_custom_fullscreen_image" 
+                           value="<?php echo esc_attr($custom_fullscreen_image); ?>">
+                    <button type="button" 
+                            class="button archi-select-image-button">
+                        <?php _e('Choisir une image', 'archi-graph'); ?>
+                    </button>
+                    <button type="button" 
+                            class="button archi-remove-image-button" 
+                            style="<?php echo $custom_fullscreen_image ? '' : 'display:none;'; ?>">
+                        <?php _e('Retirer l\'image', 'archi-graph'); ?>
+                    </button>
+                </div>
+                <div class="archi-image-preview" style="margin-top: 10px;">
+                    <?php if ($custom_image_url): ?>
+                        <img src="<?php echo esc_url($custom_image_url); ?>" 
+                             style="max-width: 300px; height: auto; display: block;">
+                    <?php endif; ?>
+                </div>
+                <p class="description">
+                    <?php _e('Si définie, cette image sera utilisée à la place de l\'image à la une pour l\'affichage fullscreen. Laissez vide pour utiliser l\'image à la une.', 'archi-graph'); ?>
                 </p>
             </td>
         </tr>
@@ -761,6 +800,71 @@ function archi_featured_image_meta_box_callback($post) {
             </td>
         </tr>
     </table>
+    
+    <script>
+    jQuery(document).ready(function($) {
+        var archiImageFrame;
+        
+        // Sélection d'image
+        $('.archi-select-image-button').on('click', function(e) {
+            e.preventDefault();
+            
+            // Si le frame existe déjà, le réutiliser
+            if (archiImageFrame) {
+                archiImageFrame.open();
+                return;
+            }
+            
+            // Créer le frame de sélection d'image
+            archiImageFrame = wp.media({
+                title: '<?php _e('Sélectionner une image pour l\'en-tête fullscreen', 'archi-graph'); ?>',
+                button: {
+                    text: '<?php _e('Utiliser cette image', 'archi-graph'); ?>'
+                },
+                multiple: false,
+                library: {
+                    type: 'image'
+                }
+            });
+            
+            // Quand une image est sélectionnée
+            archiImageFrame.on('select', function() {
+                var attachment = archiImageFrame.state().get('selection').first().toJSON();
+                
+                // Mettre à jour le champ caché avec l'ID de l'image
+                $('#archi_custom_fullscreen_image').val(attachment.id);
+                
+                // Afficher l'aperçu
+                var imgUrl = attachment.sizes && attachment.sizes.medium 
+                    ? attachment.sizes.medium.url 
+                    : attachment.url;
+                    
+                $('.archi-image-preview').html(
+                    '<img src="' + imgUrl + '" style="max-width: 300px; height: auto; display: block;">'
+                );
+                
+                // Afficher le bouton de suppression
+                $('.archi-remove-image-button').show();
+            });
+            
+            archiImageFrame.open();
+        });
+        
+        // Retirer l'image
+        $('.archi-remove-image-button').on('click', function(e) {
+            e.preventDefault();
+            
+            // Vider le champ caché
+            $('#archi_custom_fullscreen_image').val('');
+            
+            // Vider l'aperçu
+            $('.archi-image-preview').html('');
+            
+            // Cacher le bouton de suppression
+            $(this).hide();
+        });
+    });
+    </script>
     <?php
 }
 
@@ -928,6 +1032,16 @@ function archi_save_meta_box_data($post_id) {
         // Sauvegarder l'option fullscreen
         $fullscreen = isset($_POST['archi_featured_image_fullscreen']) ? '1' : '0';
         update_post_meta($post_id, '_archi_featured_image_fullscreen', $fullscreen);
+        
+        // Sauvegarder l'image fullscreen personnalisée
+        if (isset($_POST['archi_custom_fullscreen_image'])) {
+            $custom_image_id = absint($_POST['archi_custom_fullscreen_image']);
+            if ($custom_image_id > 0) {
+                update_post_meta($post_id, '_archi_custom_fullscreen_image', $custom_image_id);
+            } else {
+                delete_post_meta($post_id, '_archi_custom_fullscreen_image');
+            }
+        }
         
         // Sauvegarder l'effet parallax
         if (isset($_POST['archi_featured_image_parallax'])) {

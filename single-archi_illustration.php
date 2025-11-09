@@ -25,13 +25,13 @@ get_header(); ?>
                     $hero_classes[] = 'parallax-zoom';
                 }
                 
-                $thumbnail_id = get_post_thumbnail_id();
+                $thumbnail_id = archi_get_fullscreen_image_id();
                 $thumbnail_alt = get_post_meta($thumbnail_id, '_wp_attachment_image_alt', true);
             ?>
                 <!-- Hero Fullscreen pour illustration -->
                 <div class="<?php echo esc_attr(implode(' ', $hero_classes)); ?>" data-parallax="<?php echo esc_attr($parallax); ?>">
                     <?php ?>
-                    <img src="<?php echo get_the_post_thumbnail_url(get_the_ID(), 'full'); ?>" 
+                    <img src="<?php echo esc_url(archi_get_fullscreen_image_url(get_the_ID(), 'full')); ?>" 
                          alt="<?php echo esc_attr($thumbnail_alt ?: get_the_title()); ?>" 
                          class="hero-media">
                     

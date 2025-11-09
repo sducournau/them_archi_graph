@@ -797,4 +797,53 @@ function archi_force_white_background() {
 }
 add_action('wp_head', 'archi_force_white_background', 999);
 
+/**
+ * Obtenir l'URL de l'image fullscreen (personnalisée ou featured)
+ * 
+ * @param int $post_id ID de l'article (optionnel, utilise get_the_ID() par défaut)
+ * @param string $size Taille de l'image ('full' par défaut)
+ * @return string|false URL de l'image ou false si aucune image
+ */
+function archi_get_fullscreen_image_url($post_id = null, $size = 'full') {
+    if (!$post_id) {
+        $post_id = get_the_ID();
+    }
+    
+    // Vérifier d'abord s'il y a une image personnalisée
+    $custom_image_id = get_post_meta($post_id, '_archi_custom_fullscreen_image', true);
+    if ($custom_image_id) {
+        $custom_url = wp_get_attachment_image_url($custom_image_id, $size);
+        if ($custom_url) {
+            return $custom_url;
+        }
+    }
+    
+    // Sinon, utiliser l'image à la une
+    return get_the_post_thumbnail_url($post_id, $size);
+}
+
+/**
+ * Obtenir l'ID de l'image fullscreen (personnalisée ou featured)
+ * 
+ * @param int $post_id ID de l'article (optionnel, utilise get_the_ID() par défaut)
+ * @return int|false ID de l'image ou false si aucune image
+ */
+function archi_get_fullscreen_image_id($post_id = null) {
+    if (!$post_id) {
+        $post_id = get_the_ID();
+    }
+    
+    // Vérifier d'abord s'il y a une image personnalisée
+    $custom_image_id = get_post_meta($post_id, '_archi_custom_fullscreen_image', true);
+    if ($custom_image_id) {
+        return $custom_image_id;
+    }
+    
+    // Sinon, utiliser l'image à la une
+    return get_post_thumbnail_id($post_id);
+}
+
+?>
+
+
 ?>

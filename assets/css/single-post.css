@@ -15,10 +15,6 @@
     padding: 2rem 1rem;
 }
 
-.archi-single-article {
-    background: var(--color-bg-primary, #ffffff);
-}
-
 /* ==========================================================================
    Section de contenu
    ========================================================================== */
@@ -342,10 +338,6 @@
    ========================================================================== */
 
 @media (prefers-color-scheme: dark) {
-    .archi-single-article {
-        background: var(--color-bg-primary-dark, #1a1a1a);
-    }
-    
     .archi-article-content h2,
     .archi-article-content h3,
     .archi-related-title,

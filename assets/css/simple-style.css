@@ -15,7 +15,7 @@ body {
     "Helvetica Neue", Arial, sans-serif;
   line-height: 1.6;
   color: #2c3e50;
-  background-color: #ffffff;
+  /* Background removed - transparent */
 }
 
 /* Container principal pour les articles */
@@ -23,11 +23,6 @@ body {
   max-width: 800px;
   margin: 0 auto;
   padding: 3rem 1.5rem;
-}
-
-/* Article */
-.single-article {
-  background: #ffffff;
 }
 
 /* En-tête de l'article */

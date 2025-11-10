@@ -4,7 +4,7 @@
 
 /* ===== Base styles ===== */
 body {
-  background-color: #ffffff !important;
+  /* Background removed - transparent */
   margin: 0;
   padding: 0;
 }
@@ -13,7 +13,7 @@ body {
 .project-container,
 .illustration-container {
   min-height: 100vh;
-  background-color: #ffffff;
+  /* Background removed - transparent */
 }
 
 /* ===== Hero section pour projets ===== */

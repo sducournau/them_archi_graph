@@ -201,6 +201,16 @@ function archi_enqueue_scripts() {
         );
     }
     
+    // Unified single post styles for all post types
+    if (is_single()) {
+        wp_enqueue_style(
+            'archi-single-post',
+            ARCHI_THEME_URI . '/assets/css/single-post.css',
+            [],
+            ARCHI_THEME_VERSION
+        );
+    }
+    
     // JavaScript pour le menu mobile
     wp_enqueue_script(
         'archi-navigation',
@@ -222,7 +232,7 @@ function archi_enqueue_scripts() {
     // Comparison slider JavaScript
     wp_register_script(
         'archi-image-comparison-slider',
-        ARCHI_THEME_URI . '/dist/comparison-slider.bundle.js',
+        ARCHI_THEME_URI . '/dist/js/comparison-slider.bundle.js',
         [],
         ARCHI_THEME_VERSION,
         true
@@ -231,7 +241,7 @@ function archi_enqueue_scripts() {
     wp_enqueue_script(
         'archi-comparison-slider',
         ARCHI_THEME_URI . '/assets/js/comparison-slider.js',
-        [],
+        ['archi-image-comparison-slider'],
         ARCHI_THEME_VERSION,
         true
     );
@@ -462,6 +472,7 @@ require_once ARCHI_THEME_DIR . '/inc/blocks/_loader.php';
 
 // Fonctionnalités avancées
 require_once ARCHI_THEME_DIR . '/inc/article-card-component.php';
+require_once ARCHI_THEME_DIR . '/inc/single-post-helpers.php';
 require_once ARCHI_THEME_DIR . '/inc/admin-enhancements.php';
 require_once ARCHI_THEME_DIR . '/inc/block-templates.php';
 require_once ARCHI_THEME_DIR . '/inc/sample-data-generator.php';
@@ -772,49 +783,3 @@ function archi_force_white_background() {
     </style>';
 }
 add_action('wp_head', 'archi_force_white_background', 999);
-
-/**
- * Obtenir l'URL de l'image fullscreen (personnalisée ou featured)
- * 
- * @param int $post_id ID de l'article (optionnel, utilise get_the_ID() par défaut)
- * @param string $size Taille de l'image ('full' par défaut)
- * @return string|false URL de l'image ou false si aucune image
- */
-function archi_get_fullscreen_image_url($post_id = null, $size = 'full') {
-    if (!$post_id) {
-        $post_id = get_the_ID();
-    }
-    
-    // Vérifier d'abord s'il y a une image personnalisée
-    $custom_image_id = get_post_meta($post_id, '_archi_custom_fullscreen_image', true);
-    if ($custom_image_id) {
-        $custom_url = wp_get_attachment_image_url($custom_image_id, $size);
-        if ($custom_url) {
-            return $custom_url;
-        }
-    }
-    
-    // Sinon, utiliser l'image à la une
-    return get_the_post_thumbnail_url($post_id, $size);
-}
-
-/**
- * Obtenir l'ID de l'image fullscreen (personnalisée ou featured)
- * 
- * @param int $post_id ID de l'article (optionnel, utilise get_the_ID() par défaut)
- * @return int|false ID de l'image ou false si aucune image
- */
-function archi_get_fullscreen_image_id($post_id = null) {
-    if (!$post_id) {
-        $post_id = get_the_ID();
-    }
-    
-    // Vérifier d'abord s'il y a une image personnalisée
-    $custom_image_id = get_post_meta($post_id, '_archi_custom_fullscreen_image', true);
-    if ($custom_image_id) {
-        return $custom_image_id;
-    }
-    
-    // Sinon, utiliser l'image à la une
-    return get_post_thumbnail_id($post_id);
-}

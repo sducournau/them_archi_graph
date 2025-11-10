@@ -1,5 +1,71 @@
 # Journal des Modifications
 
+## Version 1.3.0 - 10 Novembre 2025
+
+### 🎨 Consolidation et Harmonisation des Templates d'Articles
+
+#### Ajouté
+
+- **Système unifié de templates** : Un seul template `single.php` gère désormais tous les types d'articles
+  - Support automatique : `post`, `archi_project`, `archi_illustration`
+  - Détection intelligente du type de post
+  - Classes CSS dynamiques par type : `.archi-single-{post_type}`
+  
+- **Fonctions helper centralisées** (`inc/single-post-helpers.php`)
+  - `archi_get_post_metadata($post_id)` : Récupération intelligente des métadonnées selon le type
+  - `archi_display_post_metadata($post_id)` : Affichage harmonisé des métadonnées
+  - `archi_get_related_posts($post_id, $count)` : Algorithme intelligent d'articles similaires
+  - `archi_display_related_posts($post_id, $count)` : Rendu moderne des articles similaires
+  - `archi_get_post_type_label($post_type)` : Obtention du label localisé du type de post
+  
+- **Styles unifiés** (`assets/css/single-post.css`)
+  - Design moderne et cohérent pour tous les types d'articles
+  - Grille responsive de métadonnées (`.archi-specs-grid`)
+  - Cards d'articles similaires avec effets hover
+  - Codes couleurs par type : Bleu (posts), Rouge (projets), Violet (illustrations), Vert (guestbook)
+  - Responsive design complet (mobile, tablette, desktop)
+  - Support du mode sombre
+  - Animations fluides au chargement
+
+- **Système de hooks personnalisés**
+  - `archi_before_single_content` : Hook avant le contenu de l'article
+  - `archi_after_single_content` : Hook après le contenu et métadonnées
+  
+- **Filtres extensibles**
+  - `archi_post_metadata` : Personnalisation des métadonnées affichées
+  - `archi_related_posts` : Personnalisation des articles similaires
+
+#### Modifié
+
+- **single.php** : Réécrit complètement pour gérer tous les types de posts
+  - Structure HTML sémantique harmonisée
+  - Utilisation des nouvelles fonctions helper
+  - Intégration des hooks personnalisés
+  
+- **functions.php** : Ajout des includes et enqueues
+  - Include de `inc/single-post-helpers.php`
+  - Enqueue de `assets/css/single-post.css` sur tous les singles
+
+#### Supprimé
+
+- **single-archi_project.php** : Code dupliqué consolidé dans `single.php`
+- **single-archi_illustration.php** : Code dupliqué consolidé dans `single.php`
+
+#### Documentation
+
+- **docs/SINGLE-POST-CONSOLIDATION.md** : Documentation technique complète
+- **docs/RESUME-CONSOLIDATION.md** : Guide utilisateur simplifié
+
+#### Bénéfices
+
+- ✨ **Maintenance simplifiée** : Un seul endroit pour modifier la mise en page
+- 🎨 **Cohérence visuelle** : Design uniforme sur tous les types d'articles
+- 🚀 **Extensibilité** : Hooks et filtres pour personnalisation facile
+- 📦 **Réduction de code** : ~150 lignes de code dupliqué éliminées
+- 📱 **Responsive** : Expérience optimale sur tous les appareils
+
+---
+
 ## Version 1.2.0 - Janvier 2025
 
 ### 🎨 Intégration complète du WordPress Customizer

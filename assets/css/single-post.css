@@ -1,0 +1,404 @@
+/**
+ * Styles unifiés pour tous les templates d'articles individuels
+ * S'applique à : posts, archi_project, archi_illustration, archi_guestbook
+ * 
+ * @package Archi_Graph
+ */
+
+/* ==========================================================================
+   Container principal
+   ========================================================================== */
+
+.archi-single-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.archi-single-article {
+    background: var(--color-bg-primary, #ffffff);
+}
+
+/* ==========================================================================
+   Section de contenu
+   ========================================================================== */
+
+.archi-content-section {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.archi-article-content {
+    padding: 2rem 0;
+    line-height: 1.8;
+    font-size: 1.1rem;
+}
+
+.archi-article-content p {
+    margin-bottom: 1.5rem;
+}
+
+.archi-article-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 2rem 0;
+}
+
+.archi-article-content h2,
+.archi-article-content h3 {
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--color-text-primary, #2c3e50);
+}
+
+/* ==========================================================================
+   Pagination
+   ========================================================================== */
+
+.archi-page-links {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: var(--color-bg-secondary, #f8f9fa);
+    border-radius: 8px;
+    text-align: center;
+}
+
+.archi-page-links .page-number {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    margin: 0 0.25rem;
+    background: var(--color-bg-primary, #ffffff);
+    border: 1px solid var(--color-border, #dee2e6);
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.archi-page-links .page-number:hover {
+    background: var(--color-primary, #3498db);
+    color: #ffffff;
+    border-color: var(--color-primary, #3498db);
+}
+
+/* ==========================================================================
+   Grille de métadonnées (specs)
+   ========================================================================== */
+
+.archi-specs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin: 3rem 0;
+    padding: 2rem;
+    background: var(--color-bg-secondary, #f8f9fa);
+    border-radius: 12px;
+    border-left: 4px solid var(--color-primary, #3498db);
+}
+
+.spec-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.spec-label {
+    font-weight: 600;
+    color: var(--color-text-secondary, #6c757d);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.spec-label .dashicons {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+    color: var(--color-primary, #3498db);
+}
+
+.spec-value {
+    font-size: 1.1rem;
+    color: var(--color-text-primary, #2c3e50);
+    font-weight: 500;
+}
+
+.spec-value a {
+    color: var(--color-primary, #3498db);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.spec-value a:hover {
+    color: var(--color-primary-dark, #2980b9);
+    text-decoration: underline;
+}
+
+/* ==========================================================================
+   Section articles similaires
+   ========================================================================== */
+
+.archi-related-section {
+    margin: 4rem 0 2rem;
+    padding-top: 3rem;
+    border-top: 2px solid var(--color-border, #dee2e6);
+}
+
+.archi-related-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--color-text-primary, #2c3e50);
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.archi-related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.archi-related-card {
+    background: var(--color-bg-primary, #ffffff);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+    transition: all 0.3s ease;
+}
+
+.archi-related-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.12);
+}
+
+.archi-related-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+.archi-related-image {
+    position: relative;
+    width: 100%;
+    height: 220px;
+    overflow: hidden;
+    background: var(--color-bg-secondary, #f8f9fa);
+}
+
+.archi-related-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.archi-related-card:hover .archi-related-image img {
+    transform: scale(1.08);
+}
+
+.archi-related-content {
+    padding: 1.5rem;
+}
+
+.archi-post-type-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: var(--color-primary, #3498db);
+    color: #ffffff;
+    border-radius: 20px;
+    margin-bottom: 0.75rem;
+}
+
+.archi-related-card-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-text-primary, #2c3e50);
+    margin: 0.5rem 0;
+    line-height: 1.4;
+    transition: color 0.3s ease;
+}
+
+.archi-related-card:hover .archi-related-card-title {
+    color: var(--color-primary, #3498db);
+}
+
+.archi-related-meta {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary, #6c757d);
+    margin: 0.5rem 0 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.archi-related-meta::before {
+    content: "📍";
+    font-size: 0.875rem;
+}
+
+/* ==========================================================================
+   Variantes par type de post
+   ========================================================================== */
+
+/* Projets architecturaux */
+.archi-single-archi_project .archi-specs-grid {
+    border-left-color: #e74c3c; /* Rouge pour projets */
+}
+
+.archi-single-archi_project .spec-label .dashicons,
+.archi-single-archi_project .archi-post-type-badge {
+    background-color: #e74c3c;
+}
+
+/* Illustrations */
+.archi-single-archi_illustration .archi-specs-grid {
+    border-left-color: #9b59b6; /* Violet pour illustrations */
+}
+
+.archi-single-archi_illustration .spec-label .dashicons,
+.archi-single-archi_illustration .archi-post-type-badge {
+    color: #9b59b6;
+    background-color: #9b59b6;
+}
+
+/* Livre d'or */
+.archi-single-archi_guestbook .archi-specs-grid {
+    border-left-color: #27ae60; /* Vert pour livre d'or */
+}
+
+.archi-single-archi_guestbook .spec-label .dashicons,
+.archi-single-archi_guestbook .archi-post-type-badge {
+    color: #27ae60;
+    background-color: #27ae60;
+}
+
+/* Articles standards */
+.archi-single-post .archi-specs-grid {
+    border-left-color: #3498db; /* Bleu pour articles */
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    .archi-single-container {
+        padding: 1rem 0.5rem;
+    }
+    
+    .archi-article-content {
+        padding: 1rem 0;
+        font-size: 1rem;
+    }
+    
+    .archi-specs-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 1.5rem;
+        margin: 2rem 0;
+    }
+    
+    .archi-related-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .archi-related-image {
+        height: 200px;
+    }
+    
+    .archi-related-title {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .archi-article-content {
+        font-size: 0.95rem;
+    }
+    
+    .archi-related-image {
+        height: 180px;
+    }
+    
+    .spec-label {
+        font-size: 0.8rem;
+    }
+    
+    .spec-value {
+        font-size: 1rem;
+    }
+}
+
+/* ==========================================================================
+   Mode sombre (si supporté par le thème)
+   ========================================================================== */
+
+@media (prefers-color-scheme: dark) {
+    .archi-single-article {
+        background: var(--color-bg-primary-dark, #1a1a1a);
+    }
+    
+    .archi-article-content h2,
+    .archi-article-content h3,
+    .archi-related-title,
+    .archi-related-card-title {
+        color: var(--color-text-primary-dark, #e8e8e8);
+    }
+    
+    .archi-specs-grid {
+        background: var(--color-bg-secondary-dark, #2a2a2a);
+    }
+    
+    .spec-value {
+        color: var(--color-text-primary-dark, #e8e8e8);
+    }
+    
+    .archi-related-card {
+        background: var(--color-bg-secondary-dark, #2a2a2a);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
+}
+
+/* ==========================================================================
+   Animations
+   ========================================================================== */
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.archi-single-article {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.archi-related-card {
+    animation: fadeInUp 0.6s ease-out;
+    animation-fill-mode: both;
+}
+
+.archi-related-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.archi-related-card:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.archi-related-card:nth-child(3) {
+    animation-delay: 0.3s;
+}

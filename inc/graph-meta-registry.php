@@ -747,10 +747,10 @@ function archi_get_graph_params($post_id, $include_defaults = true) {
             $frontend_key = str_replace('_archi_', '', $meta_key);
             
             // Type conversion for proper JavaScript consumption
-            if (in_array($meta_key, ['_archi_node_size', '_archi_node_weight', '_archi_connection_depth'])) {
+            if (in_array($meta_key, ['_archi_node_size', '_archi_node_weight', '_archi_connection_depth', '_archi_animation_duration', '_archi_animation_delay'])) {
                 // Integer fields
                 $params[$frontend_key] = intval($value);
-            } elseif (in_array($meta_key, ['_archi_node_opacity', '_archi_link_strength'])) {
+            } elseif (in_array($meta_key, ['_archi_node_opacity', '_archi_link_strength', '_archi_hover_scale'])) {
                 // Float fields
                 $params[$frontend_key] = floatval($value);
             } elseif (in_array($meta_key, ['_archi_hide_links', '_archi_show_in_graph', '_archi_pin_node', '_archi_show_label', '_archi_pulse_effect', '_archi_glow_effect'])) {

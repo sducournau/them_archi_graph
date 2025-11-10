@@ -32,6 +32,11 @@ import {
   applyRepulsionForces as applyRepulsionForcesUtil,
   initializeNodePositions,
 } from "../utils/physicsUtils";
+import {
+  applyContinuousEffects,
+  applyHoverScale,
+  createVisualEffectFilters,
+} from "../utils/nodeVisualEffects";
 // Arrow satellites désactivés
 // import {
 //   createArrowSatellites,
@@ -684,6 +689,10 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
     // Satellites de flèches désactivés
     // updateArrowSatellites(nodeUpdate);
 
+    // ✅ Apply continuous visual effects (pulse, glow)
+    const svg = container.select('svg');
+    applyContinuousEffects(nodeUpdate, svg);
+
     // Événements
     nodeUpdate
       .on("mouseover", (event, d) => handleNodeHover(event, d, true))
@@ -1178,6 +1187,7 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
    */
   const handleNodeHover = (event, d, isEntering) => {
     const nodeElement = d3.select(event.currentTarget);
+    const imageElement = nodeElement.select(".node-image");
     const intensity = getAnimationIntensity(d);
 
     if (isEntering) {
@@ -1186,17 +1196,8 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
       // Activate GIF animation on hover
       activateNodeGif(nodeElement, d);
 
-      // Animation de mise en évidence de l'image avec intensité variable
-      if (intensity.scale > 1.0) {
-        nodeElement
-          .select(".node-image")
-          .transition()
-          .duration(intensity.duration)
-          .attr("width", (d.node_size || 60) * intensity.scale)
-          .attr("height", (d.node_size || 60) * intensity.scale)
-          .attr("x", (-(d.node_size || 60) * intensity.scale) / 2)
-          .attr("y", (-(d.node_size || 60) * intensity.scale) / 2);
-      }
+      // ✅ Use unified hover scale effect
+      applyHoverScale(imageElement, d, true);
 
       // Afficher le tooltip à proximité du nœud
       showNodeTooltip(d, event);
@@ -1208,16 +1209,9 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
         deactivateNodeGif(nodeElement, d);
       }
 
-      // Retour à la taille normale de l'image (seulement si pas actif)
+      // ✅ Reset scale using unified function
       if (!selectedNode || selectedNode.id !== d.id) {
-        nodeElement
-          .select(".node-image")
-          .transition()
-          .duration(intensity.duration)
-          .attr("width", d.node_size || 60)
-          .attr("height", d.node_size || 60)
-          .attr("x", -(d.node_size || 60) / 2)
-          .attr("y", -(d.node_size || 60) / 2);
+        applyHoverScale(imageElement, d, false);
       }
 
       // Masquer le tooltip

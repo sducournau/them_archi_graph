@@ -1,76 +1,161 @@
-.archi-image-comparison-container {
+/* Container principal du mode comparison */
+.archi-comparison-block {
     position: relative;
     width: 100%;
+    max-width: 100%;
     overflow: hidden;
+    margin: 0 auto;
 }
 
-.archi-image-comparison-slider {
+/* Container de la comparison */
+.comparison-container {
     position: relative;
     width: 100%;
     overflow: hidden;
     cursor: ew-resize;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
-.archi-image-comparison-slider.horizontal-mode {
+.comparison-container.horizontal {
     cursor: ns-resize;
 }
 
-.archi-comparison-before,
-.archi-comparison-after {
-    display: block;
-    width: 100%;
-    height: auto;
-    position: relative;
-}
-
-.archi-comparison-after {
+/* Images */
+.before-image,
+.after-image {
     position: absolute;
     top: 0;
     left: 0;
-    clip-path: inset(0 0 0 50%);
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
 }
 
-.archi-comparison-handle {
+.before-image img,
+.after-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+    user-select: none;
+}
+
+.after-image {
+    position: relative;
+    z-index: 1;
+}
+
+.before-image {
     position: absolute;
-    top: 50%;
+    z-index: 2;
+    clip-path: inset(0 50% 0 0);
+    overflow: hidden;
+}
+
+/* Handle (poignée) */
+.comparison-slider-handle {
+    position: absolute;
+    top: 0;
     left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 10;
-    pointer-events: auto;
-    touch-action: none;
-}
-
-.archi-handle-line {
-    position: absolute;
+    width: 4px;
+    height: 100%;
     background: white;
+    transform: translateX(-50%);
+    z-index: 3;
+    cursor: ew-resize;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
-.archi-image-comparison-slider:not(.horizontal-mode) .archi-handle-line {
-    width: 2px;
-    height: 100vh;
+.comparison-container.horizontal .comparison-slider-handle {
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    transform: translateY(-50%);
+    cursor: ns-resize;
+}
+
+.handle-circle {
+    position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-}
-
-.archi-image-comparison-slider.horizontal-mode .archi-handle-line {
-    height: 2px;
-    width: 100vw;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
-.archi-handle-circle {
     width: 50px;
     height: 50px;
     border-radius: 50%;
     background: white;
-    border: 2px solid #333;
+    border: 3px solid rgba(0, 0, 0, 0.3);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 5px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+    pointer-events: none;
+}
+
+.handle-circle svg {
+    width: 24px;
+    height: 24px;
+    color: #333;
+}
+
+/* Labels */
+.comparison-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+    padding: 0 20px;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.label-before,
+.label-after {
+    padding: 8px 16px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border-radius: 4px;
+}
+
+/* États interactifs */
+.comparison-container:active {
+    cursor: grabbing;
+}
+
+.comparison-slider-handle:hover .handle-circle {
+    transform: translate(-50%, -50%) scale(1.1);
+    transition: transform 0.2s ease;
+}
+
+/* Mode horizontal spécifique */
+.comparison-container.horizontal .before-image {
+    clip-path: inset(0 0 50% 0);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .handle-circle {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .handle-circle svg {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .comparison-labels {
+        font-size: 12px;
+        padding: 0 10px;
+        margin-top: 10px;
+    }
+    
+    .label-before,
+    .label-after {
+        padding: 6px 12px;
+    }
 }

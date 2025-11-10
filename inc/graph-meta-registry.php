@@ -753,7 +753,7 @@ function archi_get_graph_params($post_id, $include_defaults = true) {
             } elseif (in_array($meta_key, ['_archi_node_opacity', '_archi_link_strength'])) {
                 // Float fields
                 $params[$frontend_key] = floatval($value);
-            } elseif (in_array($meta_key, ['_archi_hide_links', '_archi_show_in_graph', '_archi_pin_node', '_archi_show_label'])) {
+            } elseif (in_array($meta_key, ['_archi_hide_links', '_archi_show_in_graph', '_archi_pin_node', '_archi_show_label', '_archi_pulse_effect', '_archi_glow_effect'])) {
                 // Boolean fields (stored as '0' or '1' in WordPress)
                 $params[$frontend_key] = $value === '1';
             } elseif ($meta_key === '_archi_related_articles') {

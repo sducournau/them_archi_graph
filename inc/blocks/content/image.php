@@ -44,6 +44,19 @@ function archi_register_image_block() {
                 'default' => ''
             ],
             
+            // Image secondaire (pour mode comparison)
+            'secondImageUrl' => [
+                'type' => 'string',
+                'default' => ''
+            ],
+            'secondImageId' => [
+                'type' => 'number'
+            ],
+            'secondImageAlt' => [
+                'type' => 'string',
+                'default' => ''
+            ],
+            
             // Dimensions
             'heightMode' => [
                 'type' => 'string',
@@ -95,6 +108,56 @@ function archi_register_image_block() {
                 'type' => 'string',
                 'default' => '#ffffff'
             ],
+            'textSize' => [
+                'type' => 'number',
+                'default' => 32
+            ],
+            'textWeight' => [
+                'type' => 'string',
+                'default' => '600'
+            ],
+            'textShadow' => [
+                'type' => 'boolean',
+                'default' => true
+            ],
+            'textPadding' => [
+                'type' => 'number',
+                'default' => 40
+            ],
+            'textMaxWidth' => [
+                'type' => 'number',
+                'default' => 80
+            ],
+            'textAlign' => [
+                'type' => 'string',
+                'default' => 'center'
+            ],
+            
+            // Mode Comparison (avant/après)
+            'comparisonOrientation' => [
+                'type' => 'string',
+                'default' => 'vertical'
+            ],
+            'comparisonInitialPosition' => [
+                'type' => 'number',
+                'default' => 50
+            ],
+            'comparisonShowLabels' => [
+                'type' => 'boolean',
+                'default' => true
+            ],
+            'comparisonBeforeLabel' => [
+                'type' => 'string',
+                'default' => 'Avant'
+            ],
+            'comparisonAfterLabel' => [
+                'type' => 'string',
+                'default' => 'Après'
+            ],
+            'comparisonHandleColor' => [
+                'type' => 'string',
+                'default' => '#ffffff'
+            ],
             
             // Overlay presets
             'overlayPreset' => [
@@ -130,6 +193,10 @@ function archi_render_image_block($attributes) {
     $image_url = $attributes['imageUrl'] ?? '';
     $image_alt = $attributes['imageAlt'] ?? '';
     
+    // Image secondaire pour le mode comparison
+    $second_image_url = $attributes['secondImageUrl'] ?? '';
+    $second_image_alt = $attributes['secondImageAlt'] ?? '';
+    
     $height_mode = $attributes['heightMode'] ?? 'auto';
     $custom_height = $attributes['customHeight'] ?? 600;
     $object_fit = $attributes['objectFit'] ?? 'cover';
@@ -145,11 +212,30 @@ function archi_render_image_block($attributes) {
     $text_content = $attributes['textContent'] ?? '';
     $text_position = $attributes['textPosition'] ?? 'center';
     $text_color = $attributes['textColor'] ?? '#ffffff';
+    $text_size = $attributes['textSize'] ?? 32;
+    $text_weight = $attributes['textWeight'] ?? '600';
+    $text_shadow = $attributes['textShadow'] ?? true;
+    $text_padding = $attributes['textPadding'] ?? 40;
+    $text_max_width = $attributes['textMaxWidth'] ?? 80;
+    $text_align = $attributes['textAlign'] ?? 'center';
+    
+    // Attributs du mode comparison
+    $comparison_orientation = $attributes['comparisonOrientation'] ?? 'vertical';
+    $comparison_initial_position = $attributes['comparisonInitialPosition'] ?? 50;
+    $comparison_show_labels = $attributes['comparisonShowLabels'] ?? true;
+    $comparison_before_label = $attributes['comparisonBeforeLabel'] ?? __('Avant', 'archi-graph');
+    $comparison_after_label = $attributes['comparisonAfterLabel'] ?? __('Après', 'archi-graph');
+    $comparison_handle_color = $attributes['comparisonHandleColor'] ?? '#ffffff';
     
     $align = $attributes['align'] ?? 'full';
     
     // Vérification des images requises
     if (empty($image_url)) {
+        return '';
+    }
+    
+    // Pour le mode comparison, vérifier qu'on a les deux images
+    if ($display_mode === 'comparison' && empty($second_image_url)) {
         return '';
     }
     
@@ -226,8 +312,62 @@ function archi_render_image_block($attributes) {
             style="<?php echo esc_attr(implode('; ', $container_styles)); ?>"
         <?php endif; ?>
     >
-        <!-- Modes Standard/Parallax/Zoom/Cover -->
-        <div class="image-block-container"<?php if (!empty($inner_container_styles)): ?> style="<?php echo esc_attr(implode('; ', $inner_container_styles)); ?>"<?php endif; ?>>
+        <?php if ($display_mode === 'comparison'): ?>
+            <!-- Mode Comparison avant/après -->
+            <?php
+            // Enqueue comparison slider assets
+            wp_enqueue_style('archi-image-comparison-slider');
+            wp_enqueue_script('archi-image-comparison-slider');
+            
+            $orientation_class = $comparison_orientation === 'horizontal' ? 'horizontal' : 'vertical';
+            ?>
+            <div class="archi-comparison-block">
+                <div 
+                    class="comparison-container" 
+                    data-orientation="<?php echo esc_attr($comparison_orientation); ?>"
+                    data-initial-position="<?php echo esc_attr($comparison_initial_position); ?>"
+                    data-handle-color="<?php echo esc_attr($comparison_handle_color); ?>"
+                >
+                    <!-- Image Avant (clippée) -->
+                    <div class="before-image">
+                        <img 
+                            src="<?php echo esc_url($image_url); ?>" 
+                            alt="<?php echo esc_attr($image_alt); ?>"
+                            draggable="false"
+                        />
+                    </div>
+                    
+                    <!-- Image Après (fond) -->
+                    <div class="after-image">
+                        <img 
+                            src="<?php echo esc_url($second_image_url); ?>" 
+                            alt="<?php echo esc_attr($second_image_alt); ?>"
+                            draggable="false"
+                        />
+                    </div>
+                    
+                    <!-- Poignée de slider -->
+                    <div class="comparison-slider-handle" style="background-color: <?php echo esc_attr($comparison_handle_color); ?>;">
+                        <div class="handle-line"></div>
+                        <div class="handle-circle">
+                            <svg width="40" height="40" viewBox="0 0 40 40">
+                                <circle cx="20" cy="20" r="18" fill="currentColor" stroke="white" stroke-width="2"/>
+                                <path d="M15 20 L12 20 L12 18 L15 18 M25 20 L28 20 L28 18 L25 18" stroke="white" stroke-width="2" fill="none"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                
+                <?php if ($comparison_show_labels): ?>
+                    <div class="comparison-labels">
+                        <span class="label-before"><?php echo esc_html($comparison_before_label); ?></span>
+                        <span class="label-after"><?php echo esc_html($comparison_after_label); ?></span>
+                    </div>
+                <?php endif; ?>
+            </div>
+        <?php else: ?>
+            <!-- Modes Standard/Parallax/Zoom/Cover -->
+            <div class="image-block-container"<?php if (!empty($inner_container_styles)): ?> style="<?php echo esc_attr(implode('; ', $inner_container_styles)); ?>"<?php endif; ?>>
                 <div class="image-wrapper"<?php if (!empty($inner_container_styles)): ?> style="<?php echo esc_attr(implode('; ', $inner_container_styles)); ?>"<?php endif; ?>>
                     <?php if ($display_mode === 'parallax-fixed'): ?>
                         <!-- Parallax Fixed utilise un div avec background-image -->
@@ -272,16 +412,63 @@ function archi_render_image_block($attributes) {
                     <?php endif; ?>
                     
                     <?php if ($text_enabled && !empty($text_content)): ?>
+                        <?php 
+                        $text_styles = [
+                            'color: ' . esc_attr($text_color),
+                            'font-size: ' . absint($text_size) . 'px',
+                            'font-weight: ' . esc_attr($text_weight),
+                            'text-align: ' . esc_attr($text_align),
+                            'max-width: ' . absint($text_max_width) . '%'
+                        ];
+                        
+                        if ($text_shadow) {
+                            $text_styles[] = 'text-shadow: 0 2px 8px rgba(0,0,0,0.5)';
+                        }
+                        
+                        // Positioning avec padding
+                        $position_classes = 'text-position-' . esc_attr($text_position);
+                        
+                        if (strpos($text_position, 'top') !== false) {
+                            $text_styles[] = 'top: ' . absint($text_padding) . 'px';
+                        } elseif (strpos($text_position, 'bottom') !== false) {
+                            $text_styles[] = 'bottom: ' . absint($text_padding) . 'px';
+                        }
+                        
+                        if (strpos($text_position, 'left') !== false) {
+                            $text_styles[] = 'left: ' . absint($text_padding) . 'px';
+                        } elseif (strpos($text_position, 'right') !== false) {
+                            $text_styles[] = 'right: ' . absint($text_padding) . 'px';
+                        }
+                        ?>
                         <div 
-                            class="image-text text-position-<?php echo esc_attr($text_position); ?>"
-                            style="color: <?php echo esc_attr($text_color); ?>;"
+                            class="image-text <?php echo esc_attr($position_classes); ?>"
+                            style="<?php echo esc_attr(implode('; ', $text_styles)); ?>"
                         >
                             <?php echo wp_kses_post($text_content); ?>
                         </div>
                     <?php endif; ?>
                 </div>
             </div>
+        <?php endif; ?>
     </div>
+    
+    <?php if ($display_mode === 'comparison'): ?>
+        <!-- Initialisation du comparison slider -->
+        <script>
+        (function() {
+            if (typeof window.archiInitComparisonSlider === 'function') {
+                window.archiInitComparisonSlider('<?php echo esc_js($block_id); ?>');
+            } else {
+                // Attendre que le script soit chargé
+                document.addEventListener('DOMContentLoaded', function() {
+                    if (typeof window.archiInitComparisonSlider === 'function') {
+                        window.archiInitComparisonSlider('<?php echo esc_js($block_id); ?>');
+                    }
+                });
+            }
+        })();
+        </script>
+    <?php endif; ?>
     
     <?php
     return ob_get_clean();

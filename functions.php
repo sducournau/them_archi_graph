@@ -165,6 +165,14 @@ function archi_enqueue_scripts() {
         ARCHI_THEME_VERSION
     );
     
+    // Image comparison slider styles
+    wp_register_style(
+        'archi-image-comparison-slider',
+        ARCHI_THEME_URI . '/assets/css/image-comparison-slider.css',
+        [],
+        ARCHI_THEME_VERSION
+    );
+    
     // Simplified templates styles (related articles, specs grid, simple headers)
     wp_enqueue_style(
         'archi-simplified-templates',
@@ -212,6 +220,14 @@ function archi_enqueue_scripts() {
     );
     
     // Comparison slider JavaScript
+    wp_register_script(
+        'archi-image-comparison-slider',
+        ARCHI_THEME_URI . '/dist/comparison-slider.bundle.js',
+        [],
+        ARCHI_THEME_VERSION,
+        true
+    );
+    
     wp_enqueue_script(
         'archi-comparison-slider',
         ARCHI_THEME_URI . '/assets/js/comparison-slider.js',
@@ -247,14 +263,6 @@ function archi_enqueue_scripts() {
             'archi-featured-image-parallax',
             ARCHI_THEME_URI . '/assets/js/featured-image-parallax.js',
             [],
-            ARCHI_THEME_VERSION,
-            true
-        );
-        
-        wp_enqueue_script(
-            'archi-hero-fullscreen-scroll',
-            ARCHI_THEME_URI . '/assets/js/hero-fullscreen-scroll.js',
-            ['jquery'],
             ARCHI_THEME_VERSION,
             true
         );

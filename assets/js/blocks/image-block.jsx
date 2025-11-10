@@ -136,6 +136,30 @@ registerBlockType("archi-graph/image-block", {
       type: "string",
       default: "#ffffff",
     },
+    textSize: {
+      type: "number",
+      default: 32, // en pixels
+    },
+    textWeight: {
+      type: "string",
+      default: "600", // 300, 400, 500, 600, 700, 800
+    },
+    textShadow: {
+      type: "boolean",
+      default: true,
+    },
+    textPadding: {
+      type: "number",
+      default: 40, // en pixels
+    },
+    textMaxWidth: {
+      type: "number",
+      default: 80, // en %
+    },
+    textAlign: {
+      type: "string",
+      default: "center", // left, center, right
+    },
 
     // Mode Comparison
     comparisonOrientation: {
@@ -190,6 +214,12 @@ registerBlockType("archi-graph/image-block", {
       textContent,
       textPosition,
       textColor,
+      textSize,
+      textWeight,
+      textShadow,
+      textPadding,
+      textMaxWidth,
+      textAlign,
       comparisonOrientation,
       comparisonInitialPosition,
       comparisonShowLabels,
@@ -429,6 +459,65 @@ registerBlockType("archi-graph/image-block", {
                     },
                   ]}
                   onChange={(value) => setAttributes({ textPosition: value })}
+                />
+
+                <RangeControl
+                  label={__("Taille du texte (px)", "archi-graph")}
+                  value={textSize}
+                  onChange={(value) => setAttributes({ textSize: value })}
+                  min={14}
+                  max={100}
+                  step={2}
+                />
+
+                <SelectControl
+                  label={__("Épaisseur du texte", "archi-graph")}
+                  value={textWeight}
+                  options={[
+                    { label: __("Ultra léger (300)", "archi-graph"), value: "300" },
+                    { label: __("Normal (400)", "archi-graph"), value: "400" },
+                    { label: __("Moyen (500)", "archi-graph"), value: "500" },
+                    { label: __("Semi-gras (600)", "archi-graph"), value: "600" },
+                    { label: __("Gras (700)", "archi-graph"), value: "700" },
+                    { label: __("Extra-gras (800)", "archi-graph"), value: "800" },
+                  ]}
+                  onChange={(value) => setAttributes({ textWeight: value })}
+                />
+
+                <SelectControl
+                  label={__("Alignement du texte", "archi-graph")}
+                  value={textAlign}
+                  options={[
+                    { label: __("Gauche", "archi-graph"), value: "left" },
+                    { label: __("Centre", "archi-graph"), value: "center" },
+                    { label: __("Droite", "archi-graph"), value: "right" },
+                  ]}
+                  onChange={(value) => setAttributes({ textAlign: value })}
+                />
+
+                <RangeControl
+                  label={__("Espacement depuis les bords (px)", "archi-graph")}
+                  value={textPadding}
+                  onChange={(value) => setAttributes({ textPadding: value })}
+                  min={0}
+                  max={100}
+                  step={5}
+                />
+
+                <RangeControl
+                  label={__("Largeur maximale du texte (%)", "archi-graph")}
+                  value={textMaxWidth}
+                  onChange={(value) => setAttributes({ textMaxWidth: value })}
+                  min={30}
+                  max={100}
+                  step={5}
+                />
+
+                <ToggleControl
+                  label={__("Ombre portée du texte", "archi-graph")}
+                  checked={textShadow}
+                  onChange={(value) => setAttributes({ textShadow: value })}
+                  help={__("Améliore la lisibilité du texte sur l'image", "archi-graph")}
                 />
 
                 <div style={{ marginBottom: "10px" }}>
@@ -837,30 +926,33 @@ registerBlockType("archi-graph/image-block", {
                         style={{
                           position: "absolute",
                           top: textPosition.includes("top")
-                            ? "40px"
+                            ? `${textPadding}px`
                             : textPosition.includes("bottom")
                             ? "auto"
                             : "50%",
                           bottom: textPosition.includes("bottom")
-                            ? "40px"
+                            ? `${textPadding}px`
                             : "auto",
                           left: textPosition.includes("left")
-                            ? "40px"
+                            ? `${textPadding}px`
                             : textPosition.includes("right")
                             ? "auto"
                             : "50%",
                           right: textPosition.includes("right")
-                            ? "40px"
+                            ? `${textPadding}px`
                             : "auto",
                           transform:
                             textPosition === "center"
                               ? "translate(-50%, -50%)"
                               : "none",
                           color: textColor,
-                          fontSize: "18px",
-                          fontWeight: "600",
-                          textShadow: "0 2px 8px rgba(0,0,0,0.5)",
-                          maxWidth: "80%",
+                          fontSize: `${textSize}px`,
+                          fontWeight: textWeight,
+                          textAlign: textAlign,
+                          textShadow: textShadow
+                            ? "0 2px 8px rgba(0,0,0,0.5)"
+                            : "none",
+                          maxWidth: `${textMaxWidth}%`,
                           zIndex: 2,
                         }}
                       >

@@ -143,7 +143,7 @@
   document.addEventListener("DOMContentLoaded", function () {
     // Legacy blocks
     const comparisonBlocks = document.querySelectorAll(
-      '.archi-unified-image[data-mode="comparison"]'
+      '.archi-image-block[data-mode="comparison"]'
     );
 
     comparisonBlocks.forEach((block) => {

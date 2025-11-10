@@ -50,10 +50,6 @@ class Archi_Blocks_Loader {
         $block_scripts = [
             'blocks-editor' => ['wp-blocks', 'wp-element', 'wp-block-editor', 'wp-editor', 'wp-components', 'wp-data', 'wp-i18n'],
             'article-manager-block' => ['wp-blocks', 'wp-element', 'wp-block-editor', 'wp-editor', 'wp-components', 'wp-data', 'wp-i18n'],
-            'image-blocks' => ['wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n'],
-            'cover-block' => ['wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n'],
-            'parallax-image' => ['wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n'],
-            'image-comparison-slider' => ['wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n'],
             'image-block' => ['wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n'],
             'interactive-map' => ['wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n'],
             'd3-bar-chart' => ['wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n'],
@@ -168,23 +164,7 @@ class Archi_Blocks_Loader {
             ARCHI_THEME_VERSION
         );
         
-        // CSS parallax image (remplace parallax-blocks et fullsize-parallax-image)
-        wp_enqueue_style(
-            'archi-parallax-image',
-            get_template_directory_uri() . '/assets/css/parallax-image.css',
-            ['archi-blocks'],
-            ARCHI_THEME_VERSION
-        );
-        
-        // CSS image comparison slider
-        wp_enqueue_style(
-            'archi-image-comparison-slider',
-            get_template_directory_uri() . '/assets/css/image-comparison-slider.css',
-            ['archi-blocks'],
-            ARCHI_THEME_VERSION
-        );
-        
-        // CSS image block
+        // CSS image block unifié (inclut parallax, comparison, cover, etc.)
         wp_enqueue_style(
             'archi-image-block',
             get_template_directory_uri() . '/assets/css/image-block.css',
@@ -214,7 +194,7 @@ class Archi_Blocks_Loader {
             'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
             [],
             '1.9.4',
-            ARCHI_THEME_VERSION
+            true
         );
         
         // ✅ Parallax script loaded from functions.php (assets/js/parallax.js)
@@ -236,10 +216,6 @@ class Archi_Blocks_Loader {
         $block_scripts = [
             'blocks-editor',
             'article-manager-block',
-            'image-blocks',
-            'cover-block',
-            'parallax-image',
-            'image-comparison-slider',
             'image-block',
             'interactive-map',
             'd3-bar-chart',
@@ -267,10 +243,6 @@ class Archi_Blocks_Loader {
         $block_scripts = [
             'blocks-editor',
             'article-manager-block',
-            'image-blocks',
-            'cover-block',
-            'parallax-image',
-            'image-comparison-slider',
             'image-block',
             'interactive-map',
             'd3-bar-chart',

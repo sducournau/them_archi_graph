@@ -57,10 +57,8 @@ module.exports = [
     entry: {
       "blocks-editor": "./assets/js/blocks-editor.js",
       "article-manager-block": "./assets/js/blocks/article-manager.jsx",
-      "cover-block": "./assets/js/blocks/cover-block.jsx",
-      "parallax-image": "./assets/js/blocks/parallax-image.jsx",
-      "image-comparison-slider": "./assets/js/blocks/image-comparison-slider.jsx",
       "image-block": "./assets/js/blocks/image-block.jsx",
+      "hero-cover": "./assets/js/blocks/hero-cover.jsx",
       "comparison-slider": "./assets/js/comparison-slider.js",
       "interactive-map": "./assets/js/blocks/interactive-map.jsx",
       "d3-bar-chart": "./assets/js/blocks/d3-bar-chart.jsx",

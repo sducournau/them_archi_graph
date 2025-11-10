@@ -1,6 +1,32 @@
 # Copilot Rules for Archi-Graph Theme
 
+## 🚨 MANDATORY: Use Serena MCP First
+
+**Before generating ANY code, you MUST:**
+1. Use `mcp_oraios_serena_find_symbol` to search for existing functionality
+2. Use `mcp_oraios_serena_search_for_pattern` to find similar patterns
+3. Review `.serena/memories/` for project conventions
+4. Check recent cleanup documentation in `/docs/changelogs/`
+
+**Why?** The codebase was cleaned in January 2025. Creating duplicate or deprecated-pattern code violates project standards.
+
 ## Code Generation Rules
+
+### 0. Check for Existing Code (NEW - PRIORITY #1)
+
+Before writing any function, component, or CSS:
+```php
+// ❌ WRONG: Creating new function without checking
+function archi_new_feature() { }
+
+// ✅ CORRECT: Search first, then decide
+// 1. Use Serena MCP: mcp_oraios_serena_find_symbol "feature"
+// 2. If found, extend existing function
+// 3. If not found, create with proper naming
+function archi_feature($options = []) {
+    // Supports variations via parameters, not separate functions
+}
+```
 
 ### 1. WordPress Function Prefixing
 
@@ -428,8 +454,12 @@ The following features have been removed from the theme:
 
 ## When in Doubt
 
-1. Check existing code patterns in the theme
-2. Follow WordPress Coding Standards
-3. Prioritize security (sanitize, escape, verify)
-4. Use the `archi_` prefix for everything custom
-5. Test with the diagnostic scripts in the root directory
+1. **USE SERENA MCP FIRST** - Search before creating
+2. Check existing code patterns in the theme
+3. Review recent cleanup documentation (`/docs/changelogs/`)
+4. Follow WordPress Coding Standards
+5. Prioritize security (sanitize, escape, verify)
+6. Use the `archi_` prefix for everything custom
+7. Test with the diagnostic scripts in the root directory
+8. Never use `enhanced_*`, `unified_*`, or `new_*` prefixes
+9. Consolidate, don't duplicate

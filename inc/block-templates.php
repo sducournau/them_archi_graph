@@ -403,9 +403,8 @@ function archi_allowed_block_types($allowed_blocks, $context) {
         'archi-graph/image-full-width',           // Image pleine largeur
         'archi-graph/images-columns',             // Images en colonnes
         'archi-graph/image-portrait',             // Image portrait
-        'archi-graph/image-comparison-slider',    // Comparateur d'images
-        'archi-graph/fullsize-parallax-image',    // Image parallax pleine taille
-        'archi-graph/cover-block',                // Couverture image + texte
+        'archi-graph/image-block',                // Bloc image unifié (standard, parallax, zoom, comparison, cover)
+        'archi-graph/hero-cover',                 // Hero cover pleine page pour en-tête d'article
         // Blocs de défilement/parallax
         'archi-graph/fixed-background',           // Image défilement fixe
         'archi-graph/sticky-scroll',              // Section scroll collant

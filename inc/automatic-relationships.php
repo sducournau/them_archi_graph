@@ -332,7 +332,7 @@ class Archi_Automatic_Relationships {
                 <script>
                 document.getElementById('archi-recalc-btn').addEventListener('click', function(e) {
                     e.preventDefault();
-                    if (confirm('<?php _e('Recalculer toutes les relations ? Cela peut prendre quelques minutes.', 'archi-graph'); ?>')) {
+                    if (confirm('<?php echo esc_js(__('Recalculer toutes les relations ? Cela peut prendre quelques minutes.', 'archi-graph')); ?>')) {
                         fetch('<?php echo admin_url('admin-ajax.php'); ?>', {
                             method: 'POST',
                             headers: {'Content-Type': 'application/x-www-form-urlencoded'},

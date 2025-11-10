@@ -1,7 +1,14 @@
 # Codebase Cleanup - January 8, 2025
 
+**Related Documentation:**
+- [Codebase Audit](/docs/06-changelogs/consolidation/CODEBASE-AUDIT-2025.md) - Issues identified
+- [Phase 3 Summary](/docs/06-changelogs/consolidation/PHASE-3-SUMMARY.md) - Prior consolidation work
+- [November Cleanup](/docs/changelogs/2025-11-09-cleanup-harmonization.md) - CSS consolidation
+
 ## Summary
 Complete harmonization and consolidation of the Archi Graph theme codebase, removing deprecated prefixes and eliminating duplicate functionality as per project guidelines.
+
+**Scope:** This cleanup focused on PHP file organization and naming conventions. CSS consolidation was handled separately (see related docs).
 
 ## Changes Made
 
@@ -140,8 +147,9 @@ These are WordPress taxonomy/post type label standards and NOT deprecated prefix
 ## Next Steps (Optional Future Improvements)
 
 1. **Sass Migration**: Update `darken()` to `color.adjust()` to remove build warnings
-2. **Code Consolidation**: Look for similar functions across files that could be merged
+2. **Code Consolidation**: Look for similar functions across files that could be merged (see CODEBASE-AUDIT-2025.md Phase 2-3)
 3. **Documentation**: Update any external documentation referencing old file names
+4. **Complete Modularization**: Finish migrating blocks from `inc/gutenberg-blocks.php` to `inc/blocks/` structure
 
 ## Files Modified
 

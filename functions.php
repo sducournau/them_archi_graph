@@ -173,14 +173,6 @@ function archi_enqueue_scripts() {
         ARCHI_THEME_VERSION
     );
     
-    // Cover block styles (WordPress standard cover block classes)
-    wp_enqueue_style(
-        'archi-cover-block',
-        ARCHI_THEME_URI . '/assets/css/cover-block.css',
-        [],
-        ARCHI_THEME_VERSION
-    );
-    
     // Page template styles
     if (is_page()) {
         wp_enqueue_style(
@@ -219,14 +211,6 @@ function archi_enqueue_scripts() {
         true
     );
     
-    // Consolidated parallax CSS for blocks
-    wp_enqueue_style(
-        'archi-parallax-image',
-        ARCHI_THEME_URI . '/assets/css/parallax-image.css',
-        [],
-        ARCHI_THEME_VERSION
-    );
-    
     // Comparison slider JavaScript
     wp_enqueue_script(
         'archi-comparison-slider',
@@ -257,24 +241,8 @@ function archi_enqueue_scripts() {
         $customizer_settings
     );
     
-    // Hero Fullscreen avec scroll indicator (pour singles uniquement)
+    // Hero Fullscreen - Parallax effects pour les images featured
     if (is_singular(['post', 'archi_project', 'archi_illustration'])) {
-        wp_enqueue_style(
-            'archi-hero-fullscreen',
-            ARCHI_THEME_URI . '/assets/css/hero-fullscreen-scroll.css',
-            [],
-            ARCHI_THEME_VERSION
-        );
-        
-        // Fix CSS pour le hero fullscreen
-        wp_enqueue_style(
-            'archi-hero-fullscreen-fix',
-            ARCHI_THEME_URI . '/assets/css/hero-fullscreen-fix.css',
-            ['archi-hero-fullscreen'],
-            ARCHI_THEME_VERSION
-        );
-        
-        // Parallax effects pour les images featured
         wp_enqueue_script(
             'archi-featured-image-parallax',
             ARCHI_THEME_URI . '/assets/js/featured-image-parallax.js',
@@ -842,8 +810,3 @@ function archi_get_fullscreen_image_id($post_id = null) {
     // Sinon, utiliser l'image à la une
     return get_post_thumbnail_id($post_id);
 }
-
-?>
-
-
-?>

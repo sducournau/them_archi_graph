@@ -854,7 +854,6 @@ function archi_attach_uploaded_file($file_url, $post_id) {
     return $attachment_id;
 }
 
-?>
 /**
  * Send confirmation email to submitter with status tracking link
  */

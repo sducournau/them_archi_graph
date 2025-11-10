@@ -15,19 +15,21 @@ get_header(); ?>
                 $parallax = get_post_meta(get_the_ID(), '_archi_featured_image_parallax', true) ?: 'none';
                 $overlay_opacity = get_post_meta(get_the_ID(), '_archi_featured_image_overlay_opacity', true) ?: 0.3;
                 
-                // Classes CSS conditionnelles
-                $hero_classes = ['archi-hero-fullscreen'];
-                if ($parallax === 'scroll') {
-                    $hero_classes[] = 'parallax-scroll';
-                } elseif ($parallax === 'fixed') {
-                    $hero_classes[] = 'parallax-fixed';
-                } elseif ($parallax === 'zoom') {
-                    $hero_classes[] = 'parallax-zoom';
-                }
-                
-                $thumbnail_id = archi_get_fullscreen_image_id();
-                $thumbnail_alt = get_post_meta($thumbnail_id, '_wp_attachment_image_alt', true);
-            ?>
+                if ($fullscreen === '1' || $fullscreen === 1 || $fullscreen === true) :
+                    // Mode fullscreen hero
+                    // Classes CSS conditionnelles
+                    $hero_classes = ['archi-hero-fullscreen'];
+                    if ($parallax === 'scroll') {
+                        $hero_classes[] = 'parallax-scroll';
+                    } elseif ($parallax === 'fixed') {
+                        $hero_classes[] = 'parallax-fixed';
+                    } elseif ($parallax === 'zoom') {
+                        $hero_classes[] = 'parallax-zoom';
+                    }
+                    
+                    $thumbnail_id = archi_get_fullscreen_image_id();
+                    $thumbnail_alt = get_post_meta($thumbnail_id, '_wp_attachment_image_alt', true);
+                ?>
                 <!-- Hero Fullscreen pour projet -->
                 <div class="<?php echo esc_attr(implode(' ', $hero_classes)); ?>" data-parallax="<?php echo esc_attr($parallax); ?>">
                     <?php ?>
@@ -68,14 +70,33 @@ get_header(); ?>
                     </div>
                 </div>
             <?php else : ?>
-                <header class="project-header-simple">
-                    <h1 class="project-title-simple"><?php the_title(); ?></h1>
+                <!-- Header standard avec image à la une (non fullscreen) -->
+                <header class="project-header">
+                    <?php
+                    $categories = get_the_terms(get_the_ID(), 'archi_project_type');
+                    if ($categories && !is_wp_error($categories)) : ?>
+                        <div class="project-categories">
+                            <?php foreach ($categories as $category) : ?>
+                                <span class="category-badge">
+                                    <?php echo esc_html($category->name); ?>
+                                </span>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                    
+                    <h1 class="project-title"><?php the_title(); ?></h1>
+                    
                     <?php 
                     $location = get_post_meta(get_the_ID(), '_archi_project_location', true);
                     if ($location) : ?>
-                        <p class="project-location-simple"><?php echo esc_html($location); ?></p>
+                        <p class="project-location"><?php echo esc_html($location); ?></p>
                     <?php endif; ?>
+                    
+                    <div class="project-featured-image">
+                        <?php the_post_thumbnail('large'); ?>
+                    </div>
                 </header>
+            <?php endif; ?>
             <?php endif; ?>
             
             <!-- Contenu principal centré -->
@@ -197,4 +218,4 @@ get_header(); ?>
     <?php endwhile; ?>
 </div>
 
-<?php get_footer(); ?>
+<?php get_footer();

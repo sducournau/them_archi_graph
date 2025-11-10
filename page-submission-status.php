@@ -424,4 +424,3 @@ function archi_display_submission_status($entry_id, $email) {
     </div>
     <?php
 }
-?>

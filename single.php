@@ -15,19 +15,21 @@ get_header(); ?>
                 $parallax = get_post_meta(get_the_ID(), '_archi_featured_image_parallax', true) ?: 'none';
                 $overlay_opacity = get_post_meta(get_the_ID(), '_archi_featured_image_overlay_opacity', true) ?: 0.3;
                 
-                // Classes CSS conditionnelles
-                $hero_classes = ['archi-hero-fullscreen'];
-                if ($parallax === 'scroll') {
-                    $hero_classes[] = 'parallax-scroll';
-                } elseif ($parallax === 'fixed') {
-                    $hero_classes[] = 'parallax-fixed';
-                } elseif ($parallax === 'zoom') {
-                    $hero_classes[] = 'parallax-zoom';
-                }
-                
-                $thumbnail_id = archi_get_fullscreen_image_id();
-                $thumbnail_alt = get_post_meta($thumbnail_id, '_wp_attachment_image_alt', true);
-            ?>
+                if ($fullscreen === '1' || $fullscreen === 1 || $fullscreen === true) :
+                    // Mode fullscreen hero
+                    // Classes CSS conditionnelles
+                    $hero_classes = ['archi-hero-fullscreen'];
+                    if ($parallax === 'scroll') {
+                        $hero_classes[] = 'parallax-scroll';
+                    } elseif ($parallax === 'fixed') {
+                        $hero_classes[] = 'parallax-fixed';
+                    } elseif ($parallax === 'zoom') {
+                        $hero_classes[] = 'parallax-zoom';
+                    }
+                    
+                    $thumbnail_id = archi_get_fullscreen_image_id();
+                    $thumbnail_alt = get_post_meta($thumbnail_id, '_wp_attachment_image_alt', true);
+                ?>
                 <!-- Hero Fullscreen avec image en vedette -->
                 <div class="<?php echo esc_attr(implode(' ', $hero_classes)); ?>" data-parallax="<?php echo esc_attr($parallax); ?>">
                     <?php ?>
@@ -59,6 +61,28 @@ get_header(); ?>
                         <span class="scroll-text"><?php _e('Défiler', 'archi-graph'); ?></span>
                     </div>
                 </div>
+            <?php else : ?>
+                <!-- Header standard avec image à la une (non fullscreen) -->
+                <header class="article-header">
+                    <?php 
+                    $categories = get_the_category();
+                    if ($categories) : ?>
+                        <div class="article-categories">
+                            <?php foreach ($categories as $category) : ?>
+                                <span class="category-badge">
+                                    <?php echo esc_html($category->name); ?>
+                                </span>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                    
+                    <h1 class="article-title"><?php the_title(); ?></h1>
+                    
+                    <div class="article-featured-image">
+                        <?php the_post_thumbnail('large'); ?>
+                    </div>
+                </header>
+            <?php endif; ?>
             <?php else : ?>
                 <!-- Header simple si pas d'image -->
                 <header class="article-header-simple">
@@ -130,4 +154,4 @@ get_header(); ?>
     <?php endwhile; ?>
 </div>
 
-<?php get_footer(); ?>
+<?php get_footer();

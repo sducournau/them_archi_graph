@@ -187,9 +187,14 @@
 }
 
 .archi-hero-fullscreen.parallax-scroll .hero-media {
-    transform: translateY(0);
+    transform: translateY(0) scale(1.15);
+    transform-origin: center center;
     transition: transform 0.1s linear;
     will-change: transform;
+    height: 120%; /* Plus grand pour permettre le mouvement */
+    width: 120%;
+    top: -10%;
+    left: -10%;
 }
 
 /* Parallax Fixed - Utilise background-attachment: fixed */
@@ -250,4 +255,90 @@
 .archi-hero-fullscreen .hero-overlay {
     opacity: 0.3; /* Valeur par défaut */
     transition: opacity 0.3s ease;
+}
+
+/* Scroll Indicator for Hero Fullscreen */
+.archi-scroll-indicator {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    color: #fff;
+    z-index: 10;
+    animation: scrollBounce 2s ease-in-out infinite;
+}
+
+.scroll-icon {
+    width: 24px;
+    height: 40px;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    border-radius: 12px;
+    position: relative;
+}
+
+.scroll-icon::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 2px;
+    animation: scrollWheel 2s ease-in-out infinite;
+}
+
+.scroll-text {
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.9;
+}
+
+@keyframes scrollBounce {
+    0%, 100% {
+        transform: translate(-50%, 0);
+    }
+    50% {
+        transform: translate(-50%, 10px);
+    }
+}
+
+@keyframes scrollWheel {
+    0%, 100% {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+    50% {
+        opacity: 0.3;
+        transform: translate(-50%, 12px);
+    }
+}
+
+@media (max-width: 768px) {
+    .archi-scroll-indicator {
+        bottom: 1.5rem;
+        font-size: 0.75rem;
+    }
+    
+    .scroll-icon {
+        width: 20px;
+        height: 32px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .archi-scroll-indicator {
+        animation: none;
+    }
+    
+    .scroll-icon::before {
+        animation: none;
+    }
 }

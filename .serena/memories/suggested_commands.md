@@ -114,6 +114,26 @@ The theme does NOT have automated linting or formatting. Follow these manual che
 - [ ] Check browser console for JS errors
 - [ ] Test REST API endpoints
 - [ ] Verify graph metadata is saved correctly
+- [ ] **NEW:** Use Serena MCP to verify no duplicate functionality created
+
+### Codebase Health Check Commands
+```powershell
+# Search for forbidden prefixes (should return nothing)
+Select-String -Path "inc/*.php" -Pattern "(unified_|enhanced_|new_)" -Exclude "*DEPRECATED*"
+
+# Check for duplicate CSS files
+Get-ChildItem -Path "assets/css/" -Filter "*enhanced*.css"
+Get-ChildItem -Path "assets/css/" -Filter "*unified*.css"
+
+# Verify all functions use archi_ prefix
+Select-String -Path "inc/*.php" -Pattern "^function (?!archi_)" -Exclude "*vendor*"
+
+# Check for missing text domain
+Select-String -Path "inc/*.php" -Pattern "__\(.*\)" | Select-String -NotMatch "archi-graph"
+
+# Find TODO comments (should be minimal)
+Select-String -Path "*.php","*.js","*.jsx" -Pattern "TODO|FIXME|XXX" -Exclude "*node_modules*"
+```
 
 ### Manual Code Review Checklist
 ```php

@@ -40,11 +40,14 @@
                 const rect = container.getBoundingClientRect();
                 const scrolled = window.pageYOffset || document.documentElement.scrollTop;
                 
-                // Calculer l'offset en fonction de la position dans le viewport
-                const offset = scrolled * PARALLAX_SPEED;
-                
-                // Appliquer la transformation
-                image.style.transform = `translateY(${offset}px)`;
+                // Seulement si le hero est visible
+                if (rect.bottom > 0) {
+                    // Calculer l'offset en fonction de la position dans le viewport
+                    const offset = scrolled * PARALLAX_SPEED;
+                    
+                    // Appliquer la transformation avec le scale initial
+                    image.style.transform = `translateY(${offset}px) scale(1.15)`;
+                }
             });
             
             ticking = false;

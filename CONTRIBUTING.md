@@ -2,6 +2,12 @@
 
 Thank you for your interest in contributing to the Archi-Graph WordPress theme! This document provides guidelines and instructions for contributors.
 
+**📚 Essential Reading:**
+- [Copilot Instructions](/.github/copilot-instructions.md) - Complete coding guidelines
+- [Code Style Conventions](/.serena/memories/code_style_conventions.md) - Naming and patterns
+- [Recent Cleanup Work](/docs/changelogs/2025-11-09-cleanup-harmonization.md) - What's been harmonized
+- [Codebase Audit](/docs/06-changelogs/consolidation/CODEBASE-AUDIT-2025.md) - Known issues and roadmap
+
 ## Table of Contents
 1. [Code Standards](#code-standards)
 2. [Development Setup](#development-setup)
@@ -11,6 +17,18 @@ Thank you for your interest in contributing to the Archi-Graph WordPress theme! 
 6. [Pull Request Process](#pull-request-process)
 
 ## Code Standards
+
+### Before Writing Code
+
+**🚨 MANDATORY: Use Serena MCP for code exploration**
+
+Before creating any new code, you MUST:
+1. **Search for existing functionality:** `mcp_oraios_serena_find_symbol`
+2. **Check for patterns:** `mcp_oraios_serena_search_for_pattern`
+3. **Review architecture:** Check `.serena/config.yaml` for conventions
+4. **Consult memories:** Review `.serena/memories/` for project patterns
+
+**Never duplicate existing functionality!**
 
 ### PHP
 - Follow [WordPress Coding Standards](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/php/)
@@ -94,6 +112,14 @@ Example:
     background: var(--archi-primary-color);
 }
 ```
+
+**⚠️ CSS Consolidation Note:**
+As of January 2025, CSS files have been consolidated:
+- Use `blocks-editor.css` (not `blocks-editor-enhanced.css`)
+- Use `parallax-image.css` (not `parallax-image-enhanced.css`)
+- Use `image-comparison-slider.css` (not `image-comparison-enhanced.css`)
+
+When adding styles, extend existing files with modifiers, don't create duplicates.
 
 ## Development Setup
 

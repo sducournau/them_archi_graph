@@ -499,7 +499,7 @@ function archi_graph_meta_box_callback($post) {
     <script>
     // Fonction pour réinitialiser la position
     function archiResetPosition(postId) {
-        if (confirm('<?php _e('Êtes-vous sûr de vouloir réinitialiser la position ?', 'archi-graph'); ?>')) {
+        if (confirm('<?php echo esc_js(__('Êtes-vous sûr de vouloir réinitialiser la position ?', 'archi-graph')); ?>')) {
             fetch('<?php echo esc_url(home_url('/wp-json/archi/v1/reset-position/')); ?>' + postId, {
                 method: 'POST',
                 headers: {
@@ -817,9 +817,9 @@ function archi_featured_image_meta_box_callback($post) {
             
             // Créer le frame de sélection d'image
             archiImageFrame = wp.media({
-                title: '<?php _e('Sélectionner une image pour l\'en-tête fullscreen', 'archi-graph'); ?>',
+                title: '<?php echo esc_js(__('Sélectionner une image pour l\'en-tête fullscreen', 'archi-graph')); ?>',
                 button: {
-                    text: '<?php _e('Utiliser cette image', 'archi-graph'); ?>'
+                    text: '<?php echo esc_js(__('Utiliser cette image', 'archi-graph')); ?>'
                 },
                 multiple: false,
                 library: {
@@ -1334,8 +1334,4 @@ function archi_save_guestbook_meta($post_id) {
     delete_transient('archi_graph_articles');
 }
 add_action('save_post_archi_guestbook', 'archi_save_guestbook_meta');
-
-
-?>
-
 

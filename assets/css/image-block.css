@@ -23,6 +23,12 @@
   overflow: hidden;
 }
 
+/* Force structure for custom/viewport height modes */
+.archi-image-block.height-custom,
+.archi-image-block.height-full-viewport {
+  display: block;
+}
+
 /* Alignements */
 .archi-image-block.alignfull {
   width: 100vw;
@@ -39,12 +45,11 @@
 
 /* Hauteurs */
 .archi-image-block.height-full-viewport {
+  height: 100vh;
   min-height: 100vh;
 }
 
-.archi-image-block.height-custom {
-  /* Hauteur définie inline */
-}
+/* height-custom: height and min-height set inline via style attribute */
 
 .archi-image-block.height-auto {
   min-height: auto;
@@ -57,60 +62,169 @@
 .archi-image-block.display-mode-standard .image-block-container {
   position: relative;
   width: 100%;
-  height: 100%;
+}
+
+.archi-image-block.display-mode-standard .image-wrapper {
+  position: relative;
+  width: 100%;
 }
 
 .archi-image-block.display-mode-standard .image-block {
   display: block;
   width: 100%;
-  height: 100%;
+  height: auto;
+  max-width: 100%;
 }
+
+/* Ensure minimum height when needed */
+.archi-image-block.display-mode-standard.height-auto .image-block-container {
+  min-height: 300px;
+}
+
+/* height-custom & height-full-viewport: height set via inline style on container, wrapper, and image */
 
 /* ==========================================================================
    Mode Parallax Scroll
    ========================================================================== */
 
+.archi-image-block.display-mode-parallax-scroll .image-block-container {
+  position: relative;
+  width: 100%;
+}
+
+.archi-image-block.display-mode-parallax-scroll.height-auto .image-block-container {
+  min-height: 400px;
+}
+
+/* height-custom & height-full-viewport: height set via inline style */
+
 .archi-image-block.display-mode-parallax-scroll .image-wrapper {
   position: relative;
   overflow: hidden;
+  width: 100%;
   height: 100%;
 }
 
 .archi-image-block.display-mode-parallax-scroll .image-block {
   display: block;
   width: 100%;
-  height: 120%; /* Espace supplémentaire pour l'effet parallax */
+  height: auto;
+  min-height: 120%; /* Espace supplémentaire pour l'effet parallax */
   will-change: transform;
   transform: translateY(0);
   transition: transform 0.1s ease-out;
 }
 
+/* height-custom & height-full-viewport: specific height set via inline style */
+
 /* ==========================================================================
    Mode Parallax Fixed
    ========================================================================== */
 
+.archi-image-block.display-mode-parallax-fixed {
+  position: relative;
+}
+
+/* Override for height-auto */
+.archi-image-block.display-mode-parallax-fixed.height-auto {
+  min-height: 70vh;
+}
+
+.archi-image-block.display-mode-parallax-fixed.height-full-viewport {
+  height: 100vh;
+  min-height: 100vh;
+}
+
+/* height-custom: height set via inline style */
+
+.archi-image-block.display-mode-parallax-fixed .image-block-container {
+  position: relative;
+  width: 100%;
+}
+
+/* Ensure the container has actual height */
+.archi-image-block.display-mode-parallax-fixed.height-auto .image-block-container {
+  height: 70vh;
+  min-height: 70vh;
+}
+
+.archi-image-block.display-mode-parallax-fixed.height-full-viewport .image-block-container {
+  height: 100vh;
+  min-height: 100vh;
+}
+
+/* height-custom container: height set via inline style */
+
 .archi-image-block.display-mode-parallax-fixed .image-wrapper {
   position: relative;
-  overflow: hidden;
+  width: 100%;
   height: 100%;
+  overflow: hidden;
+  z-index: 0;
 }
 
 .archi-image-block.display-mode-parallax-fixed .image-block {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-attachment: fixed;
+  min-height: 100%; /* Force la hauteur minimale */
+  background-attachment: scroll; /* Changé de fixed à scroll pour compatibilité */
   background-size: cover;
-  background-position: center;
-  z-index: -1;
+  background-position: center center;
+  background-repeat: no-repeat;
+  z-index: 0;
+  /* Amélioration pour le support du parallax fixed */
+  will-change: background-position;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
 }
 
-/* Mobile fallback - fixed devient absolute */
+/* Force explicit heights for all modes to ensure visibility */
+.archi-image-block.display-mode-parallax-fixed.height-auto .image-wrapper,
+.archi-image-block.display-mode-parallax-fixed.height-auto .image-block {
+  height: 70vh;
+  min-height: 70vh;
+}
+
+.archi-image-block.display-mode-parallax-fixed.height-full-viewport .image-wrapper,
+.archi-image-block.display-mode-parallax-fixed.height-full-viewport .image-block {
+  height: 100vh;
+  min-height: 100vh;
+}
+
+.archi-image-block.display-mode-parallax-fixed.height-custom .image-wrapper {
+  min-height: inherit;
+}
+
+/* Ensure overlay and text are above the image */
+.archi-image-block.display-mode-parallax-fixed .image-overlay,
+.archi-image-block.display-mode-parallax-fixed .image-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.archi-image-block.display-mode-parallax-fixed .image-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+}
+
+/* Adjust text positioning for parallax-fixed */
+.archi-image-block.display-mode-parallax-fixed .image-text.text-position-center {
+  transform: none;
+}
+
+/* Mobile fallback - fixed devient scroll */
 @media (max-width: 768px) {
   .archi-image-block.display-mode-parallax-fixed .image-block {
-    position: absolute;
     background-attachment: scroll;
   }
 }
@@ -119,19 +233,31 @@
    Mode Zoom
    ========================================================================== */
 
+.archi-image-block.display-mode-zoom .image-block-container {
+  position: relative;
+  width: 100%;
+}
+
 .archi-image-block.display-mode-zoom .image-wrapper {
   position: relative;
   overflow: hidden;
-  height: 100%;
+  width: 100%;
 }
 
 .archi-image-block.display-mode-zoom .image-block {
   display: block;
   width: 100%;
-  height: 100%;
+  height: auto;
   transition: transform 0.6s ease-out;
   will-change: transform;
 }
+
+/* Ensure minimum height when needed */
+.archi-image-block.display-mode-zoom.height-auto .image-block-container {
+  min-height: 300px;
+}
+
+/* height-custom & height-full-viewport: height set via inline style */
 
 .archi-image-block.display-mode-zoom:hover .image-block {
   transform: scale(1.1);
@@ -141,13 +267,35 @@
    Mode Cover
    ========================================================================== */
 
+.archi-image-block.display-mode-cover {
+  position: relative;
+}
+
 .archi-image-block.display-mode-cover .image-block-container {
   position: relative;
   width: 100%;
-  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.archi-image-block.display-mode-cover.height-auto .image-block-container {
+  min-height: 400px;
+}
+
+.archi-image-block.display-mode-cover.height-full-viewport .image-block-container {
+  height: 100vh;
+  min-height: 100vh;
+}
+
+/* height-custom container: height set via inline style */
+
+.archi-image-block.display-mode-cover .image-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .archi-image-block.display-mode-cover .image-block {
@@ -156,6 +304,7 @@
   left: 0;
   width: 100%;
   height: 100%;
+  object-fit: cover;
   z-index: 0;
 }
 
@@ -169,7 +318,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 1;
+  z-index: 10;
   pointer-events: none;
 }
 
@@ -179,7 +328,7 @@
 
 .archi-image-block .image-text {
   position: absolute;
-  z-index: 2;
+  z-index: 20;
   padding: 20px;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
   max-width: 90%;
@@ -230,161 +379,6 @@
 }
 
 /* ==========================================================================
-   Mode Comparaison Avant/Après
-   ========================================================================== */
-
-.archi-image-block.display-mode-comparison .comparison-container {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  user-select: none;
-  touch-action: none;
-  cursor: ew-resize;
-}
-
-.archi-image-block.display-mode-comparison .comparison-container.orientation-horizontal {
-  cursor: ns-resize;
-}
-
-/* Images de comparaison */
-.archi-image-block.display-mode-comparison .comparison-image {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.archi-image-block.display-mode-comparison .comparison-image img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  pointer-events: none;
-}
-
-/* Image avant (avec clip-path) */
-.archi-image-block.display-mode-comparison .before-image {
-  z-index: 2;
-  will-change: clip-path;
-  transition: clip-path 0.05s ease-out;
-}
-
-/* Image après (arrière-plan) */
-.archi-image-block.display-mode-comparison .after-image {
-  z-index: 1;
-}
-
-/* Étiquettes */
-.archi-image-block.display-mode-comparison .image-label {
-  position: absolute;
-  z-index: 3;
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 8px 16px;
-  font-size: 14px;
-  font-weight: 600;
-  border-radius: 4px;
-  pointer-events: none;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.archi-image-block.display-mode-comparison .before-label {
-  top: 20px;
-  left: 20px;
-}
-
-.archi-image-block.display-mode-comparison .after-label {
-  top: 20px;
-  right: 20px;
-}
-
-/* Poignée du slider */
-.archi-image-block.display-mode-comparison .comparison-slider-handle {
-  position: absolute;
-  z-index: 10;
-  will-change: left, top;
-  transition: left 0.05s ease-out, top 0.05s ease-out;
-}
-
-/* Orientation verticale (gauche/droite) */
-.archi-image-block.display-mode-comparison .comparison-container.orientation-vertical .comparison-slider-handle {
-  top: 0;
-  height: 100%;
-  width: 4px;
-  transform: translateX(-50%);
-  cursor: ew-resize;
-}
-
-/* Orientation horizontale (haut/bas) */
-.archi-image-block.display-mode-comparison .comparison-container.orientation-horizontal .comparison-slider-handle {
-  left: 0;
-  width: 100%;
-  height: 4px;
-  transform: translateY(-50%);
-  cursor: ns-resize;
-}
-
-/* Ligne de la poignée */
-.archi-image-block.display-mode-comparison .handle-line {
-  position: absolute;
-  background: var(--handle-color, #ffffff);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-}
-
-.archi-image-block.display-mode-comparison .comparison-container.orientation-vertical .handle-line {
-  width: 4px;
-  height: 100%;
-  left: 0;
-}
-
-.archi-image-block.display-mode-comparison .comparison-container.orientation-horizontal .handle-line {
-  height: 4px;
-  width: 100%;
-  top: 0;
-}
-
-/* Cercle de la poignée */
-.archi-image-block.display-mode-comparison .handle-circle {
-  position: absolute;
-  width: 48px;
-  height: 48px;
-  background: var(--handle-color, #ffffff);
-  border-radius: 50%;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: grab;
-  transition: transform 0.2s ease-out;
-}
-
-.archi-image-block.display-mode-comparison .handle-circle:active {
-  cursor: grabbing;
-  transform: scale(1.1);
-}
-
-.archi-image-block.display-mode-comparison .comparison-container.orientation-vertical .handle-circle {
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.archi-image-block.display-mode-comparison .comparison-container.orientation-horizontal .handle-circle {
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.archi-image-block.display-mode-comparison .handle-circle svg {
-  width: 24px;
-  height: 24px;
-  color: #333;
-}
-
-/* ==========================================================================
    Responsive Design
    ========================================================================== */
 
@@ -419,27 +413,6 @@
   .archi-image-block .image-text.text-position-bottom-right {
     right: 20px;
   }
-
-  /* Poignée plus petite sur mobile */
-  .archi-image-block.display-mode-comparison .handle-circle {
-    width: 40px;
-    height: 40px;
-  }
-
-  /* Étiquettes plus petites */
-  .archi-image-block.display-mode-comparison .image-label {
-    padding: 6px 12px;
-    font-size: 12px;
-    top: 10px;
-  }
-
-  .archi-image-block.display-mode-comparison .before-label {
-    left: 10px;
-  }
-
-  .archi-image-block.display-mode-comparison .after-label {
-    right: 10px;
-  }
 }
 
 @media (max-width: 480px) {
@@ -466,18 +439,241 @@
 }
 
 /* ==========================================================================
-   Placeholder (éditeur)
+   Overlay Presets (NEW)
    ========================================================================== */
 
-.archi-image-block-placeholder {
-  padding: 40px;
-  text-align: center;
-  border: 2px dashed #ccc;
-  border-radius: 8px;
-  background: #f9f9f9;
-  color: #666;
-  min-height: 200px;
+/* Gradient top */
+.archi-image-block.overlay-preset-gradient-top .image-overlay {
+  background: linear-gradient(to bottom, var(--overlay-color, #000000), transparent) !important;
+  opacity: 0.8 !important;
+}
+
+/* Gradient bottom */
+.archi-image-block.overlay-preset-gradient-bottom .image-overlay {
+  background: linear-gradient(to top, var(--overlay-color, #000000), transparent) !important;
+  opacity: 0.8 !important;
+}
+
+/* Gradient center (radial) */
+.archi-image-block.overlay-preset-gradient-center .image-overlay {
+  background: radial-gradient(circle at center, transparent 0%, var(--overlay-color, #000000) 100%) !important;
+  opacity: 0.6 !important;
+}
+
+/* Pattern dots */
+.archi-image-block.overlay-preset-pattern-dots .image-overlay {
+  background-color: transparent !important;
+  background-image: radial-gradient(circle, var(--overlay-color, #000000) 1px, transparent 1px) !important;
+  background-size: 20px 20px !important;
+  opacity: 0.3 !important;
+}
+
+/* Pattern lines */
+.archi-image-block.overlay-preset-pattern-lines .image-overlay {
+  background-color: transparent !important;
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--overlay-color, #000000),
+    var(--overlay-color, #000000) 2px,
+    transparent 2px,
+    transparent 10px
+  ) !important;
+  opacity: 0.2 !important;
+}
+
+/* ==========================================================================
+   Mode Comparaison Avant/Après
+   ========================================================================== */
+
+.comparison-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  user-select: none;
+  touch-action: none;
+}
+
+.comparison-image {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.comparison-image img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  display: block;
+}
+
+/* Image Avant (gauche ou haut) */
+.comparison-vertical .before-image {
+  left: 0;
+  right: auto;
+  clip-path: inset(0 50% 0 0);
+}
+
+.comparison-horizontal .before-image {
+  top: 0;
+  bottom: auto;
+  clip-path: inset(0 0 50% 0);
+}
+
+/* Image Après (droite ou bas) */
+.comparison-vertical .after-image {
+  left: 0;
+  right: 0;
+}
+
+.comparison-horizontal .after-image {
+  top: 0;
+  bottom: 0;
+}
+
+/* Slider Handle */
+.comparison-slider-handle {
+  position: absolute;
+  z-index: 10;
+  cursor: ew-resize;
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
+.comparison-vertical .comparison-slider-handle {
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  cursor: ew-resize;
+  transform: translateX(-50%);
+}
+
+.comparison-horizontal .comparison-slider-handle {
+  left: 0;
+  right: 0;
+  height: 4px;
+  cursor: ns-resize;
+  transform: translateY(-50%);
+}
+
+/* Handle Line */
+.handle-line {
+  position: absolute;
+  background-color: #ffffff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+.comparison-vertical .handle-line {
+  width: 4px;
+  height: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.comparison-horizontal .handle-line {
+  height: 4px;
+  width: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Handle Circle */
+.handle-circle {
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  pointer-events: auto;
+  z-index: 11;
+  transition: transform 0.2s ease;
+}
+
+.comparison-vertical .handle-circle {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.comparison-horizontal .handle-circle {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.handle-circle:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+.handle-circle:active {
+  transform: translate(-50%, -50%) scale(0.95);
+}
+
+.handle-circle svg {
+  width: 24px;
+  height: 24px;
+  color: #333;
+}
+
+/* Labels */
+.image-label {
+  position: absolute;
+  bottom: 20px;
+  padding: 10px 16px;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 4px;
+  pointer-events: none;
+  z-index: 5;
+  backdrop-filter: blur(4px);
+}
+
+.before-label {
+  left: 20px;
+}
+
+.after-label {
+  right: 20px;
+}
+
+/* Mobile Optimization */
+@media (max-width: 768px) {
+  .handle-circle {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .handle-circle svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .image-label {
+    font-size: 12px;
+    padding: 8px 12px;
+    bottom: 15px;
+  }
+  
+  .before-label {
+    left: 15px;
+  }
+  
+  .after-label {
+    right: 15px;
+  }
+}
+

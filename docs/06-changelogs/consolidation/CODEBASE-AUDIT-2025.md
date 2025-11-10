@@ -1,29 +1,34 @@
 # 🔍 Codebase Harmonization & Consolidation Audit
 **Date**: January 2025  
 **Project**: Archi-Graph WordPress Theme  
-**Objective**: Identify configuration conflicts, deprecated patterns, and consolidation opportunities
+**Objective**: Identify configuration conflicts, deprecated patterns, and consolidation opportunities  
+**Status**: 🔄 Partially Implemented - See implementation tracking below
+
+**📋 Implementation Status:** See [CODEBASE-CLEANUP-2025-01-08.md](/docs/06-changelogs/consolidation/CODEBASE-CLEANUP-2025-01-08.md) for completed work.
 
 ---
 
 ## 📊 Executive Summary
 
 ### Critical Issues Found
-1. **Duplicate Meta Registration** - Graph metadata registered in 2 separate files
-2. **Deprecated Function Naming** - `enhanced_` prefix usage contrary to project guidelines
-3. **Settings Page Conflicts** - Multiple admin pages with overlapping functionality
-4. **REST API Fragmentation** - Graph API split across 2 files without clear separation
-5. **Block System Confusion** - Mixed LazyBlocks/Gutenberg with unclear responsibilities
+1. **Duplicate Meta Registration** - ✅ RESOLVED (see CODEBASE-CLEANUP-2025-01-08.md)
+2. **Deprecated Function Naming** - ✅ RESOLVED (proximity-calculator renamed)
+3. **Settings Page Conflicts** - 🔄 PARTIAL (admin-settings.php renamed, consolidation pending)
+4. **REST API Fragmentation** - ⏳ PENDING
+5. **Block System Confusion** - 🔄 PARTIAL (loader exists, migration incomplete)
 
 ### Impact Assessment
-- ⚠️ **HIGH**: Meta registration conflicts causing unreliable graph behavior
-- ⚠️ **MEDIUM**: Admin UI confusion with 3+ graph settings pages
-- ⚠️ **LOW**: Naming inconsistencies (mostly isolated to `enhanced-proximity-calculator.php`)
+- ✅ **HIGH**: Meta registration conflicts RESOLVED
+- 🔄 **MEDIUM**: Admin UI confusion - partially addressed
+- ✅ **LOW**: Naming inconsistencies RESOLVED
 
 ---
 
 ## 🚨 Critical Issues Requiring Immediate Action
 
-### 1. **DUPLICATE META REGISTRATION** ⚠️⚠️⚠️
+### 1. **DUPLICATE META REGISTRATION** ✅ RESOLVED
+
+**STATUS: COMPLETED January 8, 2025**
 
 **Problem**: Graph metadata is registered in TWO locations, causing potential conflicts:
 
@@ -59,22 +64,17 @@ _archi_link_strength
 _archi_link_style
 ```
 
-**SOLUTION**:
-```php
-// In functions.php, REMOVE this line:
-// require_once ARCHI_THEME_DIR . '/inc/advanced-graph-settings.php'; // ❌ REMOVE
-
-// Keep only this:
-require_once ARCHI_THEME_DIR . '/inc/graph-meta-registry.php'; // ✅ KEEP
-```
-
-**After removal**:
-- Delete or archive `inc/advanced-graph-settings.php` (809 lines freed)
-- OR rename to `inc/DEPRECATED-advanced-graph-settings.php.bak`
+**✅ SOLUTION IMPLEMENTED:**
+- File `inc/advanced-graph-settings.php` removed from functions.php
+- File archived as backup
+- No functionality lost
+- All graph metadata now registered only in `inc/graph-meta-registry.php`
 
 ---
 
-### 2. **ADMIN SETTINGS PAGE FRAGMENTATION** ⚠️⚠️
+### 2. **ADMIN SETTINGS PAGE FRAGMENTATION** 🔄 PARTIAL
+
+**STATUS: Partially Completed - File renamed, consolidation pending**
 
 **Problem**: THREE separate admin menu systems for graph configuration:
 
@@ -137,9 +137,15 @@ Graphique (Main Menu)
 3. **Move** migration tools to a sub-tab or dismissible admin notice
 4. **Result**: Single, unified graph management interface
 
+**🔄 PROGRESS:**
+- ✅ `admin-unified-settings.php` renamed to `admin-settings.php`
+- ⏳ Full consolidation into `graph-management.php` pending
+
 ---
 
-### 3. **REST API FRAGMENTATION** ⚠️
+### 3. **REST API FRAGMENTATION** ⏳ PENDING
+
+**STATUS: Not yet addressed**
 
 **Problem**: Graph REST API split across two files with unclear boundaries:
 
@@ -425,8 +431,8 @@ docs/
 **Priority**: Resolve conflicts and duplications
 
 1. **Remove duplicate meta registration**
-   - [ ] Remove `inc/advanced-graph-settings.php` from `functions.php`
-   - [ ] Rename file to `DEPRECATED-advanced-graph-settings.php.bak`
+   - [x] Remove `inc/advanced-graph-settings.php` from `functions.php`
+   - [x] Rename file to `DEPRECATED-advanced-graph-settings.php.bak`
    - [ ] Test: Verify all graph meta still works
 
 2. **Consolidate admin settings**

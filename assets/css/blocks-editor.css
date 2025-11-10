@@ -1,6 +1,899 @@
 /* Styles pour l'éditeur Gutenberg */
 
 /* ==========================================================================
+   Image Block - Enhanced Editor Rendering (Nov 2025)
+   ========================================================================== */
+
+/* Main Editor Container - Enhanced Visual Hierarchy */
+.archi-image-block-editor {
+    position: relative;
+    border-radius: 8px;
+    padding: 20px;
+    background: #ffffff;
+    border: 2px solid #e1e4e8;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.archi-image-block-editor:hover {
+    border-color: #0073aa;
+    box-shadow: 0 4px 12px rgba(0, 115, 170, 0.1);
+}
+
+/* Selected State */
+.block-editor-block-list__block.is-selected .archi-image-block-editor {
+    border-color: #0073aa;
+    box-shadow: 0 0 0 2px rgba(0, 115, 170, 0.1);
+}
+
+/* ====================
+   MODE INDICATORS - Enhanced Visual Feedback
+   ==================== */
+
+/* Mode Background Gradients - Subtle & Professional */
+.archi-image-block-editor.mode-parallax-scroll {
+    background: linear-gradient(135deg, #e8f5e9 0%, #ffffff 50%, #e8f5e9 100%);
+}
+
+.archi-image-block-editor.mode-parallax-fixed {
+    background: linear-gradient(135deg, #e3f2fd 0%, #ffffff 50%, #e3f2fd 100%);
+}
+
+.archi-image-block-editor.mode-zoom {
+    background: linear-gradient(135deg, #fff9c4 0%, #ffffff 50%, #fff9c4 100%);
+}
+
+.archi-image-block-editor.mode-comparison {
+    background: linear-gradient(135deg, #e1f5fe 0%, #ffffff 50%, #fce4ec 100%);
+}
+
+.archi-image-block-editor.mode-cover {
+    background: linear-gradient(135deg, #f3e5f5 0%, #ffffff 50%, #f3e5f5 100%);
+}
+
+.archi-image-block-editor.mode-gallery {
+    background: linear-gradient(135deg, #fff3e0 0%, #ffffff 50%, #fff3e0 100%);
+}
+
+/* Mode Badges - Professional Styling */
+.archi-image-block-editor [style*="background: #3498db"],
+.archi-image-block-editor [style*="background: #9b59b6"],
+.archi-image-block-editor [style*="background: #e74c3c"],
+.archi-image-block-editor [style*="background: #e67e22"],
+.archi-image-block-editor [style*="background: #34495e"],
+.archi-image-block-editor [style*="background: #16a085"] {
+    animation: fadeInBadge 0.3s ease;
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+@keyframes fadeInBadge {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* ====================
+   IMAGE PREVIEW - Enhanced Quality
+   ==================== */
+
+/* Image Container with Better Spacing */
+.archi-image-block-editor .archi-image-preview {
+    position: relative;
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 15px 0;
+    background: #f8f9fa;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Image Styling with Smooth Transitions */
+.archi-image-block-editor img {
+    display: block;
+    width: 100%;
+    height: auto;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+                box-shadow 0.3s ease,
+                filter 0.3s ease;
+    border-radius: 4px;
+}
+
+.archi-image-block-editor img:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.archi-image-block-editor.mode-zoom img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+}
+
+/* Parallax Animated Preview Enhancement */
+.archi-image-block-editor.mode-parallax-scroll img {
+    animation: subtleParallax 3s ease-in-out infinite;
+}
+
+@keyframes subtleParallax {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* ====================
+   COMPARISON SLIDER - Enhanced Animation
+   ==================== */
+
+.archi-image-block-editor.mode-comparison .comparison-slider {
+    animation: pulseSlider 2s ease-in-out infinite;
+    box-shadow: 0 0 20px rgba(52, 152, 219, 0.4);
+}
+
+@keyframes pulseSlider {
+    0%, 100% {
+        opacity: 1;
+        transform: translateX(-50%) scale(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: translateX(-50%) scale(1.05);
+    }
+}
+
+/* ====================
+   GALLERY MODE - Enhanced Preview
+   ==================== */
+
+.archi-image-block-editor.mode-gallery .gallery-container {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.archi-image-block-editor.mode-gallery .gallery-slide {
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.archi-image-block-editor.mode-gallery .gallery-controls {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 8px 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.archi-image-block-editor.mode-gallery .gallery-indicators {
+    gap: 8px;
+}
+
+.archi-image-block-editor.mode-gallery .gallery-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.archi-image-block-editor.mode-gallery .gallery-indicator.active {
+    background: #0073aa;
+    transform: scale(1.3);
+}
+
+/* ====================
+   PLACEHOLDER - Enhanced Design
+   ==================== */
+
+.archi-image-block-editor .components-placeholder {
+    border: 3px dashed #cbd5e0 !important;
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border-radius: 8px;
+    padding: 40px 20px;
+    transition: all 0.3s ease;
+    min-height: 200px;
+}
+
+.archi-image-block-editor .components-placeholder:hover {
+    border-color: #0073aa !important;
+    background: linear-gradient(135deg, #e8f5e9 0%, #f0f8ff 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 115, 170, 0.1);
+}
+
+.archi-image-block-editor .components-placeholder__label {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 8px;
+}
+
+.archi-image-block-editor .components-placeholder__instructions {
+    font-size: 14px;
+    color: #64748b;
+    line-height: 1.6;
+}
+
+/* ====================
+   HELP MESSAGES - Enhanced Styling
+   ==================== */
+
+.archi-image-block-editor [style*="border-left: 4px solid"] {
+    animation: slideInLeft 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 4px;
+    padding: 16px 20px;
+    background: #f8fafc;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    margin: 12px 0;
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* ====================
+   TEXT OVERLAY - Enhanced WYSIWYG
+   ==================== */
+
+.archi-image-block-editor .overlay-text {
+    padding: 20px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.archi-image-block-editor .overlay-text:hover {
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.archi-image-block-editor .overlay-text .block-editor-rich-text__editable {
+    font-size: 18px;
+    line-height: 1.6;
+    color: #1e293b;
+}
+
+/* ====================
+   OVERLAY PRESETS - Enhanced Visual Feedback
+   ==================== */
+
+.archi-image-block-editor.has-overlay-gradient-top::before,
+.archi-image-block-editor.has-overlay-gradient-bottom::before,
+.archi-image-block-editor.has-overlay-gradient-center::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    border-radius: 6px;
+    opacity: 0.15;
+    z-index: 1;
+}
+
+.archi-image-block-editor.has-overlay-gradient-top::before {
+    background: linear-gradient(180deg, #000000 0%, transparent 50%);
+}
+
+.archi-image-block-editor.has-overlay-gradient-bottom::before {
+    background: linear-gradient(0deg, #000000 0%, transparent 50%);
+}
+
+.archi-image-block-editor.has-overlay-gradient-center::before {
+    background: radial-gradient(circle, transparent 30%, #000000 100%);
+}
+
+/* ====================
+   LOADING STATE - Enhanced Animation
+   ==================== */
+
+.archi-image-block-editor.is-loading {
+    position: relative;
+    pointer-events: none;
+}
+
+.archi-image-block-editor.is-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 48px;
+    height: 48px;
+    margin: -24px 0 0 -24px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #0073aa;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    z-index: 10;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ====================
+   RESPONSIVE - Mobile Optimization
+   ==================== */
+
+@media (max-width: 782px) {
+    .archi-image-block-editor {
+        padding: 15px;
+    }
+    
+    .archi-image-block-editor [style*="display: flex"][style*="gap: 8px"] {
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+    
+    .archi-image-block-editor .components-placeholder {
+        padding: 30px 15px;
+    }
+    
+    .archi-image-block-editor .overlay-text {
+        padding: 15px;
+    }
+}
+
+@media (max-width: 600px) {
+    .archi-image-block-editor img {
+        border-radius: 4px;
+    }
+    
+    .archi-image-block-editor .components-placeholder__label {
+        font-size: 14px;
+    }
+    
+    .archi-image-block-editor .components-placeholder__instructions {
+        font-size: 12px;
+    }
+}
+
+/* ==========================================================================
+   InspectorControls - Enhanced Sidebar UI for Image Block
+   ========================================================================== */
+
+/* Panel Headers - Enhanced Typography */
+.components-panel__body.archi-image-block-panel .components-panel__body-title {
+    font-weight: 600;
+    font-size: 14px;
+    color: #1e293b;
+    padding: 16px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.components-panel__body.archi-image-block-panel .components-panel__body-title button {
+    font-weight: 600;
+}
+
+/* Panel Body - Better Spacing */
+.components-panel__body.archi-image-block-panel {
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.components-panel__body.archi-image-block-panel > div {
+    padding: 16px;
+}
+
+/* ====================
+   PRESET BUTTONS - Visual & Overlay Presets
+   ==================== */
+
+/* Preset Container Grid */
+.archi-preset-buttons-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin: 16px 0;
+}
+
+/* Individual Preset Button */
+.archi-preset-button {
+    position: relative;
+    padding: 16px 12px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    background: #ffffff;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-align: center;
+    font-size: 13px;
+    font-weight: 500;
+    color: #475569;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.archi-preset-button:hover {
+    border-color: #0073aa;
+    background: #f8fafc;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 115, 170, 0.15);
+    color: #0073aa;
+}
+
+.archi-preset-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 115, 170, 0.2);
+}
+
+/* Active Preset State */
+.archi-preset-button.is-active {
+    border-color: #0073aa;
+    background: linear-gradient(135deg, #e8f5e9 0%, #f0f8ff 100%);
+    color: #0073aa;
+    font-weight: 600;
+    box-shadow: 0 0 0 3px rgba(0, 115, 170, 0.1),
+                0 2px 8px rgba(0, 115, 170, 0.2);
+}
+
+.archi-preset-button.is-active::before {
+    content: '✓';
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 20px;
+    height: 20px;
+    background: #0073aa;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    animation: checkmarkPop 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes checkmarkPop {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Preset Button Icons/Emojis */
+.archi-preset-button .preset-icon {
+    display: block;
+    font-size: 24px;
+    margin-bottom: 8px;
+}
+
+/* Preset Button Label */
+.archi-preset-button .preset-label {
+    display: block;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+/* ====================
+   VISUAL PRESETS - Specific Styling
+   ==================== */
+
+.archi-preset-button.preset-hero-parallax {
+    background: linear-gradient(135deg, #e8f5e9 0%, #ffffff 100%);
+}
+
+.archi-preset-button.preset-hero-parallax:hover,
+.archi-preset-button.preset-hero-parallax.is-active {
+    background: linear-gradient(135deg, #c8e6c9 0%, #e8f5e9 100%);
+    border-color: #4caf50;
+    color: #2e7d32;
+}
+
+.archi-preset-button.preset-zoom-portfolio {
+    background: linear-gradient(135deg, #fff9c4 0%, #ffffff 100%);
+}
+
+.archi-preset-button.preset-zoom-portfolio:hover,
+.archi-preset-button.preset-zoom-portfolio.is-active {
+    background: linear-gradient(135deg, #fff59d 0%, #fff9c4 100%);
+    border-color: #fbc02d;
+    color: #f57f17;
+}
+
+.archi-preset-button.preset-cover-dark {
+    background: linear-gradient(135deg, #f3e5f5 0%, #ffffff 100%);
+}
+
+.archi-preset-button.preset-cover-dark:hover,
+.archi-preset-button.preset-cover-dark.is-active {
+    background: linear-gradient(135deg, #e1bee7 0%, #f3e5f5 100%);
+    border-color: #9c27b0;
+    color: #6a1b9a;
+}
+
+.archi-preset-button.preset-fond-fixe {
+    background: linear-gradient(135deg, #e3f2fd 0%, #ffffff 100%);
+}
+
+.archi-preset-button.preset-fond-fixe:hover,
+.archi-preset-button.preset-fond-fixe.is-active {
+    background: linear-gradient(135deg, #bbdefb 0%, #e3f2fd 100%);
+    border-color: #2196f3;
+    color: #1565c0;
+}
+
+.archi-preset-button.preset-gallery {
+    background: linear-gradient(135deg, #fff3e0 0%, #ffffff 100%);
+}
+
+.archi-preset-button.preset-gallery:hover,
+.archi-preset-button.preset-gallery.is-active {
+    background: linear-gradient(135deg, #ffe0b2 0%, #fff3e0 100%);
+    border-color: #ff9800;
+    color: #e65100;
+}
+
+.archi-preset-button.preset-comparison {
+    background: linear-gradient(135deg, #fce4ec 0%, #ffffff 100%);
+}
+
+.archi-preset-button.preset-comparison:hover,
+.archi-preset-button.preset-comparison.is-active {
+    background: linear-gradient(135deg, #f8bbd0 0%, #fce4ec 100%);
+    border-color: #e91e63;
+    color: #c2185b;
+}
+
+/* ====================
+   OVERLAY PRESETS - Visual Pattern Previews
+   ==================== */
+
+.archi-overlay-preset-button {
+    position: relative;
+    height: 80px;
+    padding: 8px;
+    overflow: hidden;
+}
+
+/* Overlay Pattern Previews */
+.archi-overlay-preset-button::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.3;
+    border-radius: 6px;
+    transition: opacity 0.3s ease;
+}
+
+.archi-overlay-preset-button:hover::after {
+    opacity: 0.5;
+}
+
+.archi-overlay-preset-button.is-active::after {
+    opacity: 0.6;
+}
+
+.archi-overlay-preset-button.preset-gradient-top::after {
+    background: linear-gradient(180deg, #000000 0%, transparent 100%);
+}
+
+.archi-overlay-preset-button.preset-gradient-bottom::after {
+    background: linear-gradient(0deg, #000000 0%, transparent 100%);
+}
+
+.archi-overlay-preset-button.preset-gradient-center::after {
+    background: radial-gradient(circle, transparent 20%, #000000 100%);
+}
+
+.archi-overlay-preset-button.preset-pattern-dots::after {
+    background-image: radial-gradient(circle, #000000 2px, transparent 2px);
+    background-size: 16px 16px;
+}
+
+.archi-overlay-preset-button.preset-pattern-lines::after {
+    background-image: repeating-linear-gradient(
+        45deg,
+        #000000,
+        #000000 2px,
+        transparent 2px,
+        transparent 10px
+    );
+}
+
+.archi-overlay-preset-button.preset-none::after {
+    display: none;
+}
+
+/* Overlay Preset Label Positioning */
+.archi-overlay-preset-button .preset-label {
+    position: relative;
+    z-index: 2;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 4px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-top: 30px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* ====================
+   TOGGLE CONTROLS - Enhanced Switches
+   ==================== */
+
+.components-toggle-control {
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.components-toggle-control:last-child {
+    border-bottom: none;
+}
+
+.components-toggle-control .components-toggle-control__label {
+    font-weight: 500;
+    font-size: 13px;
+    color: #1e293b;
+}
+
+.components-base-control__help {
+    font-size: 12px;
+    color: #64748b;
+    font-style: normal;
+    margin-top: 4px;
+}
+
+/* ====================
+   SELECT & INPUT CONTROLS - Enhanced Styling
+   ==================== */
+
+.components-select-control__input,
+.components-text-control__input,
+.components-textarea-control__input {
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+    padding: 8px 12px;
+    font-size: 13px;
+    transition: all 0.2s ease;
+}
+
+.components-select-control__input:focus,
+.components-text-control__input:focus,
+.components-textarea-control__input:focus {
+    border-color: #0073aa;
+    box-shadow: 0 0 0 3px rgba(0, 115, 170, 0.1);
+    outline: none;
+}
+
+.components-base-control__label {
+    font-weight: 500;
+    font-size: 13px;
+    color: #1e293b;
+    margin-bottom: 6px;
+}
+
+/* ====================
+   COLOR PICKER - Enhanced UI
+   ==================== */
+
+.components-color-picker {
+    padding: 12px;
+    background: #f8fafc;
+    border-radius: 8px;
+    margin-top: 8px;
+}
+
+/* ====================
+   RANGE CONTROL - Enhanced Slider
+   ==================== */
+
+.components-range-control {
+    margin: 16px 0;
+}
+
+.components-range-control__wrapper {
+    margin-top: 8px;
+}
+
+.components-range-control__slider {
+    border-radius: 8px;
+}
+
+.components-range-control__slider::-webkit-slider-thumb {
+    background: #0073aa;
+    border: 2px solid #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 115, 170, 0.3);
+    width: 20px;
+    height: 20px;
+}
+
+.components-range-control__slider::-moz-range-thumb {
+    background: #0073aa;
+    border: 2px solid #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 115, 170, 0.3);
+    width: 20px;
+    height: 20px;
+}
+
+/* ====================
+   MEDIA UPLOAD BUTTON - Enhanced Styling
+   ==================== */
+
+.components-button.is-secondary {
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.components-button.is-secondary:hover {
+    background: #0073aa;
+    color: #ffffff;
+    border-color: #0073aa;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 115, 170, 0.2);
+}
+
+.components-button.is-primary {
+    border-radius: 6px;
+    background: #0073aa;
+    border-color: #0073aa;
+    padding: 8px 16px;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0, 115, 170, 0.2);
+    transition: all 0.2s ease;
+}
+
+.components-button.is-primary:hover {
+    background: #005177;
+    border-color: #005177;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 81, 119, 0.3);
+}
+
+/* ====================
+   GALLERY IMAGE MANAGEMENT - Enhanced UI
+   ==================== */
+
+.archi-gallery-images-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 8px;
+    margin: 12px 0;
+}
+
+.archi-gallery-image-item {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 2px solid #e2e8f0;
+    transition: all 0.2s ease;
+}
+
+.archi-gallery-image-item:hover {
+    border-color: #0073aa;
+    box-shadow: 0 4px 12px rgba(0, 115, 170, 0.15);
+}
+
+.archi-gallery-image-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.archi-gallery-image-remove {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: rgba(220, 38, 38, 0.95);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.archi-gallery-image-item:hover .archi-gallery-image-remove {
+    opacity: 1;
+}
+
+.archi-gallery-image-remove:hover {
+    background: rgba(185, 28, 28, 1);
+}
+
+/* ====================
+   SECTION DIVIDERS - Enhanced Spacing
+   ==================== */
+
+.archi-section-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+    margin: 20px 0;
+}
+
+.archi-section-title {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #64748b;
+    margin: 16px 0 8px 0;
+}
+
+/* ====================
+   HELP TEXT - Enhanced Visibility
+   ==================== */
+
+.archi-help-text {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 12px;
+    background: #eff6ff;
+    border-left: 3px solid #3b82f6;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #1e40af;
+    margin: 12px 0;
+    line-height: 1.5;
+}
+
+.archi-help-text .dashicons {
+    flex-shrink: 0;
+    color: #3b82f6;
+    margin-top: 2px;
+}
+
+/* ====================
+   Responsive - Sidebar Optimization
+   ==================== */
+
+@media (max-width: 782px) {
+    .archi-preset-buttons-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    
+    .archi-preset-button {
+        padding: 12px;
+    }
+    
+    .archi-gallery-images-list {
+        grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    }
+}
+
+/* ==========================================================================
    Contenu centré dans l'éditeur - Aligné avec centered-content.css
    ========================================================================== */
 

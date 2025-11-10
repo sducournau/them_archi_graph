@@ -654,6 +654,8 @@ tail -f /path/to/wordpress/wp-content/debug.log
 - **Main Blocks Documentation:** `/docs/NEW-GUTENBERG-BLOCKS.md`
 - **WordPress Block Editor Handbook:** https://developer.wordpress.org/block-editor/
 - **Theme Instructions:** `/.github/copilot-instructions.md`
+- **Codebase Cleanup:** `/docs/changelogs/2025-11-09-cleanup-harmonization.md`
+- **Consolidation Audit:** `/docs/06-changelogs/consolidation/CODEBASE-AUDIT-2025.md`
 
 ---
 
@@ -661,18 +663,28 @@ tail -f /path/to/wordpress/wp-content/debug.log
 
 ### Adding a New Block
 
-1. **Create JSX file** in `assets/js/blocks/`
-2. **Create PHP file** in `inc/blocks/[category]/`
-3. **Add to webpack.config.js** entry points
-4. **Create CSS file** if needed in `assets/css/`
-5. **Add script handle** to `_loader.php`
+1. **Check existing blocks first** - Use Serena MCP to search: `mcp_oraios_serena_find_symbol`
+2. **Create JSX file** in `assets/js/blocks/` (follow existing patterns)
+3. **Create PHP file** in `inc/blocks/[category]/` (auto-loaded by `_loader.php`)
+4. **Add to webpack.config.js** entry points (if creating new category)
+5. **Create CSS file** if needed in `assets/css/` (consolidate with existing if possible)
 6. **Run build:** `npm run build`
+7. **Test in editor** - Verify block appears and functions correctly
 
 ### Code Style
-- Follow WordPress Coding Standards
+- Follow WordPress Coding Standards (WPCS)
 - Use proper text domain: `archi-graph`
-- Prefix functions with `archi_`
+- Prefix all functions with `archi_` (never `enhanced_*` or `unified_*`)
 - Use descriptive block names: `archi-graph/descriptive-name`
+- Sanitize inputs, escape outputs
+- Check capabilities before sensitive operations
+
+### Block Organization
+The theme uses a modular block loading system (`inc/blocks/_loader.php`):
+- Blocks are automatically discovered by category folder
+- Shared attributes in `_shared-attributes.php`
+- Shared functions in `_shared-functions.php`
+- No need to manually enqueue - loader handles it
 
 ---
 

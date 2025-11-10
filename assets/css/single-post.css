@@ -143,11 +143,25 @@
 }
 
 .archi-related-title {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: var(--color-text-primary, #2c3e50);
-    margin-bottom: 2rem;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #2c3e50;
+    margin-bottom: 2.5rem;
     text-align: center;
+    position: relative;
+    padding-bottom: 1rem;
+}
+
+.archi-related-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-primary, #3498db), #2ecc71);
+    border-radius: 2px;
 }
 
 .archi-related-grid {
@@ -158,16 +172,18 @@
 }
 
 .archi-related-card {
-    background: var(--color-bg-primary, #ffffff);
-    border-radius: 12px;
+    background: #ffffff;
+    border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
-    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .archi-related-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.12);
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.08);
+    border-color: var(--color-primary, #3498db);
 }
 
 .archi-related-link {
@@ -179,44 +195,47 @@
 .archi-related-image {
     position: relative;
     width: 100%;
-    height: 220px;
+    height: 240px;
     overflow: hidden;
-    background: var(--color-bg-secondary, #f8f9fa);
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 }
 
 .archi-related-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.4s ease;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .archi-related-card:hover .archi-related-image img {
-    transform: scale(1.08);
+    transform: scale(1.1);
 }
 
 .archi-related-content {
-    padding: 1.5rem;
+    padding: 1.75rem 1.5rem;
+    background: #ffffff;
+    color: #2c3e50;
 }
 
 .archi-post-type-badge {
     display: inline-block;
-    padding: 0.25rem 0.75rem;
-    font-size: 0.75rem;
-    font-weight: 600;
+    padding: 0.4rem 0.85rem;
+    font-size: 0.7rem;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    background: var(--color-primary, #3498db);
+    letter-spacing: 0.8px;
+    background: linear-gradient(135deg, var(--color-primary, #3498db) 0%, #2980b9 100%);
     color: #ffffff;
-    border-radius: 20px;
-    margin-bottom: 0.75rem;
+    border-radius: 24px;
+    margin-bottom: 0.5rem;
+    box-shadow: 0 2px 4px rgba(52, 152, 219, 0.3);
 }
 
 .archi-related-card-title {
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: var(--color-text-primary, #2c3e50);
-    margin: 0.5rem 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0.75rem 0;
     line-height: 1.4;
     transition: color 0.3s ease;
 }
@@ -227,16 +246,17 @@
 
 .archi-related-meta {
     font-size: 0.875rem;
-    color: var(--color-text-secondary, #6c757d);
-    margin: 0.5rem 0 0;
+    color: #6c757d;
+    margin: 0.75rem 0 0;
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    font-weight: 500;
 }
 
 .archi-related-meta::before {
     content: "📍";
-    font-size: 0.875rem;
+    font-size: 1rem;
 }
 
 /* ==========================================================================

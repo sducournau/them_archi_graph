@@ -12,7 +12,7 @@
 .archi-single-container {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 2rem 1rem;
+    padding: 0 1rem 2rem;
 }
 
 /* ==========================================================================
@@ -25,7 +25,7 @@
 }
 
 .archi-article-content {
-    padding: 2rem 0;
+    padding: 0 0 2rem;
     line-height: 1.8;
     font-size: 1.1rem;
 }
@@ -286,11 +286,11 @@
 
 @media (max-width: 768px) {
     .archi-single-container {
-        padding: 1rem 0.5rem;
+        padding: 0 0.5rem 1rem;
     }
     
     .archi-article-content {
-        padding: 1rem 0;
+        padding: 0 0 1rem;
         font-size: 1rem;
     }
     

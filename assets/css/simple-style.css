@@ -22,7 +22,7 @@ body {
 .article-container {
   max-width: 800px;
   margin: 0 auto;
-  padding: 3rem 1.5rem;
+  padding: 0 1.5rem 3rem;
 }
 
 /* En-tête de l'article */

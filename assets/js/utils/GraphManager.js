@@ -27,17 +27,72 @@ class GraphManager {
     this.width = options.width || 1200;
     this.height = options.height || 800;
 
-    // Récupérer les settings WordPress
-    this.settings = {
-      animationType: options.animationType || wp?.archi?.settings?.animation_type || "fadeIn",
-      animationDuration: options.animationDuration || wp?.archi?.settings?.animation_duration || 800,
-      hoverEffect: options.hoverEffect ?? wp?.archi?.settings?.hover_effect ?? true,
-      hoverScale: options.hoverScale || wp?.archi?.settings?.hover_scale || 1.15,
-      linkAnimation: options.linkAnimation ?? wp?.archi?.settings?.link_animation ?? true,
-      organicMode: options.organicMode ?? wp?.archi?.settings?.organic_mode ?? true,
-      clusterStrength: options.clusterStrength || wp?.archi?.settings?.cluster_strength || 0.1,
-      showPolygons: options.showPolygons ?? true,
+    // Get configuration from WordPress (simplified and centralized)
+    const globalConfig = window.archiGraph?.config || {};
+    
+    // Merge with options, prioritizing: options > globalConfig > defaults
+    this.config = {
+      // Visual
+      nodeColor: options.nodeColor || globalConfig.nodeColor || '#3498db',
+      nodeSize: options.nodeSize || globalConfig.nodeSize || 30,
+      nodeOpacity: options.nodeOpacity || globalConfig.nodeOpacity || 1.0,
+      showLabels: options.showLabels ?? globalConfig.showLabels ?? true,
+      showPolygons: options.showPolygons ?? globalConfig.showPolygons ?? true,
+      
+      // Animation
+      animationEnabled: options.animationEnabled ?? globalConfig.animationEnabled ?? true,
+      animationType: options.animationType || globalConfig.animationType || 'slide',
+      animationDuration: options.animationDuration || globalConfig.animationDuration || 800,
+      animationEasing: options.animationEasing || globalConfig.animationEasing || 'ease-out',
+      staggerDelay: options.staggerDelay || globalConfig.staggerDelay || 50,
+      
+      // Hover
+      hoverEnabled: options.hoverEnabled ?? globalConfig.hoverEnabled ?? true,
+      hoverEffect: options.hoverEffect || globalConfig.hoverEffect || 'scale',
+      hoverScale: options.hoverScale || globalConfig.hoverScale || 1.15,
+      showHalo: options.showHalo ?? globalConfig.showHalo ?? true,
+      elevateOnHover: options.elevateOnHover ?? globalConfig.elevateOnHover ?? true,
+      
+      // Inactive nodes
+      inactiveEnabled: options.inactiveEnabled ?? globalConfig.inactiveEnabled ?? true,
+      pulseInactive: options.pulseInactive ?? globalConfig.pulseInactive ?? true,
+      pulseSpeed: options.pulseSpeed || globalConfig.pulseSpeed || 2000,
+      inactiveOpacityMin: options.inactiveOpacityMin || globalConfig.inactiveOpacityMin || 0.3,
+      inactiveOpacityMax: options.inactiveOpacityMax || globalConfig.inactiveOpacityMax || 0.4,
+      inactiveGrayscale: options.inactiveGrayscale || globalConfig.inactiveGrayscale || 30,
+      
+      // Click interactions
+      clickToggle: options.clickToggle ?? globalConfig.clickToggle ?? true,
+      shockwaveEnabled: options.shockwaveEnabled ?? globalConfig.shockwaveEnabled ?? true,
+      shockwaveDuration: options.shockwaveDuration || globalConfig.shockwaveDuration || 600,
+      bounceOnClick: options.bounceOnClick ?? globalConfig.bounceOnClick ?? true,
+      
+      // Links
+      linkAnimation: options.linkAnimation ?? globalConfig.linkAnimation ?? true,
+      highlightLinksOnHover: options.highlightLinksOnHover ?? globalConfig.highlightLinksOnHover ?? true,
+      linkStyle: options.linkStyle || globalConfig.linkStyle || 'curve',
+      linkOpacity: options.linkOpacity || globalConfig.linkOpacity || 0.3,
+      linkHoverOpacity: options.linkHoverOpacity || globalConfig.linkHoverOpacity || 1.0,
+      
+      // Physics
+      chargeStrength: options.chargeStrength || globalConfig.chargeStrength || -300,
+      linkDistance: options.linkDistance || globalConfig.linkDistance || 100,
+      collisionRadius: options.collisionRadius || globalConfig.collisionRadius || 40,
+      centerStrength: options.centerStrength || globalConfig.centerStrength || 0.05,
+      clusterStrength: options.clusterStrength || globalConfig.clusterStrength || 0.1,
+      
+      // Performance
+      lazyLoad: options.lazyLoad ?? globalConfig.lazyLoad ?? true,
+      maxVisibleNodes: options.maxVisibleNodes || globalConfig.maxVisibleNodes || 100,
+      respectReducedMotion: options.respectReducedMotion ?? globalConfig.respectReducedMotion ?? true,
     };
+
+    // Check for reduced motion preference
+    if (this.config.respectReducedMotion && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      this.config.animationEnabled = false;
+      this.config.pulseInactive = false;
+      this.config.linkAnimation = false;
+    }
 
     this.svg = null;
     this.simulation = null;
@@ -59,7 +114,7 @@ class GraphManager {
       this.createSVG();
 
       // Charger les couleurs de polygones
-      if (this.settings.showPolygons) {
+      if (this.config.showPolygons) {
         this.polygonColors = await loadPolygonColors();
       }
 
@@ -92,6 +147,32 @@ class GraphManager {
       const data = await response.json();
       this.nodes = data.articles || data.nodes || [];
       this.categories = data.categories || [];
+
+      // ✅ Transform flat structure to nested structure for effects
+      this.nodes = this.nodes.map(node => {
+        // Create animation object from flat parameters
+        const animation = {
+          type: node.animation_type || "fadeIn",
+          duration: node.animation_duration || this.config.animationDuration,
+          delay: node.animation_delay || 0,
+          easing: node.animation_easing || "ease-out",
+          enterFrom: node.enter_from || "center"
+        };
+
+        // Create hover object from flat parameters
+        const hover = {
+          scale: node.hover_scale || 1.15,
+          pulse: node.pulse_effect || false,
+          glow: node.glow_effect || false
+        };
+
+        // Return node with nested structures
+        return {
+          ...node,
+          animation,
+          hover
+        };
+      });
 
       // ✅ NEW: Generate and integrate comment nodes
       if (typeof window.generateCommentsNodes === 'function') {
@@ -140,7 +221,7 @@ class GraphManager {
    * Dessiner les polygones de catégories
    */
   drawPolygons() {
-    if (!this.settings.showPolygons || this.polygonColors.length === 0) {
+    if (!this.config.showPolygons || this.polygonColors.length === 0) {
       return;
     }
 
@@ -153,7 +234,7 @@ class GraphManager {
 
     drawPolygons(this.svg, polygons, {
       animated: true,
-      animationDuration: this.settings.animationDuration,
+      animationDuration: this.config.animationDuration,
     });
   }
 
@@ -227,10 +308,10 @@ class GraphManager {
       .attr("stroke-width", (d) => Math.sqrt(d.strength));
 
     // Animer les liens si activé
-    if (this.settings.linkAnimation) {
+    if (this.config.linkAnimation) {
       animateLinks(links, {
-        duration: this.settings.animationDuration * 1.2,
-        delay: this.settings.animationDuration,
+        duration: this.config.animationDuration * 1.2,
+        delay: this.config.animationDuration,
         staggerDelay: 20,
       });
     }
@@ -250,23 +331,49 @@ class GraphManager {
       .enter()
       .append("g")
       .attr("class", "graph-node")
-      .attr("cursor", "pointer");
+      .attr("cursor", "pointer")
+      .attr("data-node-id", (d) => d.id)
+      .classed("node-inactive", (d) => d.inactive || false);
 
-    // Ajouter cercles
+    // Ajouter cercle externe pour effet de halo
     nodes
       .append("circle")
+      .attr("class", "node-halo")
+      .attr("r", (d) => (d.node_size || 60) / 2 + 4)
+      .attr("fill", "none")
+      .attr("stroke", (d) => d.node_color || "#3498db")
+      .attr("stroke-width", 0)
+      .attr("stroke-opacity", 0);
+
+    // Ajouter cercles principaux
+    nodes
+      .append("circle")
+      .attr("class", "node-circle")
       .attr("r", (d) => (d.node_size || 60) / 2)
       .attr("fill", (d) => d.node_color || "#3498db")
       .attr("stroke", "#fff")
-      .attr("stroke-width", 2);
+      .attr("stroke-width", 2)
+      .style("opacity", (d) => d.inactive ? 0.4 : 1);
+
+    // Ajouter cercle intérieur pour effet de brillance
+    nodes
+      .append("circle")
+      .attr("class", "node-shine")
+      .attr("r", (d) => (d.node_size || 60) / 4)
+      .attr("cx", -5)
+      .attr("cy", -5)
+      .attr("fill", "white")
+      .attr("opacity", 0.3);
 
     // Ajouter labels
     nodes
       .append("text")
+      .attr("class", "node-label")
       .attr("text-anchor", "middle")
       .attr("dy", (d) => (d.node_size || 60) / 2 + 15)
       .attr("font-size", "12px")
       .attr("fill", "#333")
+      .style("opacity", (d) => d.inactive ? 0.5 : 1)
       .text((d) => d.title);
 
     this.nodeElements = nodes;
@@ -282,8 +389,8 @@ class GraphManager {
       {
         width: this.width,
         height: this.height,
-        organicMode: this.settings.organicMode,
-        clusterStrength: this.settings.clusterStrength,
+        organicMode: this.config.organicMode,
+        clusterStrength: this.config.clusterStrength,
       }
     );
 
@@ -294,7 +401,7 @@ class GraphManager {
 
     // Quand la simulation se stabilise, mettre à jour les polygones
     this.simulation.on("end", () => {
-      if (this.settings.showPolygons) {
+      if (this.config.showPolygons) {
         updatePolygons(
           this.svg,
           this.nodes,
@@ -328,7 +435,7 @@ class GraphManager {
 
     // Mettre à jour les polygones périodiquement
     if (
-      this.settings.showPolygons &&
+      this.config.showPolygons &&
       this.simulation.alpha() > 0.1 &&
       Math.random() < 0.1
     ) {
@@ -362,7 +469,7 @@ class GraphManager {
         d.fy = null;
 
         // Mettre à jour les polygones après le drag
-        if (this.settings.showPolygons) {
+        if (this.config.showPolygons) {
           setTimeout(() => {
             updatePolygons(
               this.svg,
@@ -388,6 +495,9 @@ class GraphManager {
     // Effets de survol personnalisés par nœud
     this.applyPerNodeHoverEffects();
 
+    // Gestion des clics
+    this.handleNodeClick();
+
     // Effets continus (pulse/glow)
     this.applyContinuousEffects();
   }
@@ -396,37 +506,128 @@ class GraphManager {
    * Appliquer les animations d'entrée personnalisées par nœud
    */
   applyPerNodeAnimations() {
+    // Si les animations sont désactivées globalement, ne rien faire
+    if (!this.config.animationEnabled) {
+      this.nodeElements.style("opacity", 1);
+      return;
+    }
+
     this.nodeElements.each((d, i, nodes) => {
       const node = d3.select(nodes[i]);
-      const circle = node.select("circle");
-      const text = node.select("text");
+      const circle = node.select(".node-circle");
+      const text = node.select(".node-label");
 
-      // Récupérer les paramètres d'animation personnalisés
+      // Récupérer les paramètres d'animation (node ou global)
       const animation = d.animation || {};
-      const duration = animation.duration || this.settings.animationDuration;
-      const delay = animation.delay || i * 50; // Délai par défaut échelonné
-      const easing = this.getEasingFunction(animation.easing || "ease-out");
+      const animationType = animation.type || this.config.animationType || 'slide';
+      const duration = animation.duration || this.config.animationDuration;
+      const delay = animation.delay || (i * (this.config.staggerDelay || 50));
+      
+      // Choisir l'easing selon le type d'animation
+      let easingName = animation.easing || this.config.animationEasing || "ease-out";
+      if (!animation.easing && animationType === 'bounce') {
+        easingName = 'bounce'; // Force bounce easing pour le type bounce
+      }
+      const easing = this.getEasingFunction(easingName);
+      
       const enterFrom = animation.enterFrom || "center";
 
-      // Définir l'état initial selon la direction
-      const initialState = this.getInitialState(enterFrom, d);
+      // Définir l'état initial selon le type d'animation
+      const initialState = this.getInitialStateByType(animationType, enterFrom, d);
       
       // Appliquer l'état initial
       node.attr("transform", initialState.transform)
           .style("opacity", 0);
+      
+      if (circle.size() > 0) {
+        circle.attr("r", initialState.scale ? 0 : circle.attr("r"));
+      }
 
       // Animation d'entrée
+      const targetX = d.x || this.width / 2;
+      const targetY = d.y || this.height / 2;
+      
       node.transition()
           .delay(delay)
           .duration(duration)
           .ease(easing)
-          .attr("transform", `translate(${d.x || this.width / 2}, ${d.y || this.height / 2})`)
+          .attr("transform", `translate(${targetX}, ${targetY})`)
           .style("opacity", 1);
+      
+      // Animation spécifique du cercle pour certains types
+      if (circle.size() > 0 && initialState.scale) {
+        const targetRadius = parseFloat(circle.attr("data-r") || 30);
+        circle.transition()
+            .delay(delay)
+            .duration(duration)
+            .ease(easing)
+            .attr("r", targetRadius);
+      }
     });
   }
 
   /**
    * Obtenir l'état initial selon la direction d'entrée
+   */
+  /**
+   * Déterminer l'état initial d'un nœud selon le type d'animation et la direction
+   * @param {string} animationType - Type d'animation : fade, slide, bounce, zoom
+   * @param {string} enterFrom - Direction d'entrée : top, bottom, left, right, center
+   * @param {object} nodeData - Données du nœud (avec d.x, d.y)
+   * @returns {object} État initial {transform, scale}
+   */
+  getInitialStateByType(animationType, enterFrom, nodeData) {
+    const targetX = nodeData.x || this.width / 2;
+    const targetY = nodeData.y || this.height / 2;
+    
+    let startX = targetX;
+    let startY = targetY;
+    let scale = false; // Indique si on doit animer le scale
+    
+    switch (animationType) {
+      case 'fade':
+        // Fade in place : pas de mouvement, juste l'opacité
+        return { transform: `translate(${targetX}, ${targetY})`, scale: false };
+        
+      case 'slide':
+        // Glissement depuis un bord
+        const offset = Math.max(this.width, this.height) * 0.3;
+        switch (enterFrom) {
+          case 'top':
+            startY = -offset;
+            break;
+          case 'bottom':
+            startY = this.height + offset;
+            break;
+          case 'left':
+            startX = -offset;
+            break;
+          case 'right':
+            startX = this.width + offset;
+            break;
+          default: // center ou random
+            const directions = ['top', 'bottom', 'left', 'right'];
+            const randomDir = directions[Math.floor(Math.random() * directions.length)];
+            return this.getInitialStateByType('slide', randomDir, nodeData);
+        }
+        return { transform: `translate(${startX}, ${startY})`, scale: false };
+        
+      case 'bounce':
+        // Bounce : commence au centre avec scale 0, puis bounce sur la position
+        return { transform: `translate(${targetX}, ${targetY})`, scale: true };
+        
+      case 'zoom':
+        // Zoom : apparait sur place avec scale 0
+        return { transform: `translate(${targetX}, ${targetY})`, scale: true };
+        
+      default:
+        // Fallback vers slide/center
+        return { transform: `translate(${targetX}, ${targetY})`, scale: false };
+    }
+  }
+
+  /**
+   * [DEPRECATED] Ancienne méthode - utiliser getInitialStateByType
    */
   getInitialState(enterFrom, nodeData) {
     const x = nodeData.x || this.width / 2;
@@ -472,50 +673,172 @@ class GraphManager {
    * Appliquer les effets de survol personnalisés par nœud
    */
   applyPerNodeHoverEffects() {
+    // Si hover désactivé globalement, ne rien faire
+    if (!this.config.hoverEnabled) {
+      return;
+    }
+
     this.nodeElements
-      .on("mouseenter", function(event, d) {
-        const node = d3.select(this);
-        const circle = node.select("circle");
-        const text = node.select("text");
+      .on("mouseenter", (event, d) => {
+        const node = d3.select(event.currentTarget);
+        const circle = node.select(".node-circle");
+        const halo = node.select(".node-halo");
+        const text = node.select(".node-label");
 
-        // Récupérer les paramètres de survol
+        // Récupérer les paramètres de survol (node ou global)
         const hover = d.hover || {};
-        const scale = hover.scale || 1.15;
-        const pulse = hover.pulse || false;
-        const glow = hover.glow || false;
+        const scale = hover.scale || this.config.hoverScale || 1.15;
+        const hoverEffect = hover.effect || this.config.hoverEffect || 'scale';
+        const glowEnabled = hover.glow !== undefined ? hover.glow : (hoverEffect === 'glow' || hoverEffect === 'multi');
 
-        // Appliquer l'échelle
+        // Effet d'activation - retirer l'état inactif
+        node.classed("node-inactive", false);
+
+        // Animer le cercle principal
         circle.transition()
           .duration(200)
-          .attr("r", (d.node_size || 60) / 2 * scale);
+          .attr("r", (d.node_size || 60) / 2 * scale)
+          .style("opacity", 1);
 
+        // Effet de halo (intensité selon le preset)
+        const haloWidth = scale > 1.2 ? 4 : 3; // Plus fort pour Rich preset
+        halo.transition()
+          .duration(300)
+          .attr("stroke-width", haloWidth)
+          .attr("stroke-opacity", 0.5);
+
+        // Animer le label
         text.transition()
           .duration(200)
           .style("font-weight", "bold")
-          .style("font-size", "14px");
+          .style("font-size", scale > 1.2 ? "15px" : "14px")
+          .style("opacity", 1);
 
         // Ajouter l'effet glow si activé
-        if (glow) {
+        if (glowEnabled) {
           circle.attr("filter", "url(#node-glow)");
         }
+
+        // Effet de brillance renforcé
+        node.select(".node-shine")
+          .transition()
+          .duration(200)
+          .attr("opacity", scale > 1.2 ? 0.7 : 0.6);
+
+        // Élever le node au-dessus des autres (z-index simulation)
+        try {
+          const nodeElement = node.node();
+          const parent = nodeElement ? nodeElement.parentNode : null;
+          if (parent && nodeElement) {
+            parent.appendChild(nodeElement);
+          }
+        } catch (e) {
+          console.warn('Could not reorder node for z-index:', e);
+        }
       })
-      .on("mouseleave", function(event, d) {
-        const node = d3.select(this);
-        const circle = node.select("circle");
-        const text = node.select("text");
+      .on("mouseleave", (event, d) => {
+        const node = d3.select(event.currentTarget);
+        const circle = node.select(".node-circle");
+        const halo = node.select(".node-halo");
+        const text = node.select(".node-label");
+
+        // Restaurer état inactif si nécessaire (vérification plus robuste)
+        const isInactive = d.inactive || d.inactiveByDefault || false;
+        if (isInactive) {
+          node.classed("node-inactive", true);
+        }
 
         // Retour à l'état normal
+        const defaultSize = (d.node_size || 60) / 2;
         circle.transition()
           .duration(200)
-          .attr("r", (d.node_size || 60) / 2);
+          .attr("r", defaultSize)
+          .style("opacity", isInactive ? 0.4 : 1);
 
+        // Retirer le halo
+        halo.transition()
+          .duration(300)
+          .attr("stroke-width", 0)
+          .attr("stroke-opacity", 0);
+
+        // Retour label normal
         text.transition()
           .duration(200)
           .style("font-weight", "normal")
-          .style("font-size", "12px");
+          .style("font-size", "12px")
+          .style("opacity", isInactive ? 0.5 : 1);
 
         // Retirer le glow
         circle.attr("filter", null);
+
+        // Brillance normale
+        node.select(".node-shine")
+          .transition()
+          .duration(200)
+          .attr("opacity", 0.3);
+      });
+  }
+
+  /**
+   * Gérer les clics sur les nodes
+   */
+  handleNodeClick() {
+    this.nodeElements
+      .on("click", function(event, d) {
+        // Empêcher la propagation de l'événement
+        event.stopPropagation();
+        
+        // Effet de clic - onde de choc
+        const node = d3.select(this);
+        const circle = node.select(".node-circle");
+        
+        // Taille du node
+        const nodeSize = d.node_size || 60;
+        const nodeRadius = nodeSize / 2;
+        
+        // Créer une onde de choc temporaire
+        const shockwave = node.insert("circle", ":first-child")
+          .attr("class", "node-shockwave")
+          .attr("r", nodeRadius)
+          .attr("fill", "none")
+          .attr("stroke", d.node_color || "#3498db")
+          .attr("stroke-width", 3)
+          .attr("stroke-opacity", 0.8);
+
+        // Animer l'onde de choc
+        shockwave.transition()
+          .duration(600)
+          .ease(d3.easeQuadOut)
+          .attr("r", nodeSize * 1.5)
+          .attr("stroke-opacity", 0)
+          .remove();
+
+        // Petit effet de rebond sur le node
+        circle.transition()
+          .duration(100)
+          .ease(d3.easeBackOut)
+          .attr("r", nodeRadius * 1.1)
+          .transition()
+          .duration(100)
+          .ease(d3.easeBackIn)
+          .attr("r", nodeRadius);
+
+        // Toggle état actif/inactif avec synchronisation
+        const wasInactive = d.inactive || d.inactiveByDefault || false;
+        d.inactive = !wasInactive;
+        d.inactiveByDefault = d.inactive;
+        
+        node.classed("node-inactive", d.inactive);
+        
+        // Mettre à jour l'opacité
+        circle.transition()
+          .duration(300)
+          .style("opacity", d.inactive ? 0.4 : 1);
+        
+        node.select(".node-label")
+          .transition()
+          .duration(300)
+          .style("opacity", d.inactive ? 0.5 : 1);
       });
   }
 
@@ -528,10 +851,11 @@ class GraphManager {
 
     this.nodeElements.each((d, i, nodes) => {
       const node = d3.select(nodes[i]);
-      const circle = node.select("circle");
+      const circle = node.select(".node-circle");
+      const halo = node.select(".node-halo");
       const hover = d.hover || {};
 
-      // Effet pulse continu
+      // Effet pulse continu pour nodes avec pulse activé
       if (hover.pulse) {
         this.applyPulseEffect(circle, d);
       }
@@ -540,7 +864,49 @@ class GraphManager {
       if (hover.glow) {
         circle.attr("filter", "url(#node-glow)");
       }
+
+      // Pulsation subtile pour les nodes inactifs
+      if (d.inactive) {
+        this.applyInactivePulse(circle, halo, d);
+      }
     });
+  }
+
+  /**
+   * Appliquer une pulsation subtile pour les nodes inactifs
+   */
+  applyInactivePulse(circle, halo, nodeData) {
+    const baseRadius = (nodeData.node_size || 60) / 2;
+    const pulseRadius = baseRadius * 1.05;
+
+    const pulse = () => {
+      circle.transition()
+        .duration(2000)
+        .ease(d3.easeSinInOut)
+        .style("opacity", 0.3)
+        .transition()
+        .duration(2000)
+        .ease(d3.easeSinInOut)
+        .style("opacity", 0.4)
+        .on("end", pulse);
+    };
+
+    const haloPulse = () => {
+      halo.transition()
+        .duration(2000)
+        .ease(d3.easeSinInOut)
+        .attr("stroke-width", 2)
+        .attr("stroke-opacity", 0.2)
+        .transition()
+        .duration(2000)
+        .ease(d3.easeSinInOut)
+        .attr("stroke-width", 0)
+        .attr("stroke-opacity", 0)
+        .on("end", haloPulse);
+    };
+
+    pulse();
+    haloPulse();
   }
 
   /**
@@ -606,9 +972,9 @@ class GraphManager {
    */
   changeAnimation(animationType) {
     if (ANIMATION_TYPES[animationType.toUpperCase()]) {
-      this.settings.animationType = animationType;
+      this.config.animationType = animationType;
       runAnimation(animationType, this.nodeElements, {
-        duration: this.settings.animationDuration,
+        duration: this.config.animationDuration,
         centerX: this.width / 2,
         centerY: this.height / 2,
       });
@@ -619,7 +985,7 @@ class GraphManager {
    * Toggle la visibilité des polygones
    */
   togglePolygons(visible) {
-    this.settings.showPolygons = visible;
+    this.config.showPolygons = visible;
 
     if (visible) {
       this.drawPolygons();

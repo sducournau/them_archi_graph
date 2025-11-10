@@ -1295,8 +1295,12 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
     activateNodeGif(nodeElement, d);
 
     // Agrandir l'image du nœud cliqué
-    nodeElement
-      .select(".node-image")
+    const imageElement = nodeElement.select(".node-image");
+    
+    // Cancel any ongoing pulse effect transition
+    imageElement.interrupt();
+    
+    imageElement
       .transition()
       .duration(400)
       .attr("width", (d.node_size || 60) * 1.5)
@@ -1349,14 +1353,23 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
         // Deactivate GIF animation when node is deselected
         deactivateNodeGif(nodeElement, selectedNode);
 
-        nodeElement
-          .select(".node-image")
+        const imageElement = nodeElement.select(".node-image");
+        
+        // Cancel any ongoing transitions
+        imageElement.interrupt();
+        
+        imageElement
           .transition()
           .duration(400)
           .attr("width", selectedNode.node_size || 60)
           .attr("height", selectedNode.node_size || 60)
           .attr("x", -(selectedNode.node_size || 60) / 2)
-          .attr("y", -(selectedNode.node_size || 60) / 2);
+          .attr("y", -(selectedNode.node_size || 60) / 2)
+          .on("end", () => {
+            // Restart pulse effect after transition if enabled
+            const svg = d3.select(svgRef.current);
+            applyContinuousEffects(nodeElement, svg);
+          });
       }
     }
 

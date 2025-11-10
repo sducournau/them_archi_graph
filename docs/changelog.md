@@ -1,5 +1,128 @@
 # Journal des Modifications
 
+## Version 1.3.1 - 10 Novembre 2025
+
+### � Enhancement : Système d'Effets Visuels Avancés pour les Nodes du Graphe
+
+#### Ajouté
+
+- **GraphManager.js** : Système complet d'effets visuels multi-couches
+  - **Structure SVG 4 couches** : Chaque node comprend maintenant :
+    - Halo (outer glow) : Cercle extérieur pour l'effet de lueur
+    - Circle (main) : Cercle principal avec la couleur du node
+    - Shine (inner highlight) : Brillance intérieure pour effet 3D
+    - Label (text) : Étiquette textuelle
+  
+  - **Gestion des états** :
+    - État actif (défaut) : Opacité pleine, couleurs normales, interactif
+    - État inactif : Opacité réduite (0.3-0.4), filtre grayscale, animation de respiration
+    - État hover : Agrandi, z-index élevé, halo visible
+  
+  - **Effets de survol** (mouseenter/mouseleave) :
+    - Animation du halo (stroke-width 0 → 2px, opacity → 0.4)
+    - Agrandissement du cercle selon `hover_scale` personnalisé
+    - Augmentation du poids de police du label (→ 600)
+    - Élévation visuelle (simulation z-index via réordonnancement DOM)
+  
+  - **Interactions au clic** :
+    - Toggle état actif/inactif avec animation de rebond
+    - Effet shockwave (onde de choc) : cercle qui s'étend de 30px à 90px en 600ms
+    - Mise à jour du modèle de données et des classes CSS
+  
+  - **Animation de pulsation pour nodes inactifs** :
+    - Cycle de respiration de 2 secondes
+    - Pulse d'opacité du cercle : 0.3 ↔ 0.4
+    - Pulse du halo : stroke 0 ↔ 2px avec opacity 0.2
+    - Animation continue et synchronisée
+  
+  - **Méthodes ajoutées** :
+    - `applyInactivePulse()` : Nouvelle méthode pour l'effet de respiration
+    - `createShockwave()` : Génération de l'onde de choc au clic
+    - Réécriture complète de `applyPerNodeHoverEffects()` (+160 lignes)
+    - Amélioration de `drawNodes()` avec structure 4 couches
+    - Modification de `applyContinuousEffects()` pour intégrer le pulse
+
+- **graph-effects.css** : Nouveau fichier de styles pour les effets visuels
+  - Classes d'état : `.node-inactive`, `.node-active`, `.node-featured`
+  - Animations keyframes :
+    - `@keyframes shockwave` : Expansion de l'onde de choc
+    - `@keyframes node-breathe` : Respiration des nodes inactifs
+    - `@keyframes halo-pulse` : Pulsation du halo pour nodes featured
+    - `@keyframes link-pulse` : Pulsation des liens connectés au survol
+  - Styles responsive (mobile, print, high contrast)
+  - Support accessibilité (reduced motion, focus states)
+  - Transitions fluides pour tous les éléments
+
+- **functions.php** : Enregistrement du nouveau fichier CSS
+  - Ajout de `wp_enqueue_style('archi-graph-effects')`
+
+#### Documentation
+
+- **GRAPH-VISUAL-EFFECTS-SYSTEM.md** : Documentation complète du système
+  - Vue d'ensemble des 6 catégories d'effets
+  - Exemples de code pour chaque fonctionnalité
+  - Guide de personnalisation
+  - Checklist de test (visuel, état, performance, accessibilité)
+  - Tableau des paramètres WordPress utilisés
+  - Suggestions d'améliorations futures
+
+### �🎬 Correction : Paramètres d'Effet des Nodes du Graphe
+
+#### Corrigé
+
+- **GraphManager.js** : Fix de la transformation des données pour les effets personnalisés
+  - **Problème** : Les paramètres d'animation et de hover configurés dans l'éditeur WordPress n'étaient pas appliqués aux nodes
+  - **Cause Part 1** : Incompatibilité de structure entre l'API REST (données plates) et GraphManager (structure imbriquée)
+  - **Solution Part 1** : Transformation des données dans `loadData()` pour restructurer les paramètres en objets `animation` et `hover`
+  - **Cause Part 2** : Les nouveaux paramètres d'animation n'étaient pas listés dans le registry de métadonnées
+  - **Solution Part 2** : Ajout de 8 paramètres manquants dans `archi_get_graph_meta_keys()` et `archi_get_graph_meta_defaults()`
+
+- **graph-meta-registry.php** : Ajout des paramètres d'animation manquants
+  - Fonction `archi_get_graph_meta_keys()` : Ajout de 8 clés dans la catégorie 'behavior'
+    - `_archi_animation_type` (Type d'animation : fadeIn, slideIn, etc.)
+    - `_archi_animation_duration` (Durée en millisecondes)
+    - `_archi_animation_delay` (Délai avant animation)
+    - `_archi_animation_easing` (Fonction d'easing : ease-out, bounce, etc.)
+    - `_archi_enter_from` (Direction d'entrée : top, bottom, left, right, center)
+    - `_archi_hover_scale` (Facteur d'agrandissement au survol) **← CRITIQUE**
+    - `_archi_pulse_effect` (Effet de pulsation continue)
+    - `_archi_glow_effect` (Effet de lueur)
+  - Fonction `archi_get_graph_meta_defaults()` : Ajout des valeurs par défaut correspondantes
+  
+  **Impact** : L'API REST récupère maintenant correctement tous les paramètres d'effet pour chaque node
+
+- **Tous les paramètres d'effet fonctionnent maintenant correctement** :
+  - ✅ Types d'animation (fadeIn, slideIn, etc.)
+  - ✅ Durée et délai d'animation personnalisés
+  - ✅ Direction d'entrée (top, bottom, left, right, center)
+  - ✅ Fonction d'easing (ease-out, bounce, elastic, etc.)
+  - ✅ **Facteur d'agrandissement au survol personnalisé par node** (hover scale)
+  - ✅ Effet de pulsation continue (pulse)
+  - ✅ Effet de lueur (glow)
+
+#### Ajouté
+
+- **Documentation** : Guide complet de la correction
+  - `docs/fixes/GRAPH-EFFECTS-FIX-2025-11-10.md` : Analyse technique détaillée
+  - `docs/fixes/GRAPH-EFFECTS-TESTING-GUIDE.md` : 8 tests manuels + tests console
+  - `docs/fixes/GRAPH-EFFECTS-FIX-SUMMARY.md` : Résumé rapide du fix
+  
+- **Tests** : Tests unitaires Jest pour la transformation des données
+  - `assets/js/__tests__/graph-effects-transform.test.js`
+  - Tests de transformation animation (5 paramètres)
+  - Tests de transformation hover (3 paramètres)
+  - Tests des valeurs par défaut
+  - Tests de préservation des propriétés originales
+
+#### Technique
+
+- **Méthode modifiée** : `GraphManager.loadData()`
+- **Lignes ajoutées** : 18 lignes de transformation (lignes 94-111)
+- **Impact performance** : O(n) au chargement uniquement, aucun impact sur le rendu
+- **Compatibilité** : Backward compatible, aucune modification de l'API REST nécessaire
+
+---
+
 ## Version 1.3.0 - 10 Novembre 2025
 
 ### 🎨 Consolidation et Harmonisation des Templates d'Articles

@@ -2,7 +2,7 @@
 
 ## 📋 Vue d'ensemble
 
-![Theme Version](https://img.shields.io/badge/version-1.2.0-blue)
+![Theme Version](https://img.shields.io/badge/version-1.3.1-blue)
 ![WordPress](https://img.shields.io/badge/WordPress-5.0%2B-green)
 ![PHP](https://img.shields.io/badge/PHP-7.4%2B-purple)
 ![License](https://img.shields.io/badge/license-GPL%20v3-orange)
@@ -12,6 +12,7 @@ Un thème WordPress interactif avec une visualisation de graphique propulsée pa
 ## ✨ Fonctionnalités
 
 - **Visualisation de Graphique Interactif** - Graphique force-directed D3.js avec drag, zoom et panoramique
+- **🎨 NOUVEAU : Effets Visuels Avancés** - Système complet d'animations et d'interactions pour les nodes
 - **Relations Intelligentes** - Les articles se connectent selon les catégories, tags et similarité de contenu
 - **Types de Publication Personnalisés** - Projets architecturaux et illustrations avec champs spécialisés
 - **Blocs Gutenberg Complets** - 78+ blocs disponibles (60 WordPress Core + 18 personnalisés)
@@ -20,6 +21,15 @@ Un thème WordPress interactif avec une visualisation de graphique propulsée pa
 - **Outils d'Administration** - Panel de diagnostic et générateur de contenu de test
 - **Design Responsive** - Optimisé pour mobile avec gestes tactiles
 - **Performance** - Chargement différé, mise en cache et requêtes optimisées
+
+### 🎨 Nouveautés v1.3.1 - Effets Visuels du Graphe
+
+- ✅ **Structure multi-couches** - 4 éléments SVG par node (halo, circle, shine, label)
+- ✅ **Effets de survol** - Halo lumineux, agrandissement personnalisé, z-index elevation
+- ✅ **Interactions au clic** - Shockwave effect, toggle actif/inactif, animation de rebond
+- ✅ **Animation de respiration** - Pulsation subtile pour les nodes inactifs
+- ✅ **Gestion des états** - Active, inactive, hover avec transitions fluides
+- ✅ **Accessibilité** - Support reduced motion, high contrast, keyboard navigation
 
 ### 🆕 Nouveautés v1.2.0
 

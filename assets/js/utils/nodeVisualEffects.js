@@ -86,6 +86,16 @@ export function applyPulseEffect(imageElement, nodeData) {
   const pulseSize = baseSize * 1.1;
   const duration = nodeData.animation_duration || 1000;
   
+  // Cancel any existing transitions first
+  imageElement.interrupt();
+  
+  // Reset to base size before starting
+  imageElement
+    .attr('width', baseSize)
+    .attr('height', baseSize)
+    .attr('x', -baseSize / 2)
+    .attr('y', -baseSize / 2);
+  
   const pulse = () => {
     imageElement
       .transition()
@@ -137,13 +147,17 @@ export function applyContinuousEffects(nodeElements, svg) {
     const node = d3.select(this);
     const imageElement = node.select('.node-image');
     
+    // Check both nested (d.hover.pulse) and flat (d.pulse_effect) structures for backward compatibility
+    const pulseEnabled = (d.hover?.pulse === true) || (d.pulse_effect === true || d.pulse_effect === '1');
+    const glowEnabled = (d.hover?.glow === true) || (d.glow_effect === true || d.glow_effect === '1');
+    
     // Apply pulse effect if enabled
-    if (d.pulse_effect === true || d.pulse_effect === '1') {
+    if (pulseEnabled) {
       applyPulseEffect(imageElement, d);
     }
     
     // Apply glow effect if enabled
-    if (d.glow_effect === true || d.glow_effect === '1') {
+    if (glowEnabled) {
       applyGlowEffect(imageElement);
     }
   });
@@ -281,6 +295,11 @@ export function applyEntranceAnimation(nodeElement, nodeData, centerPosition) {
 export function getEffectConfiguration(nodeData) {
   const level = nodeData.animation_level || 'normal';
   
+  // Check both nested and flat structures for backward compatibility
+  const pulseEnabled = (nodeData.hover?.pulse === true) || (nodeData.pulse_effect === true || nodeData.pulse_effect === '1');
+  const glowEnabled = (nodeData.hover?.glow === true) || (nodeData.glow_effect === true || nodeData.glow_effect === '1');
+  const hoverScale = nodeData.hover?.scale || nodeData.hover_scale || 1.15;
+  
   const configs = {
     none: {
       enablePulse: false,
@@ -295,10 +314,10 @@ export function getEffectConfiguration(nodeData) {
       hoverScale: 1.05
     },
     normal: {
-      enablePulse: nodeData.pulse_effect === true || nodeData.pulse_effect === '1',
-      enableGlow: nodeData.glow_effect === true || nodeData.glow_effect === '1',
+      enablePulse: pulseEnabled,
+      enableGlow: glowEnabled,
       hoverDuration: 200,
-      hoverScale: nodeData.hover_scale || 1.15
+      hoverScale: hoverScale
     },
     intense: {
       enablePulse: true,

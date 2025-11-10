@@ -3,6 +3,7 @@ const path = require("path");
 module.exports = [
   // Configuration pour l'application principale (graph)
   {
+    mode: process.env.NODE_ENV || 'production',
     entry: {
       app: "./assets/js/app.js",
       admin: "./assets/js/admin.js",
@@ -10,6 +11,7 @@ module.exports = [
     output: {
       path: path.resolve(__dirname, "dist/js"),
       filename: "[name].bundle.js",
+      clean: false, // Ne pas supprimer les autres bundles
     },
     module: {
       rules: [
@@ -19,7 +21,15 @@ module.exports = [
           use: {
             loader: "babel-loader",
             options: {
-              presets: ["@babel/preset-env", "@babel/preset-react"],
+              presets: [
+                ["@babel/preset-env", {
+                  targets: "> 0.25%, not dead",
+                  modules: false
+                }],
+                ["@babel/preset-react", {
+                  runtime: "automatic"
+                }]
+              ],
             },
           },
         },
@@ -47,9 +57,16 @@ module.exports = [
             test: /[\\/]node_modules[\\/](react|react-dom|d3)[\\/]/,
             name: "vendors",
             chunks: "all",
+            priority: 10,
           },
         },
       },
+      runtimeChunk: false,
+    },
+    performance: {
+      hints: false,
+      maxEntrypointSize: 512000,
+      maxAssetSize: 512000,
     },
   },
   // Configuration pour les blocks Gutenberg

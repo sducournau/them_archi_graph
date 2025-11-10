@@ -140,7 +140,7 @@ function archi_register_illustration_post_type() {
         'rest_base'             => 'illustrations',
         'menu_position'         => 6,
         'menu_icon'             => 'dashicons-images-alt2',
-        'supports'              => ['title', 'editor', 'thumbnail', 'excerpt', 'custom-fields', 'author'],
+        'supports'              => ['title', 'editor', 'thumbnail', 'excerpt', 'custom-fields', 'author', 'comments'],
         'has_archive'           => true,
         'rewrite'               => ['slug' => 'illustration', 'with_front' => false],
         'capability_type'       => 'post',

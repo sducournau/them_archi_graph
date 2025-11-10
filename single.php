@@ -69,6 +69,16 @@ $container_class = 'archi-single-container archi-single-' . esc_attr($post_type)
                 archi_display_related_posts(get_the_ID(), 3); 
                 ?>
                 
+                <?php 
+                /**
+                 * Affichage des commentaires WordPress
+                 * Uniquement pour les posts, projets et illustrations (pas pour le livre d'or)
+                 */
+                if (get_post_type() !== 'archi_guestbook' && (comments_open() || get_comments_number())) {
+                    comments_template();
+                }
+                ?>
+                
             </div><!-- .archi-content-section -->
             
         </article>

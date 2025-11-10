@@ -436,6 +436,324 @@
   .archi-image-block.display-mode-zoom:hover .image-block {
     transform: none;
   }
+  
+  /* Désactiver Ken Burns */
+  .archi-image-block.ken-burns-enabled .image-block {
+    animation: none !important;
+  }
+  
+  /* Désactiver animations scroll */
+  .archi-image-block.scroll-animation-enabled {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* ==========================================================================
+   Nouveaux Effets - Ken Burns
+   ========================================================================== */
+
+@keyframes kenBurnsZoomIn {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.2);
+  }
+}
+
+@keyframes kenBurnsZoomOut {
+  0% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes kenBurnsPanLeft {
+  0% {
+    transform: translateX(0) scale(1.1);
+  }
+  100% {
+    transform: translateX(-5%) scale(1.1);
+  }
+}
+
+@keyframes kenBurnsPanRight {
+  0% {
+    transform: translateX(-5%) scale(1.1);
+  }
+  100% {
+    transform: translateX(0) scale(1.1);
+  }
+}
+
+.archi-image-block.ken-burns-enabled .image-block {
+  will-change: transform;
+}
+
+.archi-image-block.ken-burns-zoom-in .image-block {
+  animation: kenBurnsZoomIn var(--ken-burns-duration, 20s) ease-in-out infinite alternate;
+}
+
+.archi-image-block.ken-burns-zoom-out .image-block {
+  animation: kenBurnsZoomOut var(--ken-burns-duration, 20s) ease-in-out infinite alternate;
+}
+
+.archi-image-block.ken-burns-pan-left .image-block {
+  animation: kenBurnsPanLeft var(--ken-burns-duration, 20s) ease-in-out infinite alternate;
+}
+
+.archi-image-block.ken-burns-pan-right .image-block {
+  animation: kenBurnsPanRight var(--ken-burns-duration, 20s) ease-in-out infinite alternate;
+}
+
+/* ==========================================================================
+   Animations au scroll (Intersection Observer)
+   ========================================================================== */
+
+.archi-image-block.scroll-animation-enabled {
+  opacity: 0;
+  transition-property: opacity, transform;
+  transition-timing-function: ease-out;
+}
+
+.archi-image-block.scroll-animation-enabled.animated {
+  opacity: 1;
+}
+
+/* Fade */
+.archi-image-block.scroll-animation-fade:not(.animated) {
+  opacity: 0;
+}
+
+/* Slide up */
+.archi-image-block.scroll-animation-slide-up:not(.animated) {
+  transform: translateY(50px);
+}
+
+/* Slide down */
+.archi-image-block.scroll-animation-slide-down:not(.animated) {
+  transform: translateY(-50px);
+}
+
+/* Slide left */
+.archi-image-block.scroll-animation-slide-left:not(.animated) {
+  transform: translateX(50px);
+}
+
+/* Slide right */
+.archi-image-block.scroll-animation-slide-right:not(.animated) {
+  transform: translateX(-50px);
+}
+
+/* Zoom */
+.archi-image-block.scroll-animation-zoom:not(.animated) {
+  transform: scale(0.8);
+}
+
+/* ==========================================================================
+   Effet 3D Tilt au survol
+   ========================================================================== */
+
+.archi-image-block.tilt-enabled {
+  perspective: 1000px;
+}
+
+.archi-image-block.tilt-enabled .image-block-container {
+  transform-style: preserve-3d;
+  transition: transform 0.5s ease;
+}
+
+.archi-image-block.tilt-enabled:hover .image-block-container {
+  transform: rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+}
+
+/* ==========================================================================
+   Lightbox
+   ========================================================================== */
+
+.archi-image-block.lightbox-enabled {
+  cursor: pointer;
+  position: relative;
+}
+
+.archi-image-block.lightbox-enabled::after {
+  content: "🔍";
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  padding: 10px 15px;
+  border-radius: 50%;
+  font-size: 20px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 100;
+}
+
+.archi-image-block.lightbox-enabled:hover::after {
+  opacity: 1;
+}
+
+/* Modal Lightbox */
+.archi-lightbox-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.95);
+  z-index: 999999;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.archi-lightbox-modal.active {
+  display: flex;
+}
+
+.archi-lightbox-content {
+  max-width: 90vw;
+  max-height: 90vh;
+  position: relative;
+}
+
+.archi-lightbox-content img {
+  max-width: 100%;
+  max-height: 90vh;
+  object-fit: contain;
+  display: block;
+}
+
+.archi-lightbox-caption {
+  color: #fff;
+  text-align: center;
+  margin-top: 20px;
+  font-size: 16px;
+}
+
+.archi-lightbox-close {
+  position: absolute;
+  top: -40px;
+  right: 0;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 40px;
+  cursor: pointer;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.archi-lightbox-close:hover {
+  transform: scale(1.2);
+}
+
+/* ==========================================================================
+   Bordures et Ombres personnalisables
+   ========================================================================== */
+
+.archi-image-block.border-enabled .image-block-container {
+  border-style: var(--border-style, solid);
+  border-width: var(--border-width, 2px);
+  border-color: var(--border-color, #ffffff);
+  border-radius: var(--border-radius, 0px);
+}
+
+.archi-image-block.shadow-enabled .image-block-container {
+  box-shadow: var(--shadow-x, 0px) var(--shadow-y, 10px) var(--shadow-blur, 30px) var(--shadow-color, rgba(0,0,0,0.3));
+}
+
+/* ==========================================================================
+   Filtres CSS et Duotone
+   ========================================================================== */
+
+.archi-image-block.filter-enabled .image-block {
+  filter: grayscale(var(--filter-grayscale, 0%)) 
+          sepia(var(--filter-sepia, 0%)) 
+          blur(var(--filter-blur, 0px)) 
+          brightness(var(--filter-brightness, 100%)) 
+          contrast(var(--filter-contrast, 100%)) 
+          saturate(var(--filter-saturate, 100%)) 
+          hue-rotate(var(--filter-hue-rotate, 0deg));
+}
+
+.archi-image-block.duotone-enabled .image-block {
+  position: relative;
+}
+
+.archi-image-block.duotone-enabled .image-block::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to bottom right,
+    var(--duotone-color-1, #000000),
+    var(--duotone-color-2, #ffffff)
+  );
+  mix-blend-mode: multiply;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.archi-image-block .image-block {
+  mix-blend-mode: var(--blend-mode, normal);
+}
+
+/* ==========================================================================
+   Responsive Design - Nouveaux effets
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  /* Simplifier effets sur mobile */
+  .archi-image-block.ken-burns-enabled .image-block {
+    animation-duration: calc(var(--ken-burns-duration, 20s) * 1.5);
+  }
+  
+  .archi-image-block.tilt-enabled:hover .image-block-container {
+    transform: none;
+  }
+  
+  .archi-lightbox-content {
+    max-width: 95vw;
+    max-height: 95vh;
+  }
+  
+  .archi-lightbox-close {
+    top: 10px;
+    right: 10px;
+  }
+}
+
+/* ==========================================================================
+   Accessibilité
+   ========================================================================== */
+
+/* Respect de la préférence "reduced motion" */
+@media (prefers-reduced-motion: reduce) {
+  .archi-image-block.display-mode-parallax-scroll .image-block,
+  .archi-image-block.display-mode-zoom .image-block {
+    transition: none;
+    transform: none !important;
+  }
+
+  .archi-image-block.display-mode-zoom:hover .image-block {
+    transform: none;
+  }
 }
 
 /* ==========================================================================

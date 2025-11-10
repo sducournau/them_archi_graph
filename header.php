@@ -78,6 +78,16 @@
                             'title_li' => '',
                             'depth' => 1,
                         ]);
+                        
+                        // Add guestbook link if page exists
+                        $guestbook_page = get_page_by_path('livre-dor');
+                        if (!$guestbook_page) {
+                            $guestbook_page = get_page_by_path('guestbook');
+                        }
+                        if ($guestbook_page) {
+                            echo '<li class="guestbook-menu-item"><a href="' . esc_url(get_permalink($guestbook_page->ID)) . '">' . esc_html__('Livre d\'or', 'archi-graph') . '</a></li>';
+                        }
+                        
                         echo '</ul>';
                         echo '</div>';
                     }

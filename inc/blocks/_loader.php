@@ -198,6 +198,15 @@ class Archi_Blocks_Loader {
         );
         
         // ✅ Parallax script loaded from functions.php (assets/js/parallax.js)
+        
+        // JavaScript pour les effets du bloc image (lightbox, scroll animations, tilt)
+        wp_enqueue_script(
+            'archi-image-block-effects',
+            get_template_directory_uri() . '/assets/js/image-block-effects.js',
+            [],
+            ARCHI_THEME_VERSION,
+            true
+        );
     }
     
     /**

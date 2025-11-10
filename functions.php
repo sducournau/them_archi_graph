@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Constantes du thème
-define('ARCHI_THEME_VERSION', '1.0.5');
+define('ARCHI_THEME_VERSION', '1.0.6');
 define('ARCHI_THEME_DIR', get_template_directory());
 define('ARCHI_THEME_URI', get_template_directory_uri());
 
@@ -161,6 +161,14 @@ function archi_enqueue_scripts() {
     wp_enqueue_style(
         'archi-centered-content',
         ARCHI_THEME_URI . '/assets/css/centered-content.css',
+        [],
+        ARCHI_THEME_VERSION
+    );
+    
+    // Graph visual effects styles
+    wp_enqueue_style(
+        'archi-graph-effects',
+        ARCHI_THEME_URI . '/assets/css/graph-effects.css',
         [],
         ARCHI_THEME_VERSION
     );
@@ -338,15 +346,6 @@ function archi_enqueue_scripts() {
             true
         );
         
-        // ✅ NEW: Comments node generator utility (must load before app)
-        wp_enqueue_script(
-            'archi-comments-nodes',
-            ARCHI_THEME_URI . '/assets/js/utils/commentsNodeGenerator.js',
-            [],
-            ARCHI_THEME_VERSION,
-            true
-        );
-        
         // Home page enhancements script
         wp_enqueue_script(
             'archi-home-enhancements',
@@ -373,7 +372,8 @@ function archi_enqueue_scripts() {
             'apiUrl' => home_url('/wp-json/archi/v1/'),
             'nonce' => wp_create_nonce('wp_rest'),
             'themeUrl' => ARCHI_THEME_URI,
-            'ajaxUrl' => admin_url('admin-ajax.php')
+            'ajaxUrl' => admin_url('admin-ajax.php'),
+            'config' => archi_visual_get_frontend_config(), // Simplified configuration
         ]);
         
         // Éditeur de graphique pour les administrateurs
@@ -461,6 +461,10 @@ require_once ARCHI_THEME_DIR . '/inc/graph-editor-api.php';
 
 // Graph Meta Registration
 require_once ARCHI_THEME_DIR . '/inc/graph-meta-registry.php';
+
+// Graph Configuration (Simplified)
+require_once ARCHI_THEME_DIR . '/inc/graph-config.php';
+require_once ARCHI_THEME_DIR . '/inc/graph-settings-page.php';
 
 // Graph UI and functionality
 require_once ARCHI_THEME_DIR . '/inc/meta-boxes.php';

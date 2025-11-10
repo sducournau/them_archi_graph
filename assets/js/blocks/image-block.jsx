@@ -187,6 +187,156 @@ registerBlockType("archi-graph/image-block", {
       default: "#ffffff",
     },
 
+    // Filtres CSS
+    filterEnabled: {
+      type: "boolean",
+      default: false,
+    },
+    filterGrayscale: {
+      type: "number",
+      default: 0,
+    },
+    filterSepia: {
+      type: "number",
+      default: 0,
+    },
+    filterBlur: {
+      type: "number",
+      default: 0,
+    },
+    filterBrightness: {
+      type: "number",
+      default: 100,
+    },
+    filterContrast: {
+      type: "number",
+      default: 100,
+    },
+    filterSaturate: {
+      type: "number",
+      default: 100,
+    },
+    filterHueRotate: {
+      type: "number",
+      default: 0,
+    },
+
+    // Effet Duotone
+    duotoneEnabled: {
+      type: "boolean",
+      default: false,
+    },
+    duotoneColor1: {
+      type: "string",
+      default: "#000000",
+    },
+    duotoneColor2: {
+      type: "string",
+      default: "#ffffff",
+    },
+
+    // Mix Blend Mode
+    blendMode: {
+      type: "string",
+      default: "normal",
+    },
+
+    // Bordures et cadres
+    borderEnabled: {
+      type: "boolean",
+      default: false,
+    },
+    borderWidth: {
+      type: "number",
+      default: 2,
+    },
+    borderColor: {
+      type: "string",
+      default: "#ffffff",
+    },
+    borderRadius: {
+      type: "number",
+      default: 0,
+    },
+    borderStyle: {
+      type: "string",
+      default: "solid",
+    },
+
+    // Ombre
+    shadowEnabled: {
+      type: "boolean",
+      default: false,
+    },
+    shadowX: {
+      type: "number",
+      default: 0,
+    },
+    shadowY: {
+      type: "number",
+      default: 10,
+    },
+    shadowBlur: {
+      type: "number",
+      default: 30,
+    },
+    shadowColor: {
+      type: "string",
+      default: "rgba(0,0,0,0.3)",
+    },
+
+    // Animations au scroll
+    scrollAnimationEnabled: {
+      type: "boolean",
+      default: false,
+    },
+    scrollAnimationType: {
+      type: "string",
+      default: "fade",
+    },
+    scrollAnimationDuration: {
+      type: "number",
+      default: 800,
+    },
+    scrollAnimationDelay: {
+      type: "number",
+      default: 0,
+    },
+
+    // Ken Burns effect
+    kenBurnsEnabled: {
+      type: "boolean",
+      default: false,
+    },
+    kenBurnsDuration: {
+      type: "number",
+      default: 20,
+    },
+    kenBurnsDirection: {
+      type: "string",
+      default: "zoom-in",
+    },
+
+    // Effet 3D au survol
+    tiltEnabled: {
+      type: "boolean",
+      default: false,
+    },
+    tiltIntensity: {
+      type: "number",
+      default: 10,
+    },
+
+    // Lightbox
+    lightboxEnabled: {
+      type: "boolean",
+      default: false,
+    },
+    lightboxCaption: {
+      type: "string",
+      default: "",
+    },
+
     // Alignement
     align: {
       type: "string",
@@ -628,6 +778,397 @@ registerBlockType("archi-graph/image-block", {
             </PanelBody>
           )}
 
+          {/* Filtres CSS */}
+          <PanelBody
+            title={__("🎨 Filtres et Effets", "archi-graph")}
+            initialOpen={false}
+          >
+            <ToggleControl
+              label={__("Activer les filtres", "archi-graph")}
+              checked={attributes.filterEnabled}
+              onChange={(value) => setAttributes({ filterEnabled: value })}
+            />
+
+            {attributes.filterEnabled && (
+              <>
+                <RangeControl
+                  label={__("Niveaux de gris (%)", "archi-graph")}
+                  value={attributes.filterGrayscale}
+                  onChange={(value) => setAttributes({ filterGrayscale: value })}
+                  min={0}
+                  max={100}
+                  step={5}
+                />
+
+                <RangeControl
+                  label={__("Sépia (%)", "archi-graph")}
+                  value={attributes.filterSepia}
+                  onChange={(value) => setAttributes({ filterSepia: value })}
+                  min={0}
+                  max={100}
+                  step={5}
+                />
+
+                <RangeControl
+                  label={__("Flou (px)", "archi-graph")}
+                  value={attributes.filterBlur}
+                  onChange={(value) => setAttributes({ filterBlur: value })}
+                  min={0}
+                  max={20}
+                  step={1}
+                />
+
+                <RangeControl
+                  label={__("Luminosité (%)", "archi-graph")}
+                  value={attributes.filterBrightness}
+                  onChange={(value) => setAttributes({ filterBrightness: value })}
+                  min={0}
+                  max={200}
+                  step={10}
+                />
+
+                <RangeControl
+                  label={__("Contraste (%)", "archi-graph")}
+                  value={attributes.filterContrast}
+                  onChange={(value) => setAttributes({ filterContrast: value })}
+                  min={0}
+                  max={200}
+                  step={10}
+                />
+
+                <RangeControl
+                  label={__("Saturation (%)", "archi-graph")}
+                  value={attributes.filterSaturate}
+                  onChange={(value) => setAttributes({ filterSaturate: value })}
+                  min={0}
+                  max={200}
+                  step={10}
+                />
+
+                <RangeControl
+                  label={__("Rotation teinte (°)", "archi-graph")}
+                  value={attributes.filterHueRotate}
+                  onChange={(value) => setAttributes({ filterHueRotate: value })}
+                  min={0}
+                  max={360}
+                  step={15}
+                />
+              </>
+            )}
+
+            <hr style={{ margin: "20px 0" }} />
+
+            <ToggleControl
+              label={__("Effet Duotone", "archi-graph")}
+              checked={attributes.duotoneEnabled}
+              onChange={(value) => setAttributes({ duotoneEnabled: value })}
+              help={__("Appliquer un effet à deux couleurs", "archi-graph")}
+            />
+
+            {attributes.duotoneEnabled && (
+              <>
+                <div style={{ marginBottom: "10px" }}>
+                  <label>{__("Couleur 1 (ombres)", "archi-graph")}</label>
+                  <input
+                    type="color"
+                    value={attributes.duotoneColor1}
+                    onChange={(e) =>
+                      setAttributes({ duotoneColor1: e.target.value })
+                    }
+                    style={{ width: "100%", height: "40px", marginTop: "5px" }}
+                  />
+                </div>
+
+                <div style={{ marginBottom: "10px" }}>
+                  <label>{__("Couleur 2 (lumières)", "archi-graph")}</label>
+                  <input
+                    type="color"
+                    value={attributes.duotoneColor2}
+                    onChange={(e) =>
+                      setAttributes({ duotoneColor2: e.target.value })
+                    }
+                    style={{ width: "100%", height: "40px", marginTop: "5px" }}
+                  />
+                </div>
+              </>
+            )}
+
+            <hr style={{ margin: "20px 0" }} />
+
+            <SelectControl
+              label={__("Mode de fusion", "archi-graph")}
+              value={attributes.blendMode}
+              options={[
+                { label: __("Normal", "archi-graph"), value: "normal" },
+                { label: __("Multiply", "archi-graph"), value: "multiply" },
+                { label: __("Screen", "archi-graph"), value: "screen" },
+                { label: __("Overlay", "archi-graph"), value: "overlay" },
+                { label: __("Darken", "archi-graph"), value: "darken" },
+                { label: __("Lighten", "archi-graph"), value: "lighten" },
+                { label: __("Color-dodge", "archi-graph"), value: "color-dodge" },
+                { label: __("Color-burn", "archi-graph"), value: "color-burn" },
+                { label: __("Hard-light", "archi-graph"), value: "hard-light" },
+                { label: __("Soft-light", "archi-graph"), value: "soft-light" },
+                { label: __("Difference", "archi-graph"), value: "difference" },
+                { label: __("Exclusion", "archi-graph"), value: "exclusion" },
+              ]}
+              onChange={(value) => setAttributes({ blendMode: value })}
+              help={__("Change la façon dont l'image se mélange avec le fond", "archi-graph")}
+            />
+          </PanelBody>
+
+          {/* Bordures et Ombres */}
+          <PanelBody
+            title={__("🖼️ Bordures et Ombres", "archi-graph")}
+            initialOpen={false}
+          >
+            <ToggleControl
+              label={__("Activer la bordure", "archi-graph")}
+              checked={attributes.borderEnabled}
+              onChange={(value) => setAttributes({ borderEnabled: value })}
+            />
+
+            {attributes.borderEnabled && (
+              <>
+                <RangeControl
+                  label={__("Épaisseur (px)", "archi-graph")}
+                  value={attributes.borderWidth}
+                  onChange={(value) => setAttributes({ borderWidth: value })}
+                  min={1}
+                  max={20}
+                  step={1}
+                />
+
+                <div style={{ marginBottom: "10px" }}>
+                  <label>{__("Couleur de la bordure", "archi-graph")}</label>
+                  <input
+                    type="color"
+                    value={attributes.borderColor}
+                    onChange={(e) =>
+                      setAttributes({ borderColor: e.target.value })
+                    }
+                    style={{ width: "100%", height: "40px", marginTop: "5px" }}
+                  />
+                </div>
+
+                <SelectControl
+                  label={__("Style de bordure", "archi-graph")}
+                  value={attributes.borderStyle}
+                  options={[
+                    { label: __("Solide", "archi-graph"), value: "solid" },
+                    { label: __("Pointillés", "archi-graph"), value: "dashed" },
+                    { label: __("Points", "archi-graph"), value: "dotted" },
+                    { label: __("Double", "archi-graph"), value: "double" },
+                  ]}
+                  onChange={(value) => setAttributes({ borderStyle: value })}
+                />
+
+                <RangeControl
+                  label={__("Arrondi des coins (px)", "archi-graph")}
+                  value={attributes.borderRadius}
+                  onChange={(value) => setAttributes({ borderRadius: value })}
+                  min={0}
+                  max={100}
+                  step={5}
+                />
+              </>
+            )}
+
+            <hr style={{ margin: "20px 0" }} />
+
+            <ToggleControl
+              label={__("Activer l'ombre portée", "archi-graph")}
+              checked={attributes.shadowEnabled}
+              onChange={(value) => setAttributes({ shadowEnabled: value })}
+            />
+
+            {attributes.shadowEnabled && (
+              <>
+                <RangeControl
+                  label={__("Décalage horizontal (px)", "archi-graph")}
+                  value={attributes.shadowX}
+                  onChange={(value) => setAttributes({ shadowX: value })}
+                  min={-50}
+                  max={50}
+                  step={1}
+                />
+
+                <RangeControl
+                  label={__("Décalage vertical (px)", "archi-graph")}
+                  value={attributes.shadowY}
+                  onChange={(value) => setAttributes({ shadowY: value })}
+                  min={-50}
+                  max={50}
+                  step={1}
+                />
+
+                <RangeControl
+                  label={__("Flou de l'ombre (px)", "archi-graph")}
+                  value={attributes.shadowBlur}
+                  onChange={(value) => setAttributes({ shadowBlur: value })}
+                  min={0}
+                  max={100}
+                  step={5}
+                />
+
+                <div style={{ marginBottom: "10px" }}>
+                  <label>{__("Couleur de l'ombre", "archi-graph")}</label>
+                  <input
+                    type="text"
+                    value={attributes.shadowColor}
+                    onChange={(e) =>
+                      setAttributes({ shadowColor: e.target.value })
+                    }
+                    placeholder="rgba(0,0,0,0.3)"
+                    style={{
+                      width: "100%",
+                      marginTop: "5px",
+                      padding: "8px",
+                    }}
+                  />
+                  <small style={{ color: "#666", display: "block", marginTop: "5px" }}>
+                    {__("Utilisez rgba() pour la transparence", "archi-graph")}
+                  </small>
+                </div>
+              </>
+            )}
+          </PanelBody>
+
+          {/* Animations */}
+          <PanelBody
+            title={__("✨ Animations", "archi-graph")}
+            initialOpen={false}
+          >
+            <ToggleControl
+              label={__("Animation au scroll", "archi-graph")}
+              checked={attributes.scrollAnimationEnabled}
+              onChange={(value) => setAttributes({ scrollAnimationEnabled: value })}
+              help={__("L'image s'anime quand elle entre dans le viewport", "archi-graph")}
+            />
+
+            {attributes.scrollAnimationEnabled && (
+              <>
+                <SelectControl
+                  label={__("Type d'animation", "archi-graph")}
+                  value={attributes.scrollAnimationType}
+                  options={[
+                    { label: __("Fondu", "archi-graph"), value: "fade" },
+                    { label: __("Glissement vers le haut", "archi-graph"), value: "slide-up" },
+                    { label: __("Glissement vers le bas", "archi-graph"), value: "slide-down" },
+                    { label: __("Glissement vers la gauche", "archi-graph"), value: "slide-left" },
+                    { label: __("Glissement vers la droite", "archi-graph"), value: "slide-right" },
+                    { label: __("Zoom", "archi-graph"), value: "zoom" },
+                  ]}
+                  onChange={(value) => setAttributes({ scrollAnimationType: value })}
+                />
+
+                <RangeControl
+                  label={__("Durée (ms)", "archi-graph")}
+                  value={attributes.scrollAnimationDuration}
+                  onChange={(value) => setAttributes({ scrollAnimationDuration: value })}
+                  min={200}
+                  max={2000}
+                  step={100}
+                />
+
+                <RangeControl
+                  label={__("Délai (ms)", "archi-graph")}
+                  value={attributes.scrollAnimationDelay}
+                  onChange={(value) => setAttributes({ scrollAnimationDelay: value })}
+                  min={0}
+                  max={2000}
+                  step={100}
+                />
+              </>
+            )}
+
+            <hr style={{ margin: "20px 0" }} />
+
+            <ToggleControl
+              label={__("Effet Ken Burns", "archi-graph")}
+              checked={attributes.kenBurnsEnabled}
+              onChange={(value) => setAttributes({ kenBurnsEnabled: value })}
+              help={__("Zoom progressif automatique sur l'image", "archi-graph")}
+            />
+
+            {attributes.kenBurnsEnabled && (
+              <>
+                <RangeControl
+                  label={__("Durée du cycle (secondes)", "archi-graph")}
+                  value={attributes.kenBurnsDuration}
+                  onChange={(value) => setAttributes({ kenBurnsDuration: value })}
+                  min={5}
+                  max={60}
+                  step={5}
+                />
+
+                <SelectControl
+                  label={__("Direction", "archi-graph")}
+                  value={attributes.kenBurnsDirection}
+                  options={[
+                    { label: __("Zoom avant", "archi-graph"), value: "zoom-in" },
+                    { label: __("Zoom arrière", "archi-graph"), value: "zoom-out" },
+                    { label: __("Panoramique gauche", "archi-graph"), value: "pan-left" },
+                    { label: __("Panoramique droite", "archi-graph"), value: "pan-right" },
+                  ]}
+                  onChange={(value) => setAttributes({ kenBurnsDirection: value })}
+                />
+              </>
+            )}
+
+            <hr style={{ margin: "20px 0" }} />
+
+            <ToggleControl
+              label={__("Effet 3D au survol", "archi-graph")}
+              checked={attributes.tiltEnabled}
+              onChange={(value) => setAttributes({ tiltEnabled: value })}
+              help={__("L'image bascule en 3D au passage de la souris", "archi-graph")}
+            />
+
+            {attributes.tiltEnabled && (
+              <RangeControl
+                label={__("Intensité (degrés)", "archi-graph")}
+                value={attributes.tiltIntensity}
+                onChange={(value) => setAttributes({ tiltIntensity: value })}
+                min={5}
+                max={30}
+                step={5}
+              />
+            )}
+          </PanelBody>
+
+          {/* Lightbox */}
+          <PanelBody
+            title={__("🔍 Lightbox", "archi-graph")}
+            initialOpen={false}
+          >
+            <ToggleControl
+              label={__("Ouvrir en plein écran au clic", "archi-graph")}
+              checked={attributes.lightboxEnabled}
+              onChange={(value) => setAttributes({ lightboxEnabled: value })}
+              help={__("Affiche l'image en grand dans une modal", "archi-graph")}
+            />
+
+            {attributes.lightboxEnabled && (
+              <div style={{ marginBottom: "10px" }}>
+                <label>{__("Légende (optionnelle)", "archi-graph")}</label>
+                <input
+                  type="text"
+                  value={attributes.lightboxCaption}
+                  onChange={(e) =>
+                    setAttributes({ lightboxCaption: e.target.value })
+                  }
+                  placeholder={__("Texte affiché sous l'image", "archi-graph")}
+                  style={{
+                    width: "100%",
+                    marginTop: "5px",
+                    padding: "8px",
+                  }}
+                />
+              </div>
+            )}
+          </PanelBody>
+
           {/* Accessibilité */}
           <PanelBody
             title={__("Accessibilité", "archi-graph")}
@@ -891,7 +1432,13 @@ registerBlockType("archi-graph/image-block", {
                           ? "400px"
                           : "auto",
                       overflow: "hidden",
-                      borderRadius: "4px",
+                      borderRadius: attributes.borderEnabled ? `${attributes.borderRadius}px` : "4px",
+                      border: attributes.borderEnabled 
+                        ? `${attributes.borderWidth}px ${attributes.borderStyle} ${attributes.borderColor}`
+                        : "none",
+                      boxShadow: attributes.shadowEnabled
+                        ? `${attributes.shadowX}px ${attributes.shadowY}px ${attributes.shadowBlur}px ${attributes.shadowColor}`
+                        : "none",
                     }}
                   >
                     <img
@@ -902,8 +1449,128 @@ registerBlockType("archi-graph/image-block", {
                         height: "100%",
                         objectFit: objectFit,
                         display: "block",
+                        filter: attributes.filterEnabled
+                          ? `grayscale(${attributes.filterGrayscale}%) sepia(${attributes.filterSepia}%) blur(${attributes.filterBlur}px) brightness(${attributes.filterBrightness}%) contrast(${attributes.filterContrast}%) saturate(${attributes.filterSaturate}%) hue-rotate(${attributes.filterHueRotate}deg)`
+                          : "none",
+                        mixBlendMode: attributes.blendMode,
+                        transition: "transform 0.3s ease",
                       }}
                     />
+
+                    {/* Duotone SVG Filter */}
+                    {attributes.duotoneEnabled && (
+                      <>
+                        <svg style={{ position: "absolute", width: 0, height: 0 }}>
+                          <defs>
+                            <filter id="duotone-filter">
+                              <feColorMatrix
+                                type="matrix"
+                                values="0.33 0.33 0.33 0 0
+                                        0.33 0.33 0.33 0 0
+                                        0.33 0.33 0.33 0 0
+                                        0    0    0    1 0"
+                              />
+                              <feComponentTransfer>
+                                <feFuncR type="table" tableValues={`${parseInt(attributes.duotoneColor1.slice(1, 3), 16) / 255} ${parseInt(attributes.duotoneColor2.slice(1, 3), 16) / 255}`} />
+                                <feFuncG type="table" tableValues={`${parseInt(attributes.duotoneColor1.slice(3, 5), 16) / 255} ${parseInt(attributes.duotoneColor2.slice(3, 5), 16) / 255}`} />
+                                <feFuncB type="table" tableValues={`${parseInt(attributes.duotoneColor1.slice(5, 7), 16) / 255} ${parseInt(attributes.duotoneColor2.slice(5, 7), 16) / 255}`} />
+                              </feComponentTransfer>
+                            </filter>
+                          </defs>
+                        </svg>
+                        <div
+                          style={{
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            backgroundImage: `url(${imageUrl})`,
+                            backgroundSize: "cover",
+                            backgroundPosition: "center",
+                            filter: "url(#duotone-filter)",
+                            pointerEvents: "none",
+                          }}
+                        />
+                      </>
+                    )}
+
+                    {/* Ken Burns preview hint */}
+                    {attributes.kenBurnsEnabled && (
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: "10px",
+                          right: "10px",
+                          background: "rgba(0,0,0,0.7)",
+                          color: "#fff",
+                          padding: "5px 10px",
+                          borderRadius: "4px",
+                          fontSize: "12px",
+                          zIndex: 100,
+                        }}
+                      >
+                        🎬 Ken Burns actif
+                      </div>
+                    )}
+
+                    {/* Tilt preview hint */}
+                    {attributes.tiltEnabled && (
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: "10px",
+                          left: "10px",
+                          background: "rgba(0,0,0,0.7)",
+                          color: "#fff",
+                          padding: "5px 10px",
+                          borderRadius: "4px",
+                          fontSize: "12px",
+                          zIndex: 100,
+                        }}
+                      >
+                        🎨 Effet 3D actif
+                      </div>
+                    )}
+
+                    {/* Scroll animation preview hint */}
+                    {attributes.scrollAnimationEnabled && (
+                      <div
+                        style={{
+                          position: "absolute",
+                          bottom: "10px",
+                          left: "10px",
+                          background: "rgba(0,0,0,0.7)",
+                          color: "#fff",
+                          padding: "5px 10px",
+                          borderRadius: "4px",
+                          fontSize: "12px",
+                          zIndex: 100,
+                        }}
+                      >
+                        ✨ Animation: {attributes.scrollAnimationType}
+                      </div>
+                    )}
+
+                    {/* Lightbox preview hint */}
+                    {attributes.lightboxEnabled && (
+                      <div
+                        style={{
+                          position: "absolute",
+                          bottom: "10px",
+                          right: "10px",
+                          background: "rgba(0,0,0,0.7)",
+                          color: "#fff",
+                          padding: "5px 10px",
+                          borderRadius: "4px",
+                          fontSize: "12px",
+                          zIndex: 100,
+                          cursor: "pointer",
+                        }}
+                      >
+                        🔍 Cliquable
+                      </div>
+                    )}
 
                     {/* Overlay preview */}
                     {overlayEnabled && (

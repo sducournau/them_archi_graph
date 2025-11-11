@@ -3,7 +3,23 @@
 Bienvenue dans la documentation complète du thème Archi Graph pour WordPress.
 
 **Version**: 1.1.0  
-**Dernière mise à jour**: 4 novembre 2025
+**Dernière mise à jour**: 11 novembre 2025
+
+---
+
+## 📦 Archive
+
+Une archive de documentation historique est disponible dans [`archive/2025-11/`](archive/2025-11/).
+Cette archive contient les documents suivants :
+- **implementation-summaries/** - Résumés d'implémentation de fonctionnalités passées
+- **audit-reports/** - Rapports d'audit du code
+- **customizer-fixes/** - Documentation des corrections du Customizer
+- **graph-enhancements/** - Améliorations historiques du système de graphique
+- **image-blocks/** - Documentation des blocs d'images
+- **guestbook-system/** - Documentation du système de livre d'or
+- **old-changelogs/** - Anciens changelogs et corrections
+
+Ces documents sont archivés pour référence historique mais ne reflètent pas nécessairement l'état actuel du code.
 
 ---
 

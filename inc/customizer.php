@@ -15,100 +15,221 @@
 function archi_customize_register($wp_customize) {
     
     // ========================================
-    // SECTION: HEADER OPTIONS
+    // SECTION 1: COULEURS GÉNÉRALES
     // ========================================
-    $wp_customize->add_section('archi_header_options', [
-        'title' => __('Options du Header', 'archi-graph'),
-        'description' => __('Personnalisez le comportement et l\'apparence du header.', 'archi-graph'),
-        'priority' => 30,
+    $wp_customize->add_section('archi_colors', [
+        'title' => __('🎨 Couleurs du Site', 'archi-graph'),
+        'description' => __('Personnalisez les couleurs principales de votre site. Ces couleurs s\'appliquent automatiquement aux liens, boutons et éléments interactifs.', 'archi-graph'),
+        'priority' => 20,
     ]);
     
-    // Temps avant disparition du header
-    $wp_customize->add_setting('archi_header_hide_delay', [
-        'default' => 500,
+    // Couleur principale (utilisée partout : liens, boutons, menu hover)
+    $wp_customize->add_setting('archi_primary_color', [
+        'default' => '#3498db',
         'transport' => 'postMessage',
-        'sanitize_callback' => 'absint'
+        'sanitize_callback' => 'sanitize_hex_color'
     ]);
     
-    $wp_customize->add_control('archi_header_hide_delay', [
-        'label' => __('Délai avant masquage (ms)', 'archi-graph'),
-        'description' => __('Temps en millisecondes avant que le header ne se masque automatiquement sur la page d\'accueil.', 'archi-graph'),
-        'section' => 'archi_header_options',
-        'type' => 'number',
-        'input_attrs' => [
-            'min' => 0,
-            'max' => 5000,
-            'step' => 100
-        ]
+    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'archi_primary_color', [
+        'label' => __('Couleur Principale', 'archi-graph'),
+        'description' => __('Utilisée pour les liens, boutons, et éléments actifs du menu.', 'archi-graph'),
+        'section' => 'archi_colors'
+    ]));
+    
+    // Couleur secondaire (titres)
+    $wp_customize->add_setting('archi_secondary_color', [
+        'default' => '#2c3e50',
+        'transport' => 'postMessage',
+        'sanitize_callback' => 'sanitize_hex_color'
     ]);
     
-    // Type d'animation header
-    $wp_customize->add_setting('archi_header_animation_type', [
-        'default' => 'ease-in-out',
+    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'archi_secondary_color', [
+        'label' => __('Couleur Secondaire', 'archi-graph'),
+        'description' => __('Utilisée pour les titres et textes importants.', 'archi-graph'),
+        'section' => 'archi_colors'
+    ]));
+    
+    // Couleur de fond du header/menu
+    $wp_customize->add_setting('archi_header_bg_color', [
+        'default' => '#ffffff',
+        'transport' => 'postMessage',
+        'sanitize_callback' => 'sanitize_hex_color'
+    ]);
+    
+    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'archi_header_bg_color', [
+        'label' => __('Fond du Header', 'archi-graph'),
+        'description' => __('Couleur de fond du menu de navigation.', 'archi-graph'),
+        'section' => 'archi_colors'
+    ]));
+    
+    // Couleur du texte du menu
+    $wp_customize->add_setting('archi_header_text_color', [
+        'default' => '#2c3e50',
+        'transport' => 'postMessage',
+        'sanitize_callback' => 'sanitize_hex_color'
+    ]);
+    
+    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'archi_header_text_color', [
+        'label' => __('Texte du Header', 'archi-graph'),
+        'description' => __('Couleur du texte dans le menu de navigation.', 'archi-graph'),
+        'section' => 'archi_colors'
+    ]));
+    
+    // ========================================
+    // SECTION 2: NAVIGATION
+    // ========================================
+    $wp_customize->add_section('archi_navigation_options', [
+        'title' => __('🧭 Navigation & Menu', 'archi-graph'),
+        'description' => __('Options d\'affichage et de comportement du menu de navigation.', 'archi-graph'),
+        'priority' => 25,
+    ]);
+    
+    // Header sticky
+    $wp_customize->add_setting('archi_header_sticky', [
+        'default' => true,
+        'transport' => 'refresh',
+        'sanitize_callback' => 'archi_sanitize_checkbox'
+    ]);
+    
+    $wp_customize->add_control('archi_header_sticky', [
+        'label' => __('Header fixe', 'archi-graph'),
+        'description' => __('Le header reste visible quand vous scrollez la page.', 'archi-graph'),
+        'section' => 'archi_navigation_options',
+        'type' => 'checkbox'
+    ]);
+    
+    // Header transparent (homepage uniquement)
+    $wp_customize->add_setting('archi_header_transparent', [
+        'default' => false,
+        'transport' => 'refresh',
+        'sanitize_callback' => 'archi_sanitize_checkbox'
+    ]);
+    
+    $wp_customize->add_control('archi_header_transparent', [
+        'label' => __('Header transparent', 'archi-graph'),
+        'description' => __('Rend le header transparent sur la page d\'accueil uniquement.', 'archi-graph'),
+        'section' => 'archi_navigation_options',
+        'type' => 'checkbox'
+    ]);
+    
+    // Afficher recherche
+    $wp_customize->add_setting('archi_menu_show_search', [
+        'default' => false,
+        'transport' => 'refresh',
+        'sanitize_callback' => 'archi_sanitize_checkbox'
+    ]);
+    
+    $wp_customize->add_control('archi_menu_show_search', [
+        'label' => __('Bouton de recherche', 'archi-graph'),
+        'description' => __('Afficher un bouton de recherche dans le menu.', 'archi-graph'),
+        'section' => 'archi_navigation_options',
+        'type' => 'checkbox'
+    ]);
+    
+    // Hauteur du header
+    $wp_customize->add_setting('archi_header_height', [
+        'default' => 'normal',
         'transport' => 'postMessage',
         'sanitize_callback' => 'sanitize_text_field'
     ]);
     
-    $wp_customize->add_control('archi_header_animation_type', [
-        'label' => __('Style d\'animation', 'archi-graph'),
-        'description' => __('Type de courbe d\'animation pour le header.', 'archi-graph'),
-        'section' => 'archi_header_options',
+    $wp_customize->add_control('archi_header_height', [
+        'label' => __('Hauteur du header', 'archi-graph'),
+        'description' => __('Choisissez la hauteur du bandeau de navigation.', 'archi-graph'),
+        'section' => 'archi_navigation_options',
         'type' => 'select',
         'choices' => [
-            'linear' => __('Linear (vitesse constante)', 'archi-graph'),
-            'ease' => __('Ease (naturel)', 'archi-graph'),
-            'ease-in' => __('Ease In (accélération)', 'archi-graph'),
-            'ease-out' => __('Ease Out (décélération)', 'archi-graph'),
-            'ease-in-out' => __('Ease In Out (fluide)', 'archi-graph'),
-            'cubic-bezier(0.68, -0.55, 0.265, 1.55)' => __('Bounce (rebond)', 'archi-graph')
+            'compact' => __('Compact (60px)', 'archi-graph'),
+            'normal' => __('Normal (80px)', 'archi-graph'),
+            'large' => __('Large (100px)', 'archi-graph'),
+            'extra-large' => __('Extra Large (120px)', 'archi-graph')
         ]
     ]);
     
-    // Durée animation header
-    $wp_customize->add_setting('archi_header_animation_duration', [
-        'default' => 0.3,
+    // Ombre du header
+    $wp_customize->add_setting('archi_header_shadow', [
+        'default' => 'light',
+        'transport' => 'postMessage',
+        'sanitize_callback' => 'sanitize_text_field'
+    ]);
+    
+    $wp_customize->add_control('archi_header_shadow', [
+        'label' => __('Ombre portée', 'archi-graph'),
+        'description' => __('Intensité de l\'ombre sous le header.', 'archi-graph'),
+        'section' => 'archi_navigation_options',
+        'type' => 'select',
+        'choices' => [
+            'none' => __('Aucune', 'archi-graph'),
+            'light' => __('Légère', 'archi-graph'),
+            'medium' => __('Moyenne', 'archi-graph'),
+            'strong' => __('Forte', 'archi-graph')
+        ]
+    ]);
+    
+    // Opacité du header transparent au scroll
+    $wp_customize->add_setting('archi_header_scroll_opacity', [
+        'default' => 0.95,
         'transport' => 'postMessage',
         'sanitize_callback' => 'archi_sanitize_float'
     ]);
     
-    $wp_customize->add_control('archi_header_animation_duration', [
-        'label' => __('Durée animation (secondes)', 'archi-graph'),
-        'description' => __('Durée totale de l\'animation en secondes.', 'archi-graph'),
-        'section' => 'archi_header_options',
-        'type' => 'number',
+    $wp_customize->add_control('archi_header_scroll_opacity', [
+        'label' => __('Opacité au scroll', 'archi-graph'),
+        'description' => __('Transparence du header transparent après le scroll (0 = invisible, 1 = opaque).', 'archi-graph'),
+        'section' => 'archi_navigation_options',
+        'type' => 'range',
         'input_attrs' => [
-            'min' => 0.1,
-            'max' => 2.0,
-            'step' => 0.1
+            'min' => 0.5,
+            'max' => 1,
+            'step' => 0.05
         ]
     ]);
     
-    // Hauteur de la zone de déclenchement
-    $wp_customize->add_setting('archi_header_trigger_height', [
-        'default' => 50,
-        'transport' => 'postMessage',
-        'sanitize_callback' => 'absint'
+    // Position du logo/titre
+    $wp_customize->add_setting('archi_header_logo_position', [
+        'default' => 'left',
+        'transport' => 'refresh',
+        'sanitize_callback' => 'sanitize_text_field'
     ]);
     
-    $wp_customize->add_control('archi_header_trigger_height', [
-        'label' => __('Hauteur zone de déclenchement (px)', 'archi-graph'),
-        'description' => __('Hauteur de la zone en haut de page qui révèle le header au survol.', 'archi-graph'),
-        'section' => 'archi_header_options',
-        'type' => 'number',
-        'input_attrs' => [
-            'min' => 20,
-            'max' => 150,
-            'step' => 10
+    $wp_customize->add_control('archi_header_logo_position', [
+        'label' => __('Position du logo', 'archi-graph'),
+        'description' => __('Alignement du logo/titre du site dans le header.', 'archi-graph'),
+        'section' => 'archi_navigation_options',
+        'type' => 'select',
+        'choices' => [
+            'left' => __('Gauche', 'archi-graph'),
+            'center' => __('Centre', 'archi-graph'),
+            'right' => __('Droite', 'archi-graph')
+        ]
+    ]);
+    
+    // Comportement sticky (show/hide on scroll)
+    $wp_customize->add_setting('archi_header_sticky_behavior', [
+        'default' => 'always',
+        'transport' => 'refresh',
+        'sanitize_callback' => 'sanitize_text_field'
+    ]);
+    
+    $wp_customize->add_control('archi_header_sticky_behavior', [
+        'label' => __('Comportement au scroll', 'archi-graph'),
+        'description' => __('Comment le header fixe réagit au scroll.', 'archi-graph'),
+        'section' => 'archi_navigation_options',
+        'type' => 'select',
+        'choices' => [
+            'always' => __('Toujours visible', 'archi-graph'),
+            'hide-on-scroll-down' => __('Se cache en scrollant vers le bas', 'archi-graph'),
+            'show-on-scroll-up' => __('Apparaît en scrollant vers le haut', 'archi-graph')
         ]
     ]);
     
     // ========================================
-    // SECTION: GRAPH VISUALIZATION
+    // SECTION 3: GRAPHIQUE D3.JS
     // ========================================
     $wp_customize->add_section('archi_graph_options', [
-        'title' => __('Visualisation du Graphique', 'archi-graph'),
-        'description' => __('Options visuelles pour le graphique D3.js sur la page d\'accueil.', 'archi-graph'),
-        'priority' => 35,
+        'title' => __('🔗 Graphique D3.js', 'archi-graph'),
+        'description' => __('Personnalisez l\'apparence du graphique de relations sur la page d\'accueil.', 'archi-graph'),
+        'priority' => 30,
     ]);
     
     // Couleur nœud par défaut
@@ -119,8 +240,8 @@ function archi_customize_register($wp_customize) {
     ]);
     
     $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'archi_default_node_color', [
-        'label' => __('Couleur nœud par défaut', 'archi-graph'),
-        'description' => __('Couleur utilisée pour les nœuds sans couleur personnalisée.', 'archi-graph'),
+        'label' => __('Couleur des nœuds', 'archi-graph'),
+        'description' => __('Couleur par défaut pour les nœuds sans couleur personnalisée.', 'archi-graph'),
         'section' => 'archi_graph_options'
     ]));
     
@@ -132,8 +253,8 @@ function archi_customize_register($wp_customize) {
     ]);
     
     $wp_customize->add_control('archi_default_node_size', [
-        'label' => __('Taille nœud par défaut (px)', 'archi-graph'),
-        'description' => __('Taille en pixels des nœuds sans taille personnalisée.', 'archi-graph'),
+        'label' => __('Taille des nœuds', 'archi-graph'),
+        'description' => __('Taille par défaut en pixels (40-120).', 'archi-graph'),
         'section' => 'archi_graph_options',
         'type' => 'range',
         'input_attrs' => [
@@ -151,57 +272,306 @@ function archi_customize_register($wp_customize) {
     ]);
     
     $wp_customize->add_control('archi_cluster_strength', [
-        'label' => __('Force de regroupement', 'archi-graph'),
-        'description' => __('Intensité du regroupement des nœuds par catégorie.', 'archi-graph'),
+        'label' => __('Regroupement par catégorie', 'archi-graph'),
+        'description' => __('Intensité du regroupement des articles similaires (0 = aucun, 0.5 = fort).', 'archi-graph'),
         'section' => 'archi_graph_options',
         'type' => 'range',
         'input_attrs' => [
             'min' => 0,
             'max' => 0.5,
-            'step' => 0.01
+            'step' => 0.05
         ]
     ]);
     
-    // Durée des animations
-    $wp_customize->add_setting('archi_graph_animation_duration', [
-        'default' => 1000,
+    // Option : Afficher seulement le titre dans la popup
+    $wp_customize->add_setting('archi_graph_popup_title_only', [
+        'default' => false,
+        'transport' => 'refresh',
+        'sanitize_callback' => 'archi_sanitize_checkbox'
+    ]);
+    
+    $wp_customize->add_control('archi_graph_popup_title_only', [
+        'label' => __('Popup : titre uniquement', 'archi-graph'),
+        'description' => __('Afficher seulement le titre dans la popup de survol (sans l\'extrait).', 'archi-graph'),
+        'section' => 'archi_graph_options',
+        'type' => 'checkbox'
+    ]);
+    
+    // Option : Afficher les commentaires dans la sidebar
+    $wp_customize->add_setting('archi_graph_show_comments', [
+        'default' => true,
+        'transport' => 'refresh',
+        'sanitize_callback' => 'archi_sanitize_checkbox'
+    ]);
+    
+    $wp_customize->add_control('archi_graph_show_comments', [
+        'label' => __('Afficher les commentaires', 'archi-graph'),
+        'description' => __('Afficher les commentaires de l\'article dans la sidebar d\'information.', 'archi-graph'),
+        'section' => 'archi_graph_options',
+        'type' => 'checkbox'
+    ]);
+    
+    // --- EFFETS ET ANIMATIONS ---
+    
+    // Mode d'animation d'entrée
+    $wp_customize->add_setting('archi_graph_animation_mode', [
+        'default' => 'fade-in',
+        'transport' => 'refresh',
+        'sanitize_callback' => 'sanitize_text_field'
+    ]);
+    
+    $wp_customize->add_control('archi_graph_animation_mode', [
+        'label' => __('Animation d\'entrée', 'archi-graph'),
+        'description' => __('Effet d\'apparition des nœuds au chargement.', 'archi-graph'),
+        'section' => 'archi_graph_options',
+        'type' => 'select',
+        'choices' => [
+            'none' => __('Aucune', 'archi-graph'),
+            'fade-in' => __('Fondu progressif', 'archi-graph'),
+            'scale-up' => __('Zoom progressif', 'archi-graph'),
+            'slide-in' => __('Glissement', 'archi-graph'),
+            'bounce' => __('Rebond', 'archi-graph')
+        ]
+    ]);
+    
+    // Vitesse des transitions
+    $wp_customize->add_setting('archi_graph_transition_speed', [
+        'default' => 500,
         'transport' => 'refresh',
         'sanitize_callback' => 'absint'
     ]);
     
-    $wp_customize->add_control('archi_graph_animation_duration', [
-        'label' => __('Durée des animations (ms)', 'archi-graph'),
-        'description' => __('Durée des animations du graphique en millisecondes.', 'archi-graph'),
+    $wp_customize->add_control('archi_graph_transition_speed', [
+        'label' => __('Vitesse des transitions', 'archi-graph'),
+        'description' => __('Durée des animations en millisecondes (200-2000).', 'archi-graph'),
         'section' => 'archi_graph_options',
-        'type' => 'number',
+        'type' => 'range',
         'input_attrs' => [
-            'min' => 100,
-            'max' => 3000,
+            'min' => 200,
+            'max' => 2000,
             'step' => 100
         ]
     ]);
     
-    // ========================================
-    // SECTION: TYPOGRAPHY
-    // ========================================
-    $wp_customize->add_section('archi_typography', [
-        'title' => __('Typographie', 'archi-graph'),
-        'description' => __('Personnalisez les polices et styles de texte.', 'archi-graph'),
-        'priority' => 40,
+    // Effet de survol des nœuds
+    $wp_customize->add_setting('archi_graph_hover_effect', [
+        'default' => 'highlight',
+        'transport' => 'refresh',
+        'sanitize_callback' => 'sanitize_text_field'
     ]);
     
-    // Font famille principale
+    $wp_customize->add_control('archi_graph_hover_effect', [
+        'label' => __('Effet de survol', 'archi-graph'),
+        'description' => __('Réaction visuelle au passage de la souris.', 'archi-graph'),
+        'section' => 'archi_graph_options',
+        'type' => 'select',
+        'choices' => [
+            'none' => __('Aucun', 'archi-graph'),
+            'highlight' => __('Mise en surbrillance', 'archi-graph'),
+            'scale' => __('Agrandissement', 'archi-graph'),
+            'glow' => __('Halo lumineux', 'archi-graph'),
+            'pulse' => __('Pulsation', 'archi-graph')
+        ]
+    ]);
+    
+    // --- LIENS ET CONNEXIONS ---
+    
+    // Couleur des liens
+    $wp_customize->add_setting('archi_graph_link_color', [
+        'default' => '#999999',
+        'transport' => 'refresh',
+        'sanitize_callback' => 'sanitize_hex_color'
+    ]);
+    
+    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'archi_graph_link_color', [
+        'label' => __('Couleur des liens', 'archi-graph'),
+        'description' => __('Couleur des lignes de connexion entre les nœuds.', 'archi-graph'),
+        'section' => 'archi_graph_options'
+    ]));
+    
+    // Épaisseur des liens
+    $wp_customize->add_setting('archi_graph_link_width', [
+        'default' => 1.5,
+        'transport' => 'refresh',
+        'sanitize_callback' => 'archi_sanitize_float'
+    ]);
+    
+    $wp_customize->add_control('archi_graph_link_width', [
+        'label' => __('Épaisseur des liens', 'archi-graph'),
+        'description' => __('Épaisseur en pixels des lignes de connexion (0.5-5).', 'archi-graph'),
+        'section' => 'archi_graph_options',
+        'type' => 'range',
+        'input_attrs' => [
+            'min' => 0.5,
+            'max' => 5,
+            'step' => 0.5
+        ]
+    ]);
+    
+    // Opacité des liens
+    $wp_customize->add_setting('archi_graph_link_opacity', [
+        'default' => 0.6,
+        'transport' => 'refresh',
+        'sanitize_callback' => 'archi_sanitize_float'
+    ]);
+    
+    $wp_customize->add_control('archi_graph_link_opacity', [
+        'label' => __('Opacité des liens', 'archi-graph'),
+        'description' => __('Transparence des lignes (0 = invisible, 1 = opaque).', 'archi-graph'),
+        'section' => 'archi_graph_options',
+        'type' => 'range',
+        'input_attrs' => [
+            'min' => 0.1,
+            'max' => 1,
+            'step' => 0.1
+        ]
+    ]);
+    
+    // Style de lien
+    $wp_customize->add_setting('archi_graph_link_style', [
+        'default' => 'solid',
+        'transport' => 'refresh',
+        'sanitize_callback' => 'sanitize_text_field'
+    ]);
+    
+    $wp_customize->add_control('archi_graph_link_style', [
+        'label' => __('Style de lien', 'archi-graph'),
+        'description' => __('Apparence des lignes de connexion.', 'archi-graph'),
+        'section' => 'archi_graph_options',
+        'type' => 'select',
+        'choices' => [
+            'solid' => __('Ligne continue', 'archi-graph'),
+            'dashed' => __('Ligne pointillée', 'archi-graph'),
+            'curved' => __('Ligne courbe', 'archi-graph')
+        ]
+    ]);
+    
+    // Afficher les flèches directionnelles
+    $wp_customize->add_setting('archi_graph_show_arrows', [
+        'default' => false,
+        'transport' => 'refresh',
+        'sanitize_callback' => 'archi_sanitize_checkbox'
+    ]);
+    
+    $wp_customize->add_control('archi_graph_show_arrows', [
+        'label' => __('Flèches directionnelles', 'archi-graph'),
+        'description' => __('Afficher des flèches pour indiquer le sens des relations.', 'archi-graph'),
+        'section' => 'archi_graph_options',
+        'type' => 'checkbox'
+    ]);
+    
+    // Animation des liens
+    $wp_customize->add_setting('archi_graph_link_animation', [
+        'default' => 'none',
+        'transport' => 'refresh',
+        'sanitize_callback' => 'sanitize_text_field'
+    ]);
+    
+    $wp_customize->add_control('archi_graph_link_animation', [
+        'label' => __('Animation des liens', 'archi-graph'),
+        'description' => __('Effet d\'animation sur les lignes de connexion.', 'archi-graph'),
+        'section' => 'archi_graph_options',
+        'type' => 'select',
+        'choices' => [
+            'none' => __('Aucune', 'archi-graph'),
+            'pulse' => __('Pulsation', 'archi-graph'),
+            'flow' => __('Flux directionnel', 'archi-graph'),
+            'glow' => __('Lueur', 'archi-graph')
+        ]
+    ]);
+    
+    // --- COULEURS PAR CATÉGORIE ---
+    
+    // Activer les couleurs par catégorie
+    $wp_customize->add_setting('archi_graph_category_colors_enabled', [
+        'default' => false,
+        'transport' => 'refresh',
+        'sanitize_callback' => 'archi_sanitize_checkbox'
+    ]);
+    
+    $wp_customize->add_control('archi_graph_category_colors_enabled', [
+        'label' => __('Couleurs par catégorie', 'archi-graph'),
+        'description' => __('Attribuer automatiquement des couleurs différentes selon les catégories.', 'archi-graph'),
+        'section' => 'archi_graph_options',
+        'type' => 'checkbox'
+    ]);
+    
+    // Palette de couleurs pour les catégories
+    $wp_customize->add_setting('archi_graph_category_palette', [
+        'default' => 'default',
+        'transport' => 'refresh',
+        'sanitize_callback' => 'sanitize_text_field'
+    ]);
+    
+    $wp_customize->add_control('archi_graph_category_palette', [
+        'label' => __('Palette de couleurs', 'archi-graph'),
+        'description' => __('Jeu de couleurs pour différencier les catégories.', 'archi-graph'),
+        'section' => 'archi_graph_options',
+        'type' => 'select',
+        'choices' => [
+            'default' => __('Par défaut (bleus)', 'archi-graph'),
+            'warm' => __('Chaude (rouges/oranges)', 'archi-graph'),
+            'cool' => __('Froide (bleus/verts)', 'archi-graph'),
+            'vibrant' => __('Vibrante (multicolore)', 'archi-graph'),
+            'pastel' => __('Pastel (doux)', 'archi-graph'),
+            'nature' => __('Nature (terre/vert)', 'archi-graph'),
+            'monochrome' => __('Monochrome (nuances de gris)', 'archi-graph')
+        ]
+    ]);
+    
+    // Afficher la légende des catégories
+    $wp_customize->add_setting('archi_graph_show_category_legend', [
+        'default' => true,
+        'transport' => 'refresh',
+        'sanitize_callback' => 'archi_sanitize_checkbox'
+    ]);
+    
+    $wp_customize->add_control('archi_graph_show_category_legend', [
+        'label' => __('Afficher la légende', 'archi-graph'),
+        'description' => __('Afficher une légende des couleurs de catégories sur le graph.', 'archi-graph'),
+        'section' => 'archi_graph_options',
+        'type' => 'checkbox'
+    ]);
+    
+    // ========================================
+    // SECTION 4: TYPOGRAPHIE
+    // ========================================
+    $wp_customize->add_section('archi_typography', [
+        'title' => __('📝 Typographie', 'archi-graph'),
+        'description' => __('Personnalisez la taille et l\'apparence du texte.', 'archi-graph'),
+        'priority' => 35,
+    ]);
+    
+    // Police principale
     $wp_customize->add_setting('archi_font_family', [
-        'default' => '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+        'default' => 'system',
         'transport' => 'postMessage',
         'sanitize_callback' => 'sanitize_text_field'
     ]);
     
     $wp_customize->add_control('archi_font_family', [
         'label' => __('Police principale', 'archi-graph'),
-        'description' => __('Police utilisée pour le corps du texte. Utilisez des polices système pour de meilleures performances.', 'archi-graph'),
+        'description' => __('Choisissez la police utilisée sur tout le site.', 'archi-graph'),
         'section' => 'archi_typography',
-        'type' => 'text'
+        'type' => 'select',
+        'choices' => [
+            'system' => __('Système par défaut', 'archi-graph'),
+            'arial' => 'Arial',
+            'helvetica' => 'Helvetica',
+            'georgia' => 'Georgia',
+            'times' => 'Times New Roman',
+            'courier' => 'Courier New',
+            'verdana' => 'Verdana',
+            'trebuchet' => 'Trebuchet MS',
+            'roboto' => 'Roboto (Google Fonts)',
+            'open-sans' => 'Open Sans (Google Fonts)',
+            'lato' => 'Lato (Google Fonts)',
+            'montserrat' => 'Montserrat (Google Fonts)',
+            'poppins' => 'Poppins (Google Fonts)',
+            'inter' => 'Inter (Google Fonts)',
+            'playfair' => 'Playfair Display (Google Fonts)',
+            'merriweather' => 'Merriweather (Google Fonts)',
+        ]
     ]);
     
     // Taille de police de base
@@ -212,8 +582,8 @@ function archi_customize_register($wp_customize) {
     ]);
     
     $wp_customize->add_control('archi_font_size_base', [
-        'label' => __('Taille de police de base (px)', 'archi-graph'),
-        'description' => __('Taille de base du texte en pixels.', 'archi-graph'),
+        'label' => __('Taille du texte', 'archi-graph'),
+        'description' => __('Taille de base du texte en pixels (12-20).', 'archi-graph'),
         'section' => 'archi_typography',
         'type' => 'range',
         'input_attrs' => [
@@ -224,56 +594,21 @@ function archi_customize_register($wp_customize) {
     ]);
     
     // ========================================
-    // SECTION: COLORS
-    // ========================================
-    $wp_customize->add_section('archi_colors', [
-        'title' => __('Couleurs du Thème', 'archi-graph'),
-        'description' => __('Personnalisez les couleurs principales du thème.', 'archi-graph'),
-        'priority' => 45,
-    ]);
-    
-    // Couleur principale
-    $wp_customize->add_setting('archi_primary_color', [
-        'default' => '#3498db',
-        'transport' => 'postMessage',
-        'sanitize_callback' => 'sanitize_hex_color'
-    ]);
-    
-    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'archi_primary_color', [
-        'label' => __('Couleur principale', 'archi-graph'),
-        'description' => __('Couleur utilisée pour les liens et éléments interactifs.', 'archi-graph'),
-        'section' => 'archi_colors'
-    ]));
-    
-    // Couleur secondaire
-    $wp_customize->add_setting('archi_secondary_color', [
-        'default' => '#2c3e50',
-        'transport' => 'postMessage',
-        'sanitize_callback' => 'sanitize_hex_color'
-    ]);
-    
-    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'archi_secondary_color', [
-        'label' => __('Couleur secondaire', 'archi-graph'),
-        'description' => __('Couleur pour les titres et éléments secondaires.', 'archi-graph'),
-        'section' => 'archi_colors'
-    ]));
-    
-    // ========================================
-    // SECTION: SOCIAL MEDIA
+    // SECTION 5: RÉSEAUX SOCIAUX
     // ========================================
     $wp_customize->add_section('archi_social_media', [
-        'title' => __('Réseaux Sociaux', 'archi-graph'),
-        'description' => __('Ajoutez vos liens de réseaux sociaux.', 'archi-graph'),
-        'priority' => 50,
+        'title' => __('🌐 Réseaux Sociaux', 'archi-graph'),
+        'description' => __('Ajoutez les liens vers vos profils de réseaux sociaux.', 'archi-graph'),
+        'priority' => 40,
     ]);
     
     $social_networks = [
-        'facebook' => __('Facebook', 'archi-graph'),
-        'twitter' => __('Twitter/X', 'archi-graph'),
-        'instagram' => __('Instagram', 'archi-graph'),
-        'linkedin' => __('LinkedIn', 'archi-graph'),
-        'github' => __('GitHub', 'archi-graph'),
-        'youtube' => __('YouTube', 'archi-graph')
+        'facebook' => 'Facebook',
+        'twitter' => 'Twitter/X',
+        'instagram' => 'Instagram',
+        'linkedin' => 'LinkedIn',
+        'github' => 'GitHub',
+        'youtube' => 'YouTube'
     ];
     
     foreach ($social_networks as $network => $label) {
@@ -283,22 +618,36 @@ function archi_customize_register($wp_customize) {
         ]);
         
         $wp_customize->add_control("archi_social_{$network}", [
-            'label' => $label . ' URL',
+            'label' => $label,
             'section' => 'archi_social_media',
             'type' => 'url',
             'input_attrs' => [
-                'placeholder' => 'https://'
+                'placeholder' => 'https://...'
             ]
         ]);
     }
     
+    // Afficher dans le footer
+    $wp_customize->add_setting('archi_footer_show_social', [
+        'default' => true,
+        'transport' => 'postMessage',
+        'sanitize_callback' => 'archi_sanitize_checkbox'
+    ]);
+    
+    $wp_customize->add_control('archi_footer_show_social', [
+        'label' => __('Afficher dans le footer', 'archi-graph'),
+        'description' => __('Afficher les icônes de réseaux sociaux en bas de page.', 'archi-graph'),
+        'section' => 'archi_social_media',
+        'type' => 'checkbox'
+    ]);
+    
     // ========================================
-    // SECTION: FOOTER
+    // SECTION 6: FOOTER
     // ========================================
     $wp_customize->add_section('archi_footer_options', [
-        'title' => __('Options du Footer', 'archi-graph'),
-        'description' => __('Personnalisez le pied de page.', 'archi-graph'),
-        'priority' => 55,
+        'title' => __('📄 Pied de Page', 'archi-graph'),
+        'description' => __('Personnalisez le contenu du footer.', 'archi-graph'),
+        'priority' => 45,
     ]);
     
     // Texte copyright
@@ -309,24 +658,10 @@ function archi_customize_register($wp_customize) {
     ]);
     
     $wp_customize->add_control('archi_footer_copyright', [
-        'label' => __('Texte copyright', 'archi-graph'),
-        'description' => __('Texte affiché dans le footer.', 'archi-graph'),
+        'label' => __('Texte de copyright', 'archi-graph'),
+        'description' => __('Texte affiché en bas de page.', 'archi-graph'),
         'section' => 'archi_footer_options',
         'type' => 'textarea'
-    ]);
-    
-    // Afficher les réseaux sociaux
-    $wp_customize->add_setting('archi_footer_show_social', [
-        'default' => true,
-        'transport' => 'postMessage',
-        'sanitize_callback' => 'archi_sanitize_checkbox'
-    ]);
-    
-    $wp_customize->add_control('archi_footer_show_social', [
-        'label' => __('Afficher les réseaux sociaux', 'archi-graph'),
-        'description' => __('Afficher les liens de réseaux sociaux dans le footer.', 'archi-graph'),
-        'section' => 'archi_footer_options',
-        'type' => 'checkbox'
     ]);
 }
 add_action('customize_register', 'archi_customize_register');
@@ -344,6 +679,163 @@ function archi_sanitize_float($value) {
 function archi_sanitize_checkbox($value) {
     return (bool) $value;
 }
+
+/**
+ * Get category color palette
+ */
+function archi_get_category_color_palette($palette_name = 'default') {
+    $palettes = [
+        'default' => [
+            '#3498db', '#2980b9', '#5dade2', '#1f618d', '#85c1e9',
+            '#21618c', '#7fb3d5', '#154360', '#aed6f1', '#2e86c1'
+        ],
+        'warm' => [
+            '#e74c3c', '#c0392b', '#ec7063', '#922b21', '#f1948a',
+            '#e67e22', '#d35400', '#f39c12', '#f8c471', '#dc7633'
+        ],
+        'cool' => [
+            '#16a085', '#1abc9c', '#48c9b0', '#0e6655', '#76d7c4',
+            '#27ae60', '#229954', '#52be80', '#1e8449', '#82e0aa'
+        ],
+        'vibrant' => [
+            '#e74c3c', '#3498db', '#9b59b6', '#f39c12', '#1abc9c',
+            '#e67e22', '#2ecc71', '#8e44ad', '#34495e', '#16a085'
+        ],
+        'pastel' => [
+            '#aed6f1', '#f9e79f', '#abebc6', '#f5b7b1', '#d7bde2',
+            '#a9dfbf', '#f8b4d9', '#fad7a0', '#d5f4e6', '#fadbd8'
+        ],
+        'nature' => [
+            '#27ae60', '#229954', '#52be80', '#7d6608', '#d68910',
+            '#935116', '#6e2c00', '#52be80', '#a04000', '#82e0aa'
+        ],
+        'monochrome' => [
+            '#2c3e50', '#34495e', '#566573', '#707b7c', '#95a5a6',
+            '#7f8c8d', '#515a5a', '#a6acaf', '#626567', '#d5d8dc'
+        ]
+    ];
+    
+    return isset($palettes[$palette_name]) ? $palettes[$palette_name] : $palettes['default'];
+}
+
+/**
+ * Get color for a specific category
+ */
+function archi_get_category_color($category_id, $palette = 'default') {
+    $palette_colors = archi_get_category_color_palette($palette);
+    $index = absint($category_id) % count($palette_colors);
+    return $palette_colors[$index];
+}
+
+/**
+ * Localize graph settings for JavaScript
+ * ⚠️ DEPRECATED - Moved to functions.php for proper timing
+ * This function had timing issues with wp_enqueue_scripts hook
+ * Graph settings are now localized directly in functions.php after wp_enqueue_script('archi-app')
+ */
+function archi_localize_graph_settings() {
+    // Function deprecated - settings now localized in functions.php
+    // Kept for reference only
+    return;
+    
+    // Only on front-end with graph
+    if (is_admin() || !is_front_page()) {
+        return;
+    }
+    
+    $graph_settings = [
+        // Node settings
+        'defaultNodeColor' => get_theme_mod('archi_default_node_color', '#3498db'),
+        'defaultNodeSize' => get_theme_mod('archi_default_node_size', 60),
+        'clusterStrength' => get_theme_mod('archi_cluster_strength', 0.1),
+        
+        // Display options
+        'popupTitleOnly' => get_theme_mod('archi_graph_popup_title_only', false),
+        'showComments' => get_theme_mod('archi_graph_show_comments', true),
+        
+        // Animations and effects
+        'animationMode' => get_theme_mod('archi_graph_animation_mode', 'fade-in'),
+        'transitionSpeed' => get_theme_mod('archi_graph_transition_speed', 500),
+        'hoverEffect' => get_theme_mod('archi_graph_hover_effect', 'highlight'),
+        
+        // Links configuration
+        'linkColor' => get_theme_mod('archi_graph_link_color', '#999999'),
+        'linkWidth' => get_theme_mod('archi_graph_link_width', 1.5),
+        'linkOpacity' => get_theme_mod('archi_graph_link_opacity', 0.6),
+        'linkStyle' => get_theme_mod('archi_graph_link_style', 'solid'),
+        'showArrows' => get_theme_mod('archi_graph_show_arrows', false),
+        'linkAnimation' => get_theme_mod('archi_graph_link_animation', 'none'),
+        
+        // Category colors
+        'categoryColorsEnabled' => get_theme_mod('archi_graph_category_colors_enabled', false),
+        'categoryPalette' => get_theme_mod('archi_graph_category_palette', 'default'),
+        'showCategoryLegend' => get_theme_mod('archi_graph_show_category_legend', true),
+        
+        // Get actual palette colors
+        'categoryColors' => archi_get_category_color_palette(get_theme_mod('archi_graph_category_palette', 'default'))
+    ];
+    
+    // 🔥 FIX: Utiliser le bon handle de script 'archi-app' au lieu de 'archi-graph-main'
+    if (wp_script_is('archi-app', 'enqueued')) {
+        wp_localize_script('archi-app', 'archiGraphSettings', $graph_settings);
+    }
+}
+// Hook disabled - localization moved to functions.php
+// add_action('wp_enqueue_scripts', 'archi_localize_graph_settings', 20);
+
+/**
+ * Get font family CSS value
+ */
+function archi_get_font_family_css($font_family) {
+    $font_stacks = [
+        'system' => '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+        'arial' => 'Arial, Helvetica, sans-serif',
+        'helvetica' => '"Helvetica Neue", Helvetica, Arial, sans-serif',
+        'georgia' => 'Georgia, "Times New Roman", Times, serif',
+        'times' => '"Times New Roman", Times, serif',
+        'courier' => '"Courier New", Courier, monospace',
+        'verdana' => 'Verdana, Geneva, sans-serif',
+        'trebuchet' => '"Trebuchet MS", "Lucida Grande", "Lucida Sans Unicode", sans-serif',
+        'roboto' => '"Roboto", -apple-system, BlinkMacSystemFont, sans-serif',
+        'open-sans' => '"Open Sans", -apple-system, BlinkMacSystemFont, sans-serif',
+        'lato' => '"Lato", -apple-system, BlinkMacSystemFont, sans-serif',
+        'montserrat' => '"Montserrat", -apple-system, BlinkMacSystemFont, sans-serif',
+        'poppins' => '"Poppins", -apple-system, BlinkMacSystemFont, sans-serif',
+        'inter' => '"Inter", -apple-system, BlinkMacSystemFont, sans-serif',
+        'playfair' => '"Playfair Display", Georgia, serif',
+        'merriweather' => '"Merriweather", Georgia, serif',
+    ];
+    
+    return $font_stacks[$font_family] ?? $font_stacks['system'];
+}
+
+/**
+ * Enqueue Google Fonts if needed
+ */
+function archi_enqueue_google_fonts() {
+    $font_family = get_theme_mod('archi_font_family', 'system');
+    
+    $google_fonts = [
+        'roboto' => 'Roboto:300,400,500,700',
+        'open-sans' => 'Open+Sans:300,400,600,700',
+        'lato' => 'Lato:300,400,700',
+        'montserrat' => 'Montserrat:300,400,500,600,700',
+        'poppins' => 'Poppins:300,400,500,600,700',
+        'inter' => 'Inter:300,400,500,600,700',
+        'playfair' => 'Playfair+Display:400,500,700',
+        'merriweather' => 'Merriweather:300,400,700',
+    ];
+    
+    if (isset($google_fonts[$font_family])) {
+        wp_enqueue_style(
+            'archi-google-font',
+            'https://fonts.googleapis.com/css2?family=' . $google_fonts[$font_family] . '&display=swap',
+            [],
+            null
+        );
+    }
+}
+add_action('wp_enqueue_scripts', 'archi_enqueue_google_fonts');
 
 /**
  * Enqueue Customizer preview JavaScript
@@ -376,35 +868,87 @@ add_action('customize_controls_enqueue_scripts', 'archi_customizer_controls_js')
 /**
  * Output Customizer CSS
  */
+/**
+ * Applique les styles personnalisés du Customizer
+ */
 function archi_customizer_css() {
-    $header_animation_type = get_theme_mod('archi_header_animation_type', 'ease-in-out');
-    $header_animation_duration = get_theme_mod('archi_header_animation_duration', 0.3);
-    $header_trigger_height = get_theme_mod('archi_header_trigger_height', 50);
-    $font_family = get_theme_mod('archi_font_family', '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif');
-    $font_size_base = get_theme_mod('archi_font_size_base', 16);
+    // Get color settings (consolidated)
     $primary_color = get_theme_mod('archi_primary_color', '#3498db');
     $secondary_color = get_theme_mod('archi_secondary_color', '#2c3e50');
+    $header_bg_color = get_theme_mod('archi_header_bg_color', '#ffffff');
+    $header_text_color = get_theme_mod('archi_header_text_color', '#2c3e50');
+    
+    // Get typography settings
+    $font_size_base = get_theme_mod('archi_font_size_base', 16);
+    $font_family = get_theme_mod('archi_font_family', 'system');
+    
+    // Get header options
+    $header_transparent = get_theme_mod('archi_header_transparent', false);
+    $header_height = get_theme_mod('archi_header_height', 'normal');
+    $header_shadow = get_theme_mod('archi_header_shadow', 'light');
+    $header_scroll_opacity = get_theme_mod('archi_header_scroll_opacity', 0.95);
+    $header_logo_position = get_theme_mod('archi_header_logo_position', 'left');
+    $header_sticky_behavior = get_theme_mod('archi_header_sticky_behavior', 'always');
+    
+    // Map font family to CSS
+    $font_family_css = archi_get_font_family_css($font_family);
+    
+    // Map header height values
+    $height_map = [
+        'compact' => '60px',
+        'normal' => '80px',
+        'large' => '100px',
+        'extra-large' => '120px'
+    ];
+    $header_height_value = $height_map[$header_height] ?? '80px';
+    
+    // Map shadow values
+    $shadow_map = [
+        'none' => 'none',
+        'light' => '0 2px 4px rgba(0,0,0,0.1)',
+        'medium' => '0 4px 8px rgba(0,0,0,0.15)',
+        'strong' => '0 6px 12px rgba(0,0,0,0.2)'
+    ];
+    $header_shadow_value = $shadow_map[$header_shadow] ?? '0 2px 4px rgba(0,0,0,0.1)';
     
     ?>
     <style id="archi-customizer-styles">
-        /* Header animations */
-        .site-header {
-            transition: transform <?php echo esc_attr($header_animation_duration); ?>s <?php echo esc_attr($header_animation_type); ?>,
-                        opacity <?php echo esc_attr($header_animation_duration); ?>s <?php echo esc_attr($header_animation_type); ?>;
+        /* Typography - Application globale de la police */
+        body,
+        html,
+        input,
+        textarea,
+        select,
+        button,
+        .site-header,
+        .site-navigation,
+        .main-navigation,
+        .site-content,
+        .entry-content,
+        .site-footer,
+        h1, h2, h3, h4, h5, h6,
+        p, span, div, a,
+        .btn, .button,
+        .wp-block,
+        .graph-container,
+        .article-card,
+        .panel-content,
+        .node-title-text,
+        .node-label,
+        .graph-legend,
+        .graph-info-panel,
+        .graph-instructions,
+        .graph-controls,
+        .side-panel,
+        .title-overlay {
+            font-family: <?php echo esc_attr($font_family_css); ?> !important;
         }
         
-        /* Header trigger zone */
-        .header-trigger-zone {
-            height: <?php echo absint($header_trigger_height); ?>px;
-        }
-        
-        /* Typography */
         body {
-            font-family: <?php echo esc_attr($font_family); ?>;
             font-size: <?php echo absint($font_size_base); ?>px;
         }
         
-        /* Colors */
+        /* Primary colors */
         a {
             color: <?php echo esc_attr($primary_color); ?>;
         }
@@ -426,10 +970,79 @@ function archi_customizer_css() {
             background-color: <?php echo esc_attr(archi_adjust_color_brightness($primary_color, -20)); ?>;
             border-color: <?php echo esc_attr(archi_adjust_color_brightness($primary_color, -20)); ?>;
         }
+        
+        /* Header & Navigation */
+        .site-header {
+            background-color: <?php echo esc_attr($header_bg_color); ?>;
+            height: <?php echo esc_attr($header_height_value); ?>;
+            box-shadow: <?php echo esc_attr($header_shadow_value); ?>;
+            transition: all 0.3s ease-in-out;
+        }
+        
+        /* Header logo/title position */
+        .site-header .site-branding {
+            text-align: <?php echo esc_attr($header_logo_position); ?>;
+        }
+        
+        <?php if ($header_logo_position === 'center') : ?>
+        .site-header .container {
+            justify-content: center;
+        }
+        .site-header .main-navigation {
+            margin-left: auto;
+            margin-right: auto;
+        }
+        <?php elseif ($header_logo_position === 'right') : ?>
+        .site-header .container {
+            flex-direction: row-reverse;
+        }
+        <?php endif; ?>
+        
+        /* Sticky header behavior */
+        <?php if ($header_sticky_behavior === 'hide-on-scroll-down') : ?>
+        .site-header.sticky-header.scroll-down {
+            transform: translateY(-100%);
+        }
+        .site-header.sticky-header.scroll-up {
+            transform: translateY(0);
+        }
+        <?php elseif ($header_sticky_behavior === 'show-on-scroll-up') : ?>
+        .site-header.sticky-header {
+            transform: translateY(-100%);
+        }
+        .site-header.sticky-header.scroll-up {
+            transform: translateY(0);
+        }
+        <?php endif; ?>
+        
+        <?php if ($header_transparent) : ?>
+        .home .site-header.transparent-header {
+            background-color: transparent;
+            position: absolute;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: none;
+        }
+        
+        .home .site-header.transparent-header.scrolled {
+            background-color: <?php echo esc_attr($header_bg_color); ?>;
+            opacity: <?php echo esc_attr($header_scroll_opacity); ?>;
+            box-shadow: <?php echo esc_attr($header_shadow_value); ?>;
+        }
+        <?php endif; ?>
+        
+        .main-navigation .nav-menu a {
+            color: <?php echo esc_attr($header_text_color); ?>;
+        }
+        
+        .main-navigation .nav-menu a:hover,
+        .main-navigation .nav-menu .current-menu-item > a {
+            color: <?php echo esc_attr($primary_color); ?>;
+        }
     </style>
     <?php
 }
-add_action('wp_head', 'archi_customizer_css');
+add_action('wp_head', 'archi_customizer_css', 999);
 
 /**
  * Adjust color brightness
@@ -457,32 +1070,3 @@ function archi_adjust_color_brightness($hex, $steps) {
                . str_pad(dechex($g), 2, '0', STR_PAD_LEFT)
                . str_pad(dechex($b), 2, '0', STR_PAD_LEFT);
 }
-
-/**
- * Enqueue Customizer preview scripts
- */
-function archi_customizer_preview_scripts() {
-    wp_enqueue_script(
-        'archi-customizer-preview',
-        get_template_directory_uri() . '/assets/js/customizer-preview.js',
-        ['jquery', 'customize-preview'],
-        '1.2.0',
-        true
-    );
-}
-add_action('customize_preview_init', 'archi_customizer_preview_scripts');
-
-/**
- * Enqueue Customizer control scripts
- */
-function archi_customizer_control_scripts() {
-    wp_enqueue_script(
-        'archi-customizer-controls',
-        get_template_directory_uri() . '/assets/js/customizer-controls.js',
-        ['jquery', 'customize-controls'],
-        '1.2.0',
-        true
-    );
-}
-add_action('customize_controls_enqueue_scripts', 'archi_customizer_control_scripts');
-

@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Constantes du thème
-define('ARCHI_THEME_VERSION', '1.0.6');
+define('ARCHI_THEME_VERSION', '1.1.0');
 define('ARCHI_THEME_DIR', get_template_directory());
 define('ARCHI_THEME_URI', get_template_directory_uri());
 
@@ -366,6 +366,17 @@ function archi_enqueue_scripts() {
         );
     }
     
+    // ✅ NOUVEAU : Unified feedback styles (commentaires + guestbook)
+    // Charger sur les pages avec commentaires ou guestbook
+    if (is_singular() || is_page_template('page-guestbook.php')) {
+        wp_enqueue_style(
+            'archi-unified-feedback',
+            ARCHI_THEME_URI . '/assets/css/unified-feedback.css',
+            [],
+            ARCHI_THEME_VERSION
+        );
+    }
+    
     // Variables pour JavaScript (uniquement sur la page d'accueil où archi-app est chargé)
     if (is_front_page()) {
         wp_localize_script('archi-app', 'archiGraph', [
@@ -374,6 +385,44 @@ function archi_enqueue_scripts() {
             'themeUrl' => ARCHI_THEME_URI,
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'config' => archi_visual_get_frontend_config(), // Simplified configuration
+        ]);
+        
+        wp_localize_script('archi-app', 'archiGraphConfig', [
+            'popupTitleOnly' => get_theme_mod('archi_graph_popup_title_only', false),
+            'showComments' => get_theme_mod('archi_graph_show_comments', true),
+        ]);
+        
+        // 🔥 Graph settings from Customizer
+        wp_localize_script('archi-app', 'archiGraphSettings', [
+            // Node settings
+            'defaultNodeColor' => get_theme_mod('archi_default_node_color', '#3498db'),
+            'defaultNodeSize' => get_theme_mod('archi_default_node_size', 60),
+            'clusterStrength' => get_theme_mod('archi_cluster_strength', 0.1),
+            
+            // Display options
+            'popupTitleOnly' => get_theme_mod('archi_graph_popup_title_only', false),
+            'showComments' => get_theme_mod('archi_graph_show_comments', true),
+            
+            // Animations and effects
+            'animationMode' => get_theme_mod('archi_graph_animation_mode', 'fade-in'),
+            'transitionSpeed' => get_theme_mod('archi_graph_transition_speed', 500),
+            'hoverEffect' => get_theme_mod('archi_graph_hover_effect', 'highlight'),
+            
+            // Links configuration
+            'linkColor' => get_theme_mod('archi_graph_link_color', '#999999'),
+            'linkWidth' => get_theme_mod('archi_graph_link_width', 1.5),
+            'linkOpacity' => get_theme_mod('archi_graph_link_opacity', 0.6),
+            'linkStyle' => get_theme_mod('archi_graph_link_style', 'solid'),
+            'showArrows' => get_theme_mod('archi_graph_show_arrows', false),
+            'linkAnimation' => get_theme_mod('archi_graph_link_animation', 'none'),
+            
+            // Category colors
+            'categoryColorsEnabled' => get_theme_mod('archi_graph_category_colors_enabled', false),
+            'categoryPalette' => get_theme_mod('archi_graph_category_palette', 'default'),
+            'showCategoryLegend' => get_theme_mod('archi_graph_show_category_legend', true),
+            
+            // Get actual palette colors
+            'categoryColors' => archi_get_category_color_palette(get_theme_mod('archi_graph_category_palette', 'default'))
         ]);
         
         // Éditeur de graphique pour les administrateurs
@@ -787,3 +836,87 @@ function archi_force_white_background() {
     </style>';
 }
 add_action('wp_head', 'archi_force_white_background', 999);
+
+/**
+ * ✅ NOUVEAU : Ajouter checkbox RGPD au formulaire de commentaire
+ * Conformité RGPD pour la collecte des données personnelles
+ * 
+ * @param array $fields Champs du formulaire de commentaire
+ * @return array Champs modifiés avec checkbox RGPD
+ * @since 1.1.0
+ */
+function archi_add_gdpr_to_comments($fields) {
+    $privacy_url = get_privacy_policy_url();
+    
+    if ($privacy_url) {
+        $consent_label = sprintf(
+            __('J\'accepte que mes données (nom, email) soient enregistrées pour ce commentaire. %sConsulter la politique de confidentialité%s.', 'archi-graph'),
+            '<a href="' . esc_url($privacy_url) . '" target="_blank">',
+            '</a>'
+        );
+    } else {
+        $consent_label = __('J\'accepte que mes données personnelles (nom, email) soient enregistrées pour ce commentaire.', 'archi-graph');
+    }
+    
+    $fields['cookies'] = '<p class="comment-form-cookies-consent unified-gdpr-consent">' .
+        '<label for="wp-comment-cookies-consent">' .
+        '<input id="wp-comment-cookies-consent" name="wp-comment-cookies-consent" type="checkbox" value="yes" required /> ' .
+        '<span class="gdpr-text">' . $consent_label . ' <span class="required">*</span></span>' .
+        '</label>' .
+        '</p>';
+    
+    return $fields;
+}
+add_filter('comment_form_default_fields', 'archi_add_gdpr_to_comments');
+
+/**
+ * Menu de fallback intelligent
+ * Affiche un message pour inviter l'admin à créer un menu
+ * ou génère automatiquement un menu basé sur les pages
+ */
+function archi_fallback_menu($args = []) {
+    // Si on est admin, afficher un message d'aide
+    if (current_user_can('manage_options')) {
+        echo '<div class="menu-primary-container">';
+        echo '<div class="no-menu-notice" style="padding: 1rem; background: #fff3cd; border: 1px solid #ffc107; border-radius: 4px; margin: 1rem 0;">';
+        echo '<p style="margin: 0; font-weight: 600; color: #856404;">';
+        echo '<span style="font-size: 1.2em;">⚠️</span> ';
+        echo esc_html__('Aucun menu assigné', 'archi-graph');
+        echo '</p>';
+        echo '<p style="margin: 0.5rem 0 0; font-size: 0.9rem; color: #856404;">';
+        printf(
+            __('Créez votre menu dans %sApparence → Menus%s', 'archi-graph'),
+            '<a href="' . esc_url(admin_url('nav-menus.php')) . '" style="color: #0073aa; text-decoration: underline;">',
+            '</a>'
+        );
+        echo '</p>';
+        echo '</div>';
+        echo '</div>';
+    }
+    
+    // Pour les visiteurs, afficher un menu automatique basé sur les pages
+    echo '<div class="menu-primary-container">';
+    echo '<ul id="primary-menu" class="nav-menu">';
+    
+    // Accueil
+    echo '<li class="menu-item">';
+    echo '<a href="' . esc_url(home_url('/')) . '">' . esc_html__('Accueil', 'archi-graph') . '</a>';
+    echo '</li>';
+    
+    // Pages principales (triées par menu_order)
+    $pages = get_pages([
+        'sort_column' => 'menu_order',
+        'sort_order' => 'ASC',
+        'hierarchical' => 0,
+        'number' => 5, // Limiter à 5 pages max
+    ]);
+    
+    foreach ($pages as $page) {
+        echo '<li class="menu-item">';
+        echo '<a href="' . esc_url(get_permalink($page->ID)) . '">' . esc_html($page->post_title) . '</a>';
+        echo '</li>';
+    }
+    
+    echo '</ul>';
+    echo '</div>';
+}

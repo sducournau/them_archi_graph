@@ -37,6 +37,10 @@ import {
   applyHoverScale,
   createVisualEffectFilters,
 } from "../utils/nodeVisualEffects";
+import {
+  showInfoPanel,
+  hideInfoPanel,
+} from "../utils/sidebarUtils";
 // Arrow satellites désactivés
 // import {
 //   createArrowSatellites,
@@ -63,6 +67,7 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
   const velocitiesRef = useRef({});
   const animationFrameRef = useRef(null);
   const clickTimerRef = useRef(null); // Timer pour détecter double-clic
+  const customizerSettingsRef = useRef({}); // 🔥 STOCKER LES SETTINGS DU CUSTOMIZER
 
   // Paramètres de physique pour la répulsion
   const REPULSION_FORCE = 2000;
@@ -151,6 +156,34 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
       updateGraph();
     }
   }, [articles, selectedCategory]);
+
+  /**
+   * Écouter les changements de paramètres du Customizer
+   */
+  useEffect(() => {
+    const handleSettingsUpdate = (event) => {
+      const newSettings = event.detail;
+      console.log('Customizer settings updated:', newSettings);
+
+      // Mettre à jour window.archiGraphSettings
+      if (typeof window.archiGraphSettings === 'object') {
+        Object.assign(window.archiGraphSettings, newSettings);
+      }
+
+      // Redessiner le graphe avec les nouveaux paramètres
+      if (articles.length > 0 && svgRef.current) {
+        updateGraph();
+      }
+    };
+
+    // Écouter l'événement personnalisé
+    window.addEventListener('graphSettingsUpdated', handleSettingsUpdate);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('graphSettingsUpdated', handleSettingsUpdate);
+    };
+  }, [articles]); // Dépend de articles pour pouvoir redessiner
 
   /**
    * Initialiser le graphique
@@ -388,6 +421,13 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
       return;
     }
 
+    // 🔥 RÉCUPÉRER LES PARAMÈTRES DU CUSTOMIZER
+    const customizerSettings = window.archiGraphSettings || {};
+    console.log('🎨 Using Customizer settings:', customizerSettings);
+    
+    // 🔥 STOCKER DANS LA REF POUR L'ACCÈS GLOBAL
+    customizerSettingsRef.current = customizerSettings;
+
     // Filtrer les articles selon la catégorie sélectionnée
     let filteredArticles = articles;
     if (selectedCategory) {
@@ -419,6 +459,16 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
     // Vérifier si l'affichage des liens est activé
     const shouldShowLinks = options.showLinks !== false;
 
+    // 🔥 UTILISER LA FORCE DE REGROUPEMENT DU CUSTOMIZER
+    const clusterStrength = customizerSettings.clusterStrength !== undefined 
+      ? customizerSettings.clusterStrength 
+      : 0.1;
+
+    // 🔥 UTILISER LA TAILLE PAR DÉFAUT DU CUSTOMIZER
+    const defaultNodeSize = customizerSettings.defaultNodeSize || 60;
+
+    console.log('🎯 Cluster strength:', clusterStrength, 'Node size:', defaultNodeSize);
+
     // Créer la simulation de force
     const simulation = d3
       .forceSimulation(filteredArticles)
@@ -428,8 +478,8 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
         "collision",
         d3
           .forceCollide()
-          .radius((d) => (d.node_size || 60) / 2 + 10)
-          .strength(0.7)
+          .radius((d) => (d.node_size || defaultNodeSize) / 2 + 10)
+          .strength(clusterStrength)
       )
       .alpha(1)
       .alphaDecay(0.02)
@@ -459,14 +509,14 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
 
     // Créer/Mettre à jour les liens seulement si l'option est activée
     if (shouldShowLinks) {
-      updateLinks(g, links);
+      updateLinks(g, links, customizerSettings);
     } else {
       // Supprimer tous les liens existants
       g.select(".links").selectAll(".graph-link").remove();
     }
 
     // Créer/Mettre à jour les nœuds
-    updateNodes(g, filteredArticles, simulation);
+    updateNodes(g, filteredArticles, simulation, customizerSettings);
 
     // Les îles architecturales remplacent les clusters de catégories
     // updateClusters(g, categories, filteredArticles);
@@ -522,8 +572,17 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
   /**
    * Mise à jour des liens entre les nœuds
    */
-  const updateLinks = (container, links) => {
+  const updateLinks = (container, links, settings = {}) => {
     const linksGroup = container.select(".links");
+
+    // 🔥 UTILISER LES PARAMÈTRES DU CUSTOMIZER
+    const linkColor = settings.linkColor || '#999999';
+    const linkWidth = settings.linkWidth || 1.5;
+    const linkOpacity = settings.linkOpacity || 0.6;
+    const linkStyle = settings.linkStyle || 'solid';
+    const showArrows = settings.showArrows !== undefined ? settings.showArrows : false;
+
+    console.log('🔗 Link settings:', { linkColor, linkWidth, linkOpacity, linkStyle, showArrows });
 
     const linkElements = linksGroup
       .selectAll(".graph-link")
@@ -538,36 +597,56 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
       .append("line")
       .attr("class", "graph-link")
       .attr("data-link-id", (d) => d.id)
+      .attr("data-link-type", (d) => d.type || "proximity")
       .style("stroke", (d) => {
-        // Couleur basée sur la force du lien
-        const strength = d.proximity?.strength || "weak";
-        const colors = {
-          "very-strong": "#e74c3c",
-          strong: "#f39c12",
-          medium: "#3498db",
-          weak: "#95a5a6",
-          "very-weak": "#bdc3c7",
-        };
-        return colors[strength] || "#95a5a6";
+        // ✅ Lien de livre d'or : couleur distinctive
+        if (d.type === 'guestbook') {
+          return '#2ecc71'; // Vert pour le livre d'or
+        }
+        
+        // 🔥 UTILISER LA COULEUR DU CUSTOMIZER
+        return linkColor;
       })
       .style("stroke-width", (d) => {
-        // Épaisseur basée sur le score
-        const score = d.proximity?.normalizedScore || 25;
-        return Math.max(1, (score / 100) * 4);
+        // ✅ Lien de livre d'or : plus épais
+        if (d.type === 'guestbook') {
+          return 3;
+        }
+        
+        // 🔥 UTILISER L'ÉPAISSEUR DU CUSTOMIZER
+        return linkWidth;
       })
       .style("stroke-opacity", (d) => {
-        // Opacité basée sur le score
-        const score = d.proximity?.normalizedScore || 25;
-        return Math.max(0.1, (score / 100) * 0.6);
+        // ✅ Lien de livre d'or : bien visible
+        if (d.type === 'guestbook') {
+          return 0.8;
+        }
+        
+        // 🔥 UTILISER L'OPACITÉ DU CUSTOMIZER
+        return linkOpacity;
       })
       .style("stroke-dasharray", (d) => {
-        // Liens faibles en pointillés
-        const strength = d.proximity?.strength || "weak";
-        return strength === "weak" || strength === "very-weak" ? "5,5" : "none";
+        // ✅ Lien de livre d'or : tirets longs pour distinction
+        if (d.type === 'guestbook') {
+          return "10,5";
+        }
+        
+        // 🔥 UTILISER LE STYLE DU CUSTOMIZER
+        if (linkStyle === 'dashed') {
+          return "5,5";
+        } else if (linkStyle === 'dotted') {
+          return "2,2";
+        }
+        return "none"; // solid
       });
 
     // Ajouter un titre pour afficher les détails au survol
     linkEnter.append("title").text((d) => {
+      // ✅ Tooltip spécial pour les liens du livre d'or
+      if (d.type === 'guestbook') {
+        return `Lien du Livre d'Or\n\nArticle lié manuellement depuis une entrée du livre d'or.`;
+      }
+      
       const prox = d.proximity;
       if (!prox) return "Lien";
 
@@ -614,8 +693,14 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
   /**
    * Mise à jour des nœuds
    */
-  const updateNodes = (container, data, simulation) => {
+  const updateNodes = (container, data, simulation, settings = {}) => {
     const nodesGroup = container.select(".nodes");
+
+    // 🔥 UTILISER LES PARAMÈTRES DU CUSTOMIZER
+    const defaultNodeColor = settings.defaultNodeColor || '#3498db';
+    const defaultNodeSize = settings.defaultNodeSize || 60;
+
+    console.log('⭕ Node settings:', { defaultNodeColor, defaultNodeSize });
 
     const nodeElements = nodesGroup
       .selectAll(".graph-node")
@@ -652,12 +737,12 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
       .append("image")
       .attr("class", "node-image")
       .attr("width", (d) => {
-        const size = d.node_size || 60;
+        const size = d.node_size || defaultNodeSize;
         return size;
       })
-      .attr("height", (d) => d.node_size || 60)
-      .attr("x", (d) => -(d.node_size || 60) / 2)
-      .attr("y", (d) => -(d.node_size || 60) / 2)
+      .attr("height", (d) => d.node_size || defaultNodeSize)
+      .attr("x", (d) => -(d.node_size || defaultNodeSize) / 2)
+      .attr("y", (d) => -(d.node_size || defaultNodeSize) / 2)
       .attr("href", (d) => d.thumbnail || "")
       .attr("preserveAspectRatio", "xMidYMid meet")
       .style("filter", "url(#drop-shadow)")
@@ -672,8 +757,8 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
       .append("circle")
       .attr("class", "priority-badge")
       .attr("r", 8)
-      .attr("cx", (d) => (d.node_size || 60) / 2 - 5)
-      .attr("cy", (d) => -(d.node_size || 60) / 2 + 5)
+      .attr("cx", (d) => (d.node_size || defaultNodeSize) / 2 - 5)
+      .attr("cy", (d) => -(d.node_size || defaultNodeSize) / 2 + 5)
       .style("fill", (d) =>
         d.priority_level === "featured" ? "#e74c3c" : "#f39c12"
       )
@@ -691,7 +776,7 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
 
     // ✅ Apply continuous visual effects (pulse, glow)
     const svg = container.select('svg');
-    applyContinuousEffects(nodeUpdate, svg);
+    applyContinuousEffects(nodeUpdate, svg, settings);
 
     // Événements
     nodeUpdate
@@ -1190,14 +1275,17 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
     const imageElement = nodeElement.select(".node-image");
     const intensity = getAnimationIntensity(d);
 
+    // 🔥 RÉCUPÉRER LES SETTINGS DU CUSTOMIZER
+    const settings = customizerSettingsRef.current;
+
     if (isEntering) {
       setHoveredNode(d);
 
       // Activate GIF animation on hover
       activateNodeGif(nodeElement, d);
 
-      // ✅ Use unified hover scale effect
-      applyHoverScale(imageElement, d, true);
+      // ✅ Use unified hover scale effect AVEC LES SETTINGS
+      applyHoverScale(imageElement, d, true, settings);
 
       // Afficher le tooltip à proximité du nœud
       showNodeTooltip(d, event);
@@ -1209,9 +1297,9 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
         deactivateNodeGif(nodeElement, d);
       }
 
-      // ✅ Reset scale using unified function
+      // ✅ Reset scale using unified function AVEC LES SETTINGS
       if (!selectedNode || selectedNode.id !== d.id) {
-        applyHoverScale(imageElement, d, false);
+        applyHoverScale(imageElement, d, false, settings);
       }
 
       // Masquer le tooltip
@@ -1310,6 +1398,9 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
 
     // Afficher le panneau latéral avec le lien "Consulter"
     showSideTitlePanel(d, true);
+
+    // Afficher le panneau d'informations avec résumé, titre et thumbnail
+    showInfoPanel(d);
   };
 
   /**
@@ -1375,6 +1466,9 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
 
     // Masquer le tooltip quand le node est désélectionné
     hideNodeTooltip();
+
+    // Masquer le panneau d'informations
+    hideInfoPanel();
 
     setSelectedNode(null);
   };

@@ -46,16 +46,22 @@ export const showNodeTooltip = (node, event, svgRef, transformRef, options = {})
   
   // Get description (excerpt, content, or custom meta)
   let description = '';
-  if (node.excerpt) {
-    description = node.excerpt;
-  } else if (node.content) {
-    // Extract excerpt from content (without HTML)
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = node.content;
-    const textContent = tempDiv.textContent || tempDiv.innerText || '';
-    description = textContent.substring(0, 200).trim() + (textContent.length > 200 ? '...' : '');
-  } else if (node.custom_meta?.description) {
-    description = node.custom_meta.description;
+  
+  // Check if we should show only the title (from Customizer option)
+  const showTitleOnly = window.archiGraphConfig?.popupTitleOnly || false;
+  
+  if (!showTitleOnly) {
+    if (node.excerpt) {
+      description = node.excerpt;
+    } else if (node.content) {
+      // Extract excerpt from content (without HTML)
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = node.content;
+      const textContent = tempDiv.textContent || tempDiv.innerText || '';
+      description = textContent.substring(0, 200).trim() + (textContent.length > 200 ? '...' : '');
+    } else if (node.custom_meta?.description) {
+      description = node.custom_meta.description;
+    }
   }
   
   // Build HTML

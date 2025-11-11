@@ -13,50 +13,82 @@
     let scrollTimeout;
     const scrollThreshold = 100; // Minimum scroll before hiding header
 
+    // Get sticky behavior from data attribute (set by PHP)
+    const stickyBehavior = header ? header.dataset.stickyBehavior || 'always' : 'always';
+
     // Header scroll behavior
-    if (header) {
+    if (header && header.classList.contains('sticky-header')) {
       window.addEventListener("scroll", function () {
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
         // Clear previous timeout
         clearTimeout(scrollTimeout);
 
-        // Only apply behavior after scrolling past threshold
-        if (scrollTop > scrollThreshold) {
-          if (scrollTop > lastScrollTop) {
-            // Scrolling down - hide header
-            header.classList.add("header-hidden");
-          } else {
-            // Scrolling up - show header
-            header.classList.remove("header-hidden");
-          }
+        // Add scrolled class for transparent header
+        if (scrollTop > 50) {
+          header.classList.add("scrolled");
         } else {
-          // At top of page - always show header
-          header.classList.remove("header-hidden");
+          header.classList.remove("scrolled");
         }
+
+        // Apply sticky behavior based on customizer setting
+        if (stickyBehavior === 'hide-on-scroll-down') {
+          // Only apply behavior after scrolling past threshold
+          if (scrollTop > scrollThreshold) {
+            if (scrollTop > lastScrollTop) {
+              // Scrolling down - hide header
+              header.classList.add("scroll-down");
+              header.classList.remove("scroll-up");
+            } else {
+              // Scrolling up - show header
+              header.classList.add("scroll-up");
+              header.classList.remove("scroll-down");
+            }
+          } else {
+            // At top of page - always show header
+            header.classList.remove("scroll-down", "scroll-up");
+          }
+        } else if (stickyBehavior === 'show-on-scroll-up') {
+          // Header hidden by default, only shows when scrolling up
+          if (scrollTop > scrollThreshold) {
+            if (scrollTop < lastScrollTop) {
+              // Scrolling up - show header
+              header.classList.add("scroll-up");
+            } else {
+              // Scrolling down - keep hidden
+              header.classList.remove("scroll-up");
+            }
+          } else {
+            // At top of page - always show header
+            header.classList.add("scroll-up");
+          }
+        }
+        // If 'always', no additional classes needed
 
         lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
       });
 
-      // Show header on hover when hidden
-      header.addEventListener("mouseenter", function () {
-        if (header.classList.contains("header-hidden")) {
-          header.classList.add("header-peek");
-        }
-      });
+      // Show header on hover when hidden (for hide behaviors)
+      if (stickyBehavior !== 'always') {
+        header.addEventListener("mouseenter", function () {
+          if (!header.classList.contains("scroll-up")) {
+            header.classList.add("header-peek");
+          }
+        });
 
-      header.addEventListener("mouseleave", function () {
-        header.classList.remove("header-peek");
-      });
-
-      // Detect mouse near top of screen to show header
-      document.addEventListener("mousemove", function (e) {
-        if (e.clientY < 50 && header.classList.contains("header-hidden")) {
-          header.classList.add("header-peek");
-        } else if (e.clientY > 150 && header.classList.contains("header-peek")) {
+        header.addEventListener("mouseleave", function () {
           header.classList.remove("header-peek");
-        }
-      });
+        });
+
+        // Detect mouse near top of screen to show header
+        document.addEventListener("mousemove", function (e) {
+          if (e.clientY < 50 && !header.classList.contains("scroll-up")) {
+            header.classList.add("header-peek");
+          } else if (e.clientY > 150 && header.classList.contains("header-peek")) {
+            header.classList.remove("header-peek");
+          }
+        });
+      }
     }
 
     // Mobile menu toggle

@@ -200,10 +200,28 @@ function archi_get_articles_for_graph($request) {
         $article = array_merge($article, $graph_params);
         
         // ✅ NEW: Add comments node metadata
+        $comments_list = [];
+        $recent_comments = get_comments([
+            'post_id' => $post->ID,
+            'status' => 'approve',
+            'number' => 5,
+            'orderby' => 'comment_date',
+            'order' => 'DESC'
+        ]);
+        
+        foreach ($recent_comments as $comment) {
+            $comments_list[] = [
+                'author' => $comment->comment_author,
+                'date' => $comment->comment_date,
+                'content' => wp_trim_words($comment->comment_content, 30, '...')
+            ];
+        }
+        
         $article['comments'] = [
             'show_as_node' => get_post_meta($post->ID, '_archi_show_comments_node', true) === '1',
             'count' => get_comments_number($post->ID),
             'node_color' => get_post_meta($post->ID, '_archi_comment_node_color', true) ?: '#16a085',
+            'recent' => $comments_list
         ];
         
         // Ajouter les métadonnées spécifiques aux illustrations

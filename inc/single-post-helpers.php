@@ -395,3 +395,94 @@ function archi_get_post_type_label($post_type = null) {
     
     return isset($labels[$post_type]) ? $labels[$post_type] : get_post_type_object($post_type)->labels->singular_name;
 }
+
+/**
+ * Callback personnalisé pour affichage des commentaires
+ * Design harmonisé avec le système de livre d'or
+ * 
+ * @param WP_Comment $comment Objet commentaire
+ * @param array $args Arguments de wp_list_comments()
+ * @param int $depth Profondeur du commentaire (threading)
+ * @since 1.1.0
+ */
+function archi_unified_comment_callback($comment, $args, $depth) {
+    $tag = ('div' === $args['style']) ? 'div' : 'li';
+    $comment_class = empty($args['has_children']) ? 'unified-feedback-card comment-item' : 'parent unified-feedback-card comment-item';
+    ?>
+    <<?php echo $tag; ?> id="comment-<?php comment_ID(); ?>" <?php comment_class($comment_class, $comment); ?>>
+        <article id="div-comment-<?php comment_ID(); ?>" class="comment-body">
+            
+            <div class="comment-author-section">
+                <div class="unified-author-avatar">
+                    <?php 
+                    if ($args['avatar_size'] != 0) {
+                        echo get_avatar($comment, $args['avatar_size'], '', '', ['class' => 'avatar-circle']); 
+                    }
+                    ?>
+                </div>
+                
+                <div class="comment-meta unified-meta-info">
+                    <div class="comment-author-name">
+                        <?php
+                        $comment_author = get_comment_author_link($comment);
+                        if ('0' == $comment->comment_approved) {
+                            echo '<em class="comment-awaiting-moderation">' . 
+                                 __('(En attente de modération)', 'archi-graph') . 
+                                 '</em> ';
+                        }
+                        echo $comment_author;
+                        ?>
+                    </div>
+                    
+                    <div class="comment-metadata">
+                        <time datetime="<?php comment_time('c'); ?>" class="comment-date">
+                            <span class="icon">📅</span>
+                            <?php 
+                            printf(
+                                __('%s à %s', 'archi-graph'),
+                                get_comment_date('', $comment),
+                                get_comment_time()
+                            );
+                            ?>
+                        </time>
+                        
+                        <?php if ('0' == $comment->comment_approved) : ?>
+                            <span class="badge badge-warning">
+                                <?php _e('En attente', 'archi-graph'); ?>
+                            </span>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <div class="comment-content unified-content-area">
+                <?php comment_text(); ?>
+            </div>
+
+            <div class="comment-actions unified-action-buttons">
+                <?php
+                // Bouton répondre
+                $reply_link = get_comment_reply_link(array_merge($args, [
+                    'add_below' => 'div-comment',
+                    'depth'     => $depth,
+                    'max_depth' => $args['max_depth'],
+                    'before'    => '<span class="reply-link">',
+                    'after'     => '</span>',
+                ]));
+                
+                if ($reply_link) {
+                    echo '<span class="icon">💬</span>' . $reply_link;
+                }
+                
+                // Lien modification (admin/auteur uniquement)
+                edit_comment_link(
+                    __('Modifier', 'archi-graph'),
+                    '<span class="edit-link"><span class="icon">✏️</span>',
+                    '</span>'
+                );
+                ?>
+            </div>
+            
+        </article>
+    <?php
+}

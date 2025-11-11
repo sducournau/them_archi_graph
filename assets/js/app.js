@@ -2,6 +2,8 @@ import { createRoot } from "react-dom/client";
 import React from "react";
 import GraphContainer from "@components/GraphContainer";
 import "../css/main.scss";
+// Import du helper de settings pour rendre window.updateGraphSettings disponible
+import "@utils/graph-settings-helper";
 
 /**
  * Point d'entrée principal de l'application React

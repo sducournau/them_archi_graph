@@ -441,6 +441,35 @@ export const calculateNodeLinks = (nodes, options = {}) => {
     linksPerNode.set(node.id, []);
   });
 
+  // ✅ NOUVEAU: Créer les liens manuels pour le livre d'or (guestbook)
+  // Ces liens ont priorité et ne sont pas limités par maxLinksPerNode
+  nodes.forEach((node) => {
+    if (node.post_type === 'archi_guestbook' && node.guestbook_meta?.linked_articles) {
+      const linkedArticleIds = node.guestbook_meta.linked_articles;
+      
+      linkedArticleIds.forEach((linkedId) => {
+        const targetNode = nodes.find(n => n.id === linkedId);
+        
+        if (targetNode) {
+          // Créer un lien fort et distinctif pour le livre d'or
+          const link = {
+            source: node,
+            target: targetNode,
+            strength: 3, // Force élevée pour les liens manuels
+            type: 'guestbook', // Type spécial pour styling différent
+            manual: true, // Marqueur de lien manuel
+            weight: 100, // Poids élevé pour le calcul de proximité
+            id: `guestbook-${node.id}-${targetNode.id}`,
+          };
+          
+          links.push(link);
+          linksPerNode.get(node.id).push(link);
+          linksPerNode.get(targetNode.id).push(link);
+        }
+      });
+    }
+  });
+
   for (let i = 0; i < nodes.length; i++) {
     for (let j = i + 1; j < nodes.length; j++) {
       const nodeA = nodes[i];

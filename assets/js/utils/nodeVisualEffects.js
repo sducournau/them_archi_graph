@@ -139,17 +139,31 @@ export function removeGlowEffect(imageElement) {
  * @param {d3.Selection} nodeElements - All node group elements
  * @param {d3.Selection} svg - SVG container for filters
  */
-export function applyContinuousEffects(nodeElements, svg) {
+export function applyContinuousEffects(nodeElements, svg, settings = {}) {
   // Ensure filters exist
   createVisualEffectFilters(svg);
+  
+  // 🔥 RÉCUPÉRER LES PARAMÈTRES DU CUSTOMIZER
+  const hoverEffect = settings.hoverEffect || 'highlight';
   
   nodeElements.each(function(d) {
     const node = d3.select(this);
     const imageElement = node.select('.node-image');
     
-    // Check both nested (d.hover.pulse) and flat (d.pulse_effect) structures for backward compatibility
-    const pulseEnabled = (d.hover?.pulse === true) || (d.pulse_effect === true || d.pulse_effect === '1');
-    const glowEnabled = (d.hover?.glow === true) || (d.glow_effect === true || d.glow_effect === '1');
+    // 🔥 UTILISER hoverEffect DU CUSTOMIZER au lieu des propriétés individuelles
+    // Si hoverEffect est défini dans le Customizer, l'utiliser pour TOUS les nœuds
+    let pulseEnabled = false;
+    let glowEnabled = false;
+    
+    if (hoverEffect === 'pulse') {
+      pulseEnabled = true;
+    } else if (hoverEffect === 'glow') {
+      glowEnabled = true;
+    } else {
+      // Fallback sur les propriétés individuelles du nœud
+      pulseEnabled = (d.hover?.pulse === true) || (d.pulse_effect === true || d.pulse_effect === '1');
+      glowEnabled = (d.hover?.glow === true) || (d.glow_effect === true || d.glow_effect === '1');
+    }
     
     // Apply pulse effect if enabled
     if (pulseEnabled) {
@@ -169,29 +183,32 @@ export function applyContinuousEffects(nodeElements, svg) {
  * @param {Object} nodeData - Node data
  * @param {boolean} isHovering - Whether mouse is hovering
  */
-export function applyHoverScale(imageElement, nodeData, isHovering) {
+export function applyHoverScale(imageElement, nodeData, isHovering, settings = {}) {
   const baseSize = nodeData.node_size || 60;
   const hoverScale = nodeData.hover_scale || 1.15;
   const animationLevel = nodeData.animation_level || 'normal';
   
-  // Determine duration based on animation level
-  let duration = 200;
-  switch (animationLevel) {
-    case 'none':
-      duration = 0;
-      break;
-    case 'subtle':
-      duration = 300;
-      break;
-    case 'normal':
-      duration = 200;
-      break;
-    case 'intense':
-      duration = 150;
-      break;
+  // 🔥 UTILISER transitionSpeed et hoverEffect DU CUSTOMIZER
+  const transitionSpeed = settings.transitionSpeed || 200;
+  const hoverEffect = settings.hoverEffect || 'scale';
+  
+  // Si hoverEffect n'est pas 'scale' ou 'highlight', ne pas appliquer le scale
+  if (hoverEffect !== 'scale' && hoverEffect !== 'highlight' && hoverEffect !== 'none') {
+    // Pour 'glow' et 'pulse', le scale est géré par applyContinuousEffects
+    return;
   }
   
-  if (isHovering) {
+  // Determine duration based on animation level, ou utiliser transitionSpeed du Customizer
+  let duration = transitionSpeed;
+  if (animationLevel === 'none') {
+    duration = 0;
+  } else if (animationLevel === 'subtle') {
+    duration = transitionSpeed * 1.5;
+  } else if (animationLevel === 'intense') {
+    duration = transitionSpeed * 0.75;
+  }
+  
+  if (isHovering && hoverEffect !== 'none') {
     const scaledSize = baseSize * hoverScale;
     imageElement
       .transition()

@@ -18,7 +18,22 @@
     <?php wp_body_open(); ?>
     
     <div id="page-wrapper">
-        <header id="site-header" class="site-header">
+        <?php 
+        // Get header customizer settings
+        $header_sticky = get_theme_mod('archi_header_sticky', true);
+        $header_transparent = get_theme_mod('archi_header_transparent', false);
+        $header_sticky_behavior = get_theme_mod('archi_header_sticky_behavior', 'always');
+        
+        // Build header classes
+        $header_classes = 'site-header';
+        if ($header_sticky) {
+            $header_classes .= ' sticky-header';
+        }
+        if ($header_transparent) {
+            $header_classes .= ' transparent-header';
+        }
+        ?>
+        <header id="site-header" class="<?php echo esc_attr($header_classes); ?>" data-sticky-behavior="<?php echo esc_attr($header_sticky_behavior); ?>">
             <div class="header-inner">
                 <div class="site-branding">
                     <?php if (has_custom_logo()) : ?>
@@ -67,29 +82,10 @@
                             'menu_class'     => 'nav-menu',
                             'container'      => 'div',
                             'container_class' => 'menu-primary-container',
-                            'fallback_cb'    => false,
+                            'fallback_cb'    => 'archi_fallback_menu',
                         ]);
                     } else {
-                        // Fallback menu if no menu is assigned
-                        echo '<div class="menu-primary-container">';
-                        echo '<ul id="primary-menu" class="nav-menu">';
-                        echo '<li><a href="' . esc_url(home_url('/')) . '">' . esc_html__('Home', 'archi-graph') . '</a></li>';
-                        wp_list_pages([
-                            'title_li' => '',
-                            'depth' => 1,
-                        ]);
-                        
-                        // Add guestbook link if page exists
-                        $guestbook_page = get_page_by_path('livre-dor');
-                        if (!$guestbook_page) {
-                            $guestbook_page = get_page_by_path('guestbook');
-                        }
-                        if ($guestbook_page) {
-                            echo '<li class="guestbook-menu-item"><a href="' . esc_url(get_permalink($guestbook_page->ID)) . '">' . esc_html__('Livre d\'or', 'archi-graph') . '</a></li>';
-                        }
-                        
-                        echo '</ul>';
-                        echo '</div>';
+                        archi_fallback_menu();
                     }
                     ?>
                 </nav>

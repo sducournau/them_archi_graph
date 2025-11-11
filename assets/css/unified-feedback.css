@@ -1,0 +1,720 @@
+/**
+ * Styles unifiés pour le système de feedback (Commentaires + Livre d'Or)
+ * 
+ * Harmonisation visuelle complète entre les commentaires WordPress
+ * et le système de livre d'or pour une expérience utilisateur cohérente.
+ * 
+ * @package ArchiGraph
+ * @since 1.1.0
+ */
+
+/* ============================================================================
+   VARIABLES CSS
+   ========================================================================== */
+
+:root {
+    /* Couleurs primaires */
+    --guestbook-primary: #2ecc71;
+    --guestbook-hover: #27ae60;
+    --comment-primary: #16a085;
+    --comment-hover: #138571;
+    
+    /* Couleurs communes */
+    --unified-bg: #f8f9fa;
+    --unified-bg-alt: #ffffff;
+    --unified-border: #dee2e6;
+    --unified-text: #212529;
+    --unified-text-light: #6c757d;
+    --unified-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --unified-shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.15);
+    
+    /* Espacements */
+    --unified-radius: 8px;
+    --unified-spacing: 1.5rem;
+    --unified-spacing-sm: 0.75rem;
+    --unified-spacing-lg: 2rem;
+    
+    /* Transitions */
+    --unified-transition: all 0.2s ease;
+}
+
+/* ============================================================================
+   SECTION FEEDBACK COMMUNE
+   ========================================================================== */
+
+.unified-feedback-section {
+    max-width: 1200px;
+    margin: var(--unified-spacing-lg) auto;
+    padding: 0 var(--unified-spacing);
+}
+
+/* ============================================================================
+   TITRES DE SECTION
+   ========================================================================== */
+
+.unified-section-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--unified-text);
+    margin-bottom: var(--unified-spacing-lg);
+    padding-bottom: var(--unified-spacing);
+    border-bottom: 3px solid var(--unified-border);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.unified-section-title .comment-icon,
+.unified-section-title .icon {
+    font-size: 1.75rem;
+}
+
+/* ============================================================================
+   GRILLE DE CARTES
+   Style identique aux articles similaires (3 colonnes)
+   ========================================================================== */
+
+.unified-feedback-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin-bottom: var(--unified-spacing-lg);
+}
+
+/* ============================================================================
+   CARTE INDIVIDUELLE (Commentaire ou Témoignage)
+   Style identique aux articles similaires
+   ========================================================================== */
+
+.unified-feedback-card {
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.unified-feedback-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* Carte guestbook - bordure verte en bas */
+.guestbook-entry-card.unified-feedback-card {
+    border-bottom: 4px solid var(--guestbook-primary);
+}
+
+/* Carte commentaire - bordure turquoise en bas */
+.comment-item.unified-feedback-card {
+    border-bottom: 4px solid var(--comment-primary);
+}
+
+/* ============================================================================
+   SECTION AUTEUR
+   ========================================================================== */
+
+.comment-author-section,
+.guestbook-author-section {
+    display: flex;
+    gap: var(--unified-spacing);
+    padding: 20px;
+    padding-bottom: 0;
+    align-items: flex-start;
+}
+
+/* ============================================================================
+   AVATAR UNIFIÉ
+   ========================================================================== */
+
+.unified-author-avatar {
+    width: 60px;
+    height: 60px;
+    min-width: 60px;
+    min-height: 60px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--guestbook-primary), var(--comment-primary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.unified-author-avatar img,
+.unified-author-avatar .avatar-circle {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+/* Avatar pour les commentaires approuvés */
+.comment-item .unified-author-avatar {
+    background: linear-gradient(135deg, var(--comment-primary), var(--comment-hover));
+}
+
+/* Avatar pour le livre d'or */
+.guestbook-entry-card .unified-author-avatar {
+    background: linear-gradient(135deg, var(--guestbook-primary), var(--guestbook-hover));
+}
+
+/* ============================================================================
+   MÉTA INFORMATIONS
+   ========================================================================== */
+
+.unified-meta-info {
+    flex: 1;
+    min-width: 0; /* Pour le text-overflow */
+}
+
+.comment-author-name,
+.guestbook-author-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--unified-text);
+    margin-bottom: 0.25rem;
+    line-height: 1.4;
+}
+
+.comment-author-name a {
+    color: var(--unified-text);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.comment-author-name a:hover {
+    color: var(--comment-primary);
+}
+
+.comment-metadata,
+.guestbook-metadata {
+    font-size: 0.875rem;
+    color: var(--unified-text-light);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.comment-metadata .icon,
+.guestbook-metadata .icon {
+    font-size: 1rem;
+}
+
+.comment-date {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+/* ============================================================================
+   BADGES
+   ========================================================================== */
+
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-left: 0.5rem;
+}
+
+.badge-warning {
+    background: #ffc107;
+    color: #000;
+}
+
+.badge-success {
+    background: var(--guestbook-primary);
+    color: white;
+}
+
+.badge-info {
+    background: var(--comment-primary);
+    color: white;
+}
+
+/* ============================================================================
+   CONTENU
+   ========================================================================== */
+
+.unified-content-area {
+    line-height: 1.7;
+    color: var(--unified-text);
+    padding: 20px;
+    padding-top: var(--unified-spacing);
+    word-wrap: break-word;
+}
+
+.unified-content-area p {
+    margin-bottom: 0.75rem;
+}
+
+.unified-content-area p:last-child {
+    margin-bottom: 0;
+}
+
+/* ============================================================================
+   ACTIONS (Boutons Répondre, Modifier, etc.)
+   ========================================================================== */
+
+.unified-action-buttons {
+    display: flex;
+    gap: var(--unified-spacing);
+    padding: 0 20px 20px;
+    padding-top: var(--unified-spacing);
+    border-top: 1px solid var(--unified-border);
+    flex-wrap: wrap;
+}
+
+.unified-action-buttons a,
+.unified-action-buttons button {
+    color: var(--comment-primary);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: color 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.unified-action-buttons a:hover,
+.unified-action-buttons button:hover {
+    color: var(--guestbook-primary);
+}
+
+.unified-action-buttons .icon {
+    font-size: 1rem;
+}
+
+/* ============================================================================
+   FORMULAIRE UNIFIÉ
+   ========================================================================== */
+
+.unified-comment-form {
+    background: var(--unified-bg);
+    border-radius: var(--unified-radius);
+    padding: var(--unified-spacing-lg);
+    margin-top: var(--unified-spacing-lg);
+}
+
+.unified-comment-form h3 {
+    font-size: 1.5rem;
+    margin-bottom: var(--unified-spacing);
+    color: var(--unified-text);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Champs de formulaire */
+.unified-comment-form label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--unified-text);
+}
+
+.unified-comment-form input[type="text"],
+.unified-comment-form input[type="email"],
+.unified-comment-form input[type="url"],
+.unified-comment-form textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--unified-border);
+    border-radius: 4px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    background: white;
+}
+
+.unified-comment-form input:focus,
+.unified-comment-form textarea:focus {
+    outline: none;
+    border-color: var(--comment-primary);
+    box-shadow: 0 0 0 3px rgba(22, 160, 133, 0.1);
+}
+
+.unified-comment-form textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+/* Note de formulaire */
+.comment-notes,
+.comment-note {
+    font-size: 0.875rem;
+    color: var(--unified-text-light);
+    margin-bottom: var(--unified-spacing);
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+.comment-notes .icon {
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.required {
+    color: #dc3545;
+}
+
+/* Champs de formulaire - grille responsive */
+.comment-form-author,
+.comment-form-email,
+.comment-form-url {
+    margin-bottom: var(--unified-spacing);
+}
+
+@media (min-width: 768px) {
+    .unified-comment-form .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--unified-spacing);
+    }
+}
+
+/* ============================================================================
+   BOUTON SUBMIT UNIFIÉ
+   ========================================================================== */
+
+.unified-submit {
+    background: linear-gradient(135deg, var(--comment-primary), var(--guestbook-primary));
+    color: white;
+    padding: 0.75rem 2rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.unified-submit:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(22, 160, 133, 0.3);
+}
+
+.unified-submit:active {
+    transform: translateY(0);
+}
+
+/* ============================================================================
+   LISTE DE COMMENTAIRES (Layout Vertical)
+   ========================================================================== */
+
+.commentlist,
+.comment-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.commentlist > li,
+.comment-list > li {
+    margin-bottom: 30px;
+}
+
+.commentlist > li:last-child,
+.comment-list > li:last-child {
+    margin-bottom: 0;
+}
+
+/* ============================================================================
+   THREADING (Réponses aux commentaires)
+   ========================================================================== */
+
+.children {
+    margin-left: 2rem;
+    margin-top: var(--unified-spacing);
+    list-style: none;
+    padding: 0;
+}
+
+.children .unified-feedback-card {
+    background: var(--unified-bg);
+    border-left: 3px solid var(--comment-primary);
+}
+
+.depth-2 .unified-feedback-card {
+    background: #f1f3f5;
+}
+
+.depth-3 .unified-feedback-card,
+.depth-4 .unified-feedback-card,
+.depth-5 .unified-feedback-card {
+    background: #e9ecef;
+}
+
+/* ============================================================================
+   PAGINATION UNIFIÉE
+   ========================================================================== */
+
+.unified-pagination {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: var(--unified-spacing-lg) 0;
+    flex-wrap: wrap;
+}
+
+.unified-pagination a,
+.unified-pagination span {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--unified-border);
+    border-radius: 4px;
+    color: var(--unified-text);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    min-width: 40px;
+    text-align: center;
+}
+
+.unified-pagination a:hover {
+    background: var(--comment-primary);
+    border-color: var(--comment-primary);
+    color: white;
+}
+
+.unified-pagination .current {
+    background: var(--comment-primary);
+    border-color: var(--comment-primary);
+    color: white;
+    font-weight: 600;
+}
+
+/* Navigation précédent/suivant */
+.nav-prev,
+.nav-next {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+/* ============================================================================
+   MESSAGES INFO
+   ========================================================================== */
+
+.unified-info-message {
+    background: var(--unified-bg);
+    border-left: 4px solid var(--comment-primary);
+    padding: var(--unified-spacing);
+    border-radius: var(--unified-radius);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--unified-text);
+}
+
+.unified-info-message .icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.no-comments {
+    margin: var(--unified-spacing-lg) 0;
+}
+
+/* ============================================================================
+   BOUTON ANNULER RÉPONSE
+   ========================================================================== */
+
+.cancel-comment-reply {
+    margin-left: var(--unified-spacing);
+}
+
+.cancel-comment-reply a {
+    color: var(--unified-text-light);
+    font-size: 0.875rem;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.cancel-comment-reply a:hover {
+    color: var(--comment-primary);
+}
+
+/* ============================================================================
+   ÉTATS SPÉCIAUX
+   ========================================================================== */
+
+/* Commentaire en attente de modération */
+.comment-awaiting-moderation {
+    color: var(--unified-text-light);
+    font-style: italic;
+}
+
+/* Commentaire du propriétaire du site */
+.bypostauthor > .comment-body {
+    border: 2px solid var(--guestbook-primary);
+}
+
+.bypostauthor .unified-author-avatar {
+    background: linear-gradient(135deg, #f39c12, #e74c3c);
+}
+
+/* Pingback/trackback */
+.pingback .unified-feedback-card,
+.trackback .unified-feedback-card {
+    background: var(--unified-bg);
+    border-left-color: #95a5a6;
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    /* Grille - 2 colonnes sur tablette (comme articles similaires) */
+    .unified-feedback-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+    
+    .unified-feedback-section {
+        padding: 0 1rem;
+        margin: 1.5rem auto;
+    }
+    
+    .unified-section-title {
+        font-size: 1.5rem;
+        margin-bottom: var(--unified-spacing);
+    }
+    
+    .children {
+        margin-left: 1rem;
+    }
+    
+    .unified-author-avatar {
+        width: 50px;
+        height: 50px;
+        min-width: 50px;
+        min-height: 50px;
+        font-size: 1.25rem;
+    }
+    
+    .unified-comment-form {
+        padding: var(--unified-spacing);
+    }
+    
+    .comment-author-section,
+    .guestbook-author-section {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .unified-action-buttons {
+        flex-direction: column;
+        gap: var(--unified-spacing-sm);
+    }
+}
+
+@media (max-width: 480px) {
+    /* Grille - 1 colonne sur mobile (comme articles similaires) */
+    .unified-feedback-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .unified-section-title {
+        font-size: 1.25rem;
+    }
+    
+    .unified-author-avatar {
+        width: 40px;
+        height: 40px;
+        min-width: 40px;
+        min-height: 40px;
+        font-size: 1rem;
+    }
+    
+    .comment-author-name,
+    .guestbook-author-name {
+        font-size: 1rem;
+    }
+    
+    .children {
+        margin-left: 0.5rem;
+    }
+}
+
+/* ============================================================================
+   DARK MODE SUPPORT (Optionnel)
+   ========================================================================== */
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --unified-bg: #2c3e50;
+        --unified-bg-alt: #34495e;
+        --unified-border: #4a5f7f;
+        --unified-text: #ecf0f1;
+        --unified-text-light: #95a5a6;
+        --unified-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        --unified-shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.6);
+    }
+    
+    .unified-comment-form input[type="text"],
+    .unified-comment-form input[type="email"],
+    .unified-comment-form input[type="url"],
+    .unified-comment-form textarea {
+        background: #2c3e50;
+        color: #ecf0f1;
+        border-color: #4a5f7f;
+    }
+}
+
+/* ============================================================================
+   ANIMATIONS
+   ========================================================================== */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.unified-feedback-card {
+    animation: fadeIn 0.3s ease;
+}
+
+/* ============================================================================
+   PRINT STYLES
+   ========================================================================== */
+
+@media print {
+    .unified-action-buttons,
+    .unified-comment-form,
+    .unified-pagination,
+    .cancel-comment-reply {
+        display: none !important;
+    }
+    
+    .unified-feedback-card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+        page-break-inside: avoid;
+    }
+}

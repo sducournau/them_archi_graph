@@ -106,19 +106,20 @@ body.admin-bar .header-trigger-zone {
     </div>
     
     <!-- Panel d'informations -->
-    <div id="graph-info-panel" class="graph-info-panel hidden" role="complementary" aria-label="<?php esc_attr_e('Détails du projet', 'archi-graph'); ?>">
+    <div id="graph-info-panel" class="graph-info-panel" role="complementary" aria-label="<?php esc_attr_e('Détails du projet', 'archi-graph'); ?>">
         <button class="close-panel" onclick="this.parentElement.classList.add('hidden')" aria-label="<?php esc_attr_e('Fermer le panneau', 'archi-graph'); ?>">×</button>
         <div class="panel-content">
-            <img id="panel-thumbnail" src="" alt="">
-            <h3 id="panel-title"></h3>
-            <div class="panel-meta">
+            <img id="panel-thumbnail" src="" alt="" style="display: none;">
+            <h3 id="panel-title"><?php _e('Explorez le graphique', 'archi-graph'); ?></h3>
+            <div class="panel-meta" style="display: none;">
                 <span class="panel-date" id="panel-date"></span>
                 <span class="panel-author" id="panel-author"></span>
             </div>
-            <p id="panel-excerpt"></p>
+            <p id="panel-excerpt"><?php _e('Cliquez sur un nœud pour voir les détails du projet ou de l\'article.', 'archi-graph'); ?></p>
             <div id="panel-categories" class="panel-categories"></div>
             <div id="panel-tags" class="panel-tags"></div>
-            <div class="panel-actions">
+            <div id="panel-comments" class="panel-comments"></div>
+            <div class="panel-actions" style="display: none;">
                 <a id="panel-link" href="#" class="btn btn-primary">
                     <?php _e('Voir le projet', 'archi-graph'); ?> →
                 </a>

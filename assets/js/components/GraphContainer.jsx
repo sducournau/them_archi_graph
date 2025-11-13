@@ -86,9 +86,9 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
   // ⚡ PERFORMANCE: Debounce pour updateGraph
   const updateGraphTimeoutRef = useRef(null);
 
-  // 🎯 Paramètres de physique pour la répulsion - RÉDUITS pour rapprocher les nœuds
-  const REPULSION_FORCE = 800;   // 🎯 Réduit de 2000 pour moins de répulsion
-  const MIN_DISTANCE = 80;       // 🎯 Réduit de 120 pour plus de proximité
+  // 🎯🎯 Paramètres de physique TRÈS RÉDUITS pour nœuds très serrés
+  const REPULSION_FORCE = 400;   // 🎯🎯 Encore réduit de 800 (moitié)
+  const MIN_DISTANCE = 50;       // 🎯🎯 Encore réduit de 80
   const DAMPING = 0.8;
 
   // Configuration

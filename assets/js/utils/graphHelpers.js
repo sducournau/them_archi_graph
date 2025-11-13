@@ -26,35 +26,35 @@ export const createForceSimulation = (nodes, categories, options = {}) => {
   // Simulation de force avec paramètres optimisés
   const simulation = d3
     .forceSimulation(nodes)
-    // 🎯 Force de répulsion RÉDUITE pour rapprocher les nœuds
+    // 🎯🎯 Force de répulsion TRÈS RÉDUITE pour nœuds très proches
     .force("charge", d3.forceManyBody()
       .strength((d) => {
-        // Répulsion beaucoup plus faible = nœuds plus proches
+        // Répulsion minimale = nœuds très serrés
         if (organicMode && d.post_type === 'archi_project') {
-          return -80; // 🎯 Réduit de -150 pour rapprocher
+          return -40; // 🎯🎯 Divisé par 2 encore (était -80)
         }
-        return -100; // 🎯 Réduit de -200 pour rapprocher
+        return -50; // 🎯🎯 Divisé par 2 encore (était -100)
       })
-      .distanceMax(120) // 🎯 Réduit de 200 pour limiter la portée
+      .distanceMax(80) // 🎯🎯 Réduit encore de 120 à 80
     )
 
-    // Force de centrage général plus forte pour regrouper
-    .force("center", d3.forceCenter(width / 2, height / 2).strength(0.08)) // 🎯 Augmenté de 0.05
+    // Force de centrage général FORTE pour concentrer
+    .force("center", d3.forceCenter(width / 2, height / 2).strength(0.12)) // 🎯🎯 Augmenté de 0.08
 
-    // Force anti-collision avec moins d'espace entre nœuds
+    // Force anti-collision MINIMALE pour serrer au maximum
     .force(
       "collision",
       d3
         .forceCollide()
-        .radius((d) => (d.node_size || 60) / 2 + (organicMode ? 8 : 5)) // 🎯 Réduit de 15/10
-        .strength(organicMode ? 0.5 : 0.6)
+        .radius((d) => (d.node_size || 60) / 2 + (organicMode ? 3 : 2)) // 🎯🎯 Encore réduit (était 8/5)
+        .strength(organicMode ? 0.4 : 0.5) // 🎯🎯 Réduit pour permettre chevauchement
         .iterations(1)
     )
 
-    // Force de clustering AUGMENTÉE pour rapprocher les groupes
+    // Force de clustering TRÈS FORTE pour groupes compacts
     .force(
       "cluster",
-      forceCluster().centers(clusterCenters).strength(clusterStrength * 2) // 🎯 Doublé
+      forceCluster().centers(clusterCenters).strength(clusterStrength * 4) // 🎯🎯 Quadruplé (était x2)
     )
 
     // ⚡ PERFORMANCE: Force d'îles désactivée par défaut

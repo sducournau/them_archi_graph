@@ -26,29 +26,29 @@ export const createForceSimulation = (nodes, categories, options = {}) => {
   // Simulation de force avec paramètres optimisés
   const simulation = d3
     .forceSimulation(nodes)
-    // ⚡ Force de répulsion ÉQUILIBRÉE pour espacement visible dans viewBox 1200x800
+    // ✅ Force de répulsion MODÉRÉE pour espacement visible dans viewBox 1200x800
     .force("charge", d3.forceManyBody()
       .strength((d) => {
-        // Force adaptée pour viewBox 1200x800 étiré sur grand écran
+        // Forces modérées pour éviter que les nœuds sortent du viewBox
         if (organicMode && d.post_type === 'archi_project') {
-          return -150; // ⚡ Répulsion modérée pour projets architecturaux
+          return -100; // ✅ Force modérée pour projets
         }
-        return -200; // ⚡ Répulsion standard pour articles normaux
+        return -150; // ✅ Force modérée pour tous les nœuds
       })
-      .distanceMax(300) // ⚡ Distance d'effet étendue pour viewBox 1200x800
+      .distanceMax(250) // ✅ Distance raisonnable dans le viewBox 1200x800
     )
 
-    // Force de centrage général MODÉRÉE
-    .force("center", d3.forceCenter(width / 2, height / 2).strength(0.05)) // ⚡ Force de centrage standard
+    // Force de centrage FORTE pour garder les nœuds dans le viewBox
+    .force("center", d3.forceCenter(width / 2, height / 2).strength(0.08)) // ✅ Force de centrage augmentée
 
-    // Force anti-collision NORMALE pour éviter chevauchement
+    // Force anti-collision ADAPTÉE à la taille de nœud 120px
     .force(
       "collision",
       d3
         .forceCollide()
-        .radius((d) => (d.node_size || 60) / 2 + (organicMode ? 10 : 8)) // ⚡ Padding suffisant
-        .strength(organicMode ? 0.7 : 0.8) // ⚡ Force de collision standard
-        .iterations(1)
+        .radius((d) => (d.node_size || 120) / 2 + (organicMode ? 15 : 12)) // ✅ Taille 120px + padding
+        .strength(organicMode ? 0.8 : 0.9) // ✅ Force de collision forte
+        .iterations(2) // ✅ 2 itérations pour collision précise
     )
 
     // Force de clustering NORMALE
@@ -69,8 +69,8 @@ export const createForceSimulation = (nodes, categories, options = {}) => {
     //   organicMode ? d3.forceY(height / 2).strength(0.01) : null
     // )
 
-    // Force vers les bords (éviter que les nœuds sortent de l'écran)
-    .force("boundary", forceBoundary(width, height, 50));
+    // Force vers les bords (FORCER les nœuds à rester DANS le viewBox)
+    .force("boundary", forceBoundary(width, height, 100)); // ✅ Marge augmentée pour contenir les nœuds
 
   // ⚡ PERFORMANCE: Configuration optimisée pour stabilisation plus rapide
   simulation

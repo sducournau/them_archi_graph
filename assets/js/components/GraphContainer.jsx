@@ -86,9 +86,9 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
   // ⚡ PERFORMANCE: Debounce pour updateGraph
   const updateGraphTimeoutRef = useRef(null);
 
-  // ⚡ Paramètres de physique ÉQUILIBRÉS pour viewBox 1200x800
-  const REPULSION_FORCE = 1000;  // ⚡ Force adaptée au viewBox standard
-  const MIN_DISTANCE = 100;      // ⚡ Distance minimum raisonnable
+  // ✅ Paramètres de physique MODÉRÉS pour nœuds visibles DANS le viewBox 1200x800
+  const REPULSION_FORCE = 1500;  // ✅ Force raisonnable pour séparer sans sortir du viewBox
+  const MIN_DISTANCE = 120;      // ✅ Distance adaptée à la taille 120px des nœuds
   const DAMPING = 0.8;
 
   // Configuration
@@ -523,8 +523,8 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
       ? customizerSettings.clusterStrength 
       : 0.1;
 
-    // 🔥 UTILISER LA TAILLE PAR DÉFAUT DU CUSTOMIZER
-    const defaultNodeSize = customizerSettings.defaultNodeSize || 60;
+    // 🔥 TAILLE PAR DÉFAUT DOUBLÉE pour visibilité dans viewBox 1200x800
+    const defaultNodeSize = customizerSettings.defaultNodeSize || 120; // 🔥 Doublé de 60 à 120px
     
     // 🔥 UTILISER LES FORCES DE SIMULATION DU CUSTOMIZER
     const chargeStrength = customizerSettings.chargeStrength || -300;
@@ -783,9 +783,9 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
   const updateNodes = (container, data, simulation, settings = {}) => {
     const nodesGroup = container.select(".nodes");
 
-    // 🔥 UTILISER LES PARAMÈTRES DU CUSTOMIZER
+    // 🔥 UTILISER LES PARAMÈTRES DU CUSTOMIZER (taille doublée pour visibilité)
     const defaultNodeColor = settings.defaultNodeColor || '#3498db';
-    const defaultNodeSize = settings.defaultNodeSize || 60;
+    const defaultNodeSize = settings.defaultNodeSize || 120; // 🔥 Doublé de 60 à 120px
     const priorityBadgeSize = settings.priorityBadgeSize || 8;
     const priorityBadgeOffset = settings.priorityBadgeOffset || 5;
     const priorityBadgeStrokeColor = settings.priorityBadgeStrokeColor || '#ffffff';

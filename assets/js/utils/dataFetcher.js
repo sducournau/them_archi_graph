@@ -261,7 +261,7 @@ export const validateArticleData = (articles) => {
     }
 
     // Valeurs par défaut pour les paramètres de base
-    article.node_size = article.node_size || 60;
+    article.node_size = article.node_size || 80;
     article.node_color = article.node_color || "#3498db";
     article.priority_level = article.priority_level || "normal";
 

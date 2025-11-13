@@ -46,7 +46,7 @@ export const createForceSimulation = (nodes, categories, options = {}) => {
       "collision",
       d3
         .forceCollide()
-        .radius((d) => (d.node_size || 120) / 2 + (organicMode ? 15 : 12)) // ✅ Taille 120px + padding
+        .radius((d) => (d.node_size || 80) / 2 + (organicMode ? 15 : 12)) // ✅ Harmonisé à 80px
         .strength(organicMode ? 0.8 : 0.9) // ✅ Force de collision forte
         .iterations(2) // ✅ 2 itérations pour collision précise
     )
@@ -361,29 +361,51 @@ const forceCluster = () => {
  * @param {number} padding - Espacement des bords
  * @returns {Function} Force de limite
  */
-const forceBoundary = (width, height, padding = 50) => {
+export const forceBoundary = (width, height, padding = 50) => {
   let nodes = [];
-  let strength = 0.1;
+  let strength = 1.0; // 🔥 FIX: Force très forte (1.0) pour contenir strictement les nœuds
 
   const force = () => {
     nodes.forEach((node) => {
-      const radius = (node.node_size || 60) / 2;
+      const radius = (node.node_size || 80) / 2; // 🔥 FIX: Adapté à la nouvelle taille 80px
 
-      // Bord gauche
-      if (node.x < padding + radius) {
-        node.vx += (padding + radius - node.x) * strength;
+      // 🔥 FIX: Clamping dur - ramener immédiatement dans les limites
+      const minX = padding + radius;
+      const maxX = width - padding - radius;
+      const minY = padding + radius;
+      const maxY = height - padding - radius;
+
+      // Contraindre X avec damping de vélocité
+      if (node.x < minX) {
+        node.x = minX;
+        node.vx = Math.abs(node.vx) * 0.5; // 🔥 FIX: Damping pour réduire rebonds
+      } else if (node.x > maxX) {
+        node.x = maxX;
+        node.vx = -Math.abs(node.vx) * 0.5;
       }
-      // Bord droit
-      if (node.x > width - padding - radius) {
-        node.vx += (width - padding - radius - node.x) * strength;
+
+      // Contraindre Y avec damping de vélocité
+      if (node.y < minY) {
+        node.y = minY;
+        node.vy = Math.abs(node.vy) * 0.5;
+      } else if (node.y > maxY) {
+        node.y = maxY;
+        node.vy = -Math.abs(node.vy) * 0.5;
       }
-      // Bord haut
-      if (node.y < padding + radius) {
-        node.vy += (padding + radius - node.y) * strength;
+
+      // Force douce pour éviter les bords (zone de 100px)
+      const softBoundary = 100;
+      if (node.x < padding + radius + softBoundary) {
+        node.vx += (padding + radius + softBoundary - node.x) * strength;
       }
-      // Bord bas
-      if (node.y > height - padding - radius) {
-        node.vy += (height - padding - radius - node.y) * strength;
+      if (node.x > width - padding - radius - softBoundary) {
+        node.vx += (width - padding - radius - softBoundary - node.x) * strength;
+      }
+      if (node.y < padding + radius + softBoundary) {
+        node.vy += (padding + radius + softBoundary - node.y) * strength;
+      }
+      if (node.y > height - padding - radius - softBoundary) {
+        node.vy += (height - padding - radius - softBoundary - node.y) * strength;
       }
     });
   };
@@ -410,8 +432,33 @@ export const updateNodePositions = (container, nodes) => {
   const nodeElements = container.selectAll(".graph-node");
 
   nodeElements.attr("transform", (d) => {
-    const x = d.x || 0;
-    const y = d.y || 0;
+    // 🔥 FIX: Contraindre les coordonnées dans les limites du viewBox (1200x800)
+    // Cela empêche les nœuds d'avoir des positions absurdes (comme y:73689)
+    const maxWidth = 1200;
+    const maxHeight = 800;
+    const margin = 100; // Marge de sécurité
+    
+    // Si les coordonnées sont invalides ou hors limites, les ramener au centre
+    let x = d.x || 0;
+    let y = d.y || 0;
+    
+    // Vérifier si les coordonnées sont valides et dans les limites
+    if (!isFinite(x) || !isFinite(y) || 
+        Math.abs(x) > maxWidth * 2 || 
+        Math.abs(y) > maxHeight * 2) {
+      // Coordonnées invalides ou trop grandes : ramener au centre
+      x = maxWidth / 2;
+      y = maxHeight / 2;
+      d.x = x;
+      d.y = y;
+    } else {
+      // Contraindre dans les limites avec marge
+      x = Math.max(margin, Math.min(maxWidth - margin, x));
+      y = Math.max(margin, Math.min(maxHeight - margin, y));
+      d.x = x;
+      d.y = y;
+    }
+    
     if (!d._loggedOnce) {
       d._loggedOnce = true;
     }

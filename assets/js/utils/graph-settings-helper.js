@@ -7,6 +7,8 @@
  * @since 1.2.0
  */
 
+import * as d3 from 'd3';
+
 /**
  * Récupère tous les paramètres du graph depuis le Customizer
  */
@@ -14,7 +16,7 @@ export function getGraphSettings() {
     return window.archiGraphSettings || {
         // Valeurs par défaut au cas où
         defaultNodeColor: '#3498db',
-        defaultNodeSize: 60,
+        defaultNodeSize: 80,
         clusterStrength: 0.1,
         popupTitleOnly: false,
         showComments: true,
@@ -314,7 +316,10 @@ export function createCategoryLegend(categories, settings) {
  * Fonction globale pour mettre à jour les paramètres du graph
  * À appeler depuis le Customizer preview
  */
+console.log('🎨 [GRAPH-SETTINGS-HELPER] Initializing window.updateGraphSettings');
 window.updateGraphSettings = function(newSettings) {
+    console.log('🎨 [GRAPH-SETTINGS-HELPER] Graph settings update requested:', newSettings);
+    
     // Fusionner les nouveaux paramètres
     Object.assign(window.archiGraphSettings, newSettings);
     

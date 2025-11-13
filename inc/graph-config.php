@@ -103,7 +103,7 @@ function archi_visual_get_config() {
         // VISUAL APPEARANCE
         'visual' => [
             'default_node_color' => '#3498db',
-            'default_node_size' => 30, // Simplified: 20-50
+            'default_node_size' => 80, // 🔥 FIX: Harmonized to 80px for optimal visibility and density
             'node_opacity' => 1.0,
             'show_labels' => true,
             'show_polygons' => true,
@@ -156,9 +156,9 @@ function archi_visual_get_config() {
         
         // PHYSICS SIMULATION
         'physics' => [
-            'charge_strength' => -300,
-            'link_distance' => 100,
-            'collision_radius' => 40,
+            'charge_strength' => -200, // 🔥 FIX: Harmonized to -200 for optimal node spacing (reduced repulsion)
+            'link_distance' => 100, // 🔥 FIX: Harmonized to 100 for consistent node-to-node distance
+            'collision_radius' => 50, // 🔥 FIX: Harmonized to 50 (80px node / 2 + 10px padding)
             'center_strength' => 0.05,
             'cluster_strength' => 0.1,
         ],
@@ -307,7 +307,7 @@ function archi_visual_get_current_config() {
 }
 
 /**
- * Save graph configuration preset
+ * Save graph configuration preset and sync with Customizer settings
  * 
  * @param string $preset_name Preset name (minimal, standard, rich, performance)
  * @return bool Success
@@ -320,11 +320,82 @@ function archi_visual_save_preset($preset_name) {
     
     $presets = archi_visual_get_presets();
     
-    if (isset($presets[$preset_name])) {
-        return update_option('archi_graph_preset', $preset_name);
+    if (!isset($presets[$preset_name])) {
+        return false;
     }
     
-    return false;
+    // Save preset name
+    update_option('archi_graph_preset', $preset_name);
+    
+    // 🔥 NEW: Sync preset values with Customizer theme_mods
+    // This ensures the frontend JavaScript gets the correct values
+    $preset_settings = $presets[$preset_name]['settings'];
+    
+    // Map preset settings to Customizer theme_mod keys
+    $mapping = [
+        'animation_enabled' => ['archi_graph_animation_enabled', 'bool'],
+        'animation_type' => ['archi_graph_animation_mode', 'text'],
+        'animation_speed' => ['archi_graph_transition_speed', 'speed'],
+        'hover_effect' => ['archi_graph_hover_effect', 'text'],
+        'hover_intensity' => ['archi_graph_hover_intensity', 'text'],
+        'link_animation' => ['archi_graph_link_animation', 'link_anim'],
+        'pulse_inactive' => ['archi_graph_pulse_inactive', 'bool'],
+        'visual_effects' => ['archi_graph_visual_effects_level', 'text'],
+    ];
+    
+    foreach ($mapping as $preset_key => $config) {
+        list($theme_mod_key, $type) = $config;
+        
+        if (!isset($preset_settings[$preset_key])) {
+            continue;
+        }
+        
+        $value = $preset_settings[$preset_key];
+        
+        // Convert preset values to Customizer-compatible values
+        switch ($type) {
+            case 'bool':
+                set_theme_mod($theme_mod_key, (bool) $value);
+                break;
+                
+            case 'text':
+                set_theme_mod($theme_mod_key, $value);
+                break;
+                
+            case 'speed':
+                // Map speed keywords to milliseconds
+                $speed_map = [
+                    'fast' => 200,
+                    'normal' => 500,
+                    'slow' => 1000,
+                ];
+                $speed_value = isset($speed_map[$value]) ? $speed_map[$value] : 500;
+                set_theme_mod('archi_graph_transition_speed', $speed_value);
+                break;
+                
+            case 'link_anim':
+                // Map boolean to animation type
+                $anim_value = $value ? 'pulse' : 'none';
+                set_theme_mod('archi_graph_link_animation', $anim_value);
+                break;
+        }
+    }
+    
+    // Set hover effect intensity based on preset
+    if (isset($preset_settings['hover_intensity'])) {
+        $intensity = $preset_settings['hover_intensity'];
+        
+        // Map intensity to actual hover effect if needed
+        if ($intensity === 'none') {
+            set_theme_mod('archi_graph_hover_effect', 'none');
+        } elseif ($intensity === 'subtle') {
+            set_theme_mod('archi_graph_hover_effect', 'highlight');
+        } elseif ($intensity === 'strong') {
+            set_theme_mod('archi_graph_hover_effect', 'glow');
+        }
+    }
+    
+    return true;
 }
 
 /**

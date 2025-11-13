@@ -26,20 +26,20 @@ export const createForceSimulation = (nodes, categories, options = {}) => {
   // Simulation de force avec paramètres optimisés
   const simulation = d3
     .forceSimulation(nodes)
-    // ✅ Force de répulsion MODÉRÉE pour espacement visible dans viewBox 1200x800
+    // ✅ Force de répulsion TRÈS FAIBLE pour garder coordonnées dans viewBox
     .force("charge", d3.forceManyBody()
       .strength((d) => {
-        // Forces modérées pour éviter que les nœuds sortent du viewBox
+        // Forces minimales pour éviter explosion des coordonnées
         if (organicMode && d.post_type === 'archi_project') {
-          return -100; // ✅ Force modérée pour projets
+          return -30; // ✅ Force très faible pour projets
         }
-        return -150; // ✅ Force modérée pour tous les nœuds
+        return -40; // ✅ Force très faible pour tous les nœuds
       })
-      .distanceMax(250) // ✅ Distance raisonnable dans le viewBox 1200x800
+      .distanceMax(150) // ✅ Distance courte dans le viewBox 1200x800
     )
 
-    // Force de centrage FORTE pour garder les nœuds dans le viewBox
-    .force("center", d3.forceCenter(width / 2, height / 2).strength(0.08)) // ✅ Force de centrage augmentée
+    // Force de centrage TRÈS FORTE pour ramener les nœuds vers le centre
+    .force("center", d3.forceCenter(width / 2, height / 2).strength(0.15)) // ✅ Force de centrage maximale
 
     // Force anti-collision ADAPTÉE à la taille de nœud 120px
     .force(
@@ -69,14 +69,14 @@ export const createForceSimulation = (nodes, categories, options = {}) => {
     //   organicMode ? d3.forceY(height / 2).strength(0.01) : null
     // )
 
-    // Force vers les bords (FORCER les nœuds à rester DANS le viewBox)
-    .force("boundary", forceBoundary(width, height, 100)); // ✅ Marge augmentée pour contenir les nœuds
+    // Force vers les bords (FORCER FORTEMENT les nœuds à rester DANS le viewBox)
+    .force("boundary", forceBoundary(width, height, 150)); // ✅ Marge très large pour confinement fort
 
   // ⚡ PERFORMANCE: Configuration optimisée pour stabilisation plus rapide
   simulation
-    .alpha(0.8) // ⚡ Réduit de 1 pour démarrage moins violent
-    .alphaDecay(0.03) // ⚡ Augmenté de 0.015 pour stabilisation plus rapide
-    .velocityDecay(0.5); // ⚡ Augmenté de 0.3/0.4 pour freiner plus vite
+    .alpha(0.5) // ⚡ Démarrage TRÈS doux pour éviter explosion
+    .alphaDecay(0.05) // ⚡ Stabilisation RAPIDE
+    .velocityDecay(0.7); // ⚡ Freinage FORT pour limiter les mouvements
 
   return simulation;
 };

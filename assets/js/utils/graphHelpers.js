@@ -26,35 +26,35 @@ export const createForceSimulation = (nodes, categories, options = {}) => {
   // Simulation de force avec paramètres optimisés
   const simulation = d3
     .forceSimulation(nodes)
-    // 🎯🎯 Force de répulsion TRÈS RÉDUITE pour nœuds très proches
+    // ⚡ Force de répulsion ÉQUILIBRÉE pour espacement visible dans viewBox 1200x800
     .force("charge", d3.forceManyBody()
       .strength((d) => {
-        // Répulsion minimale = nœuds très serrés
+        // Force adaptée pour viewBox 1200x800 étiré sur grand écran
         if (organicMode && d.post_type === 'archi_project') {
-          return -40; // 🎯🎯 Divisé par 2 encore (était -80)
+          return -150; // ⚡ Répulsion modérée pour projets architecturaux
         }
-        return -50; // 🎯🎯 Divisé par 2 encore (était -100)
+        return -200; // ⚡ Répulsion standard pour articles normaux
       })
-      .distanceMax(80) // 🎯🎯 Réduit encore de 120 à 80
+      .distanceMax(300) // ⚡ Distance d'effet étendue pour viewBox 1200x800
     )
 
-    // Force de centrage général FORTE pour concentrer
-    .force("center", d3.forceCenter(width / 2, height / 2).strength(0.12)) // 🎯🎯 Augmenté de 0.08
+    // Force de centrage général MODÉRÉE
+    .force("center", d3.forceCenter(width / 2, height / 2).strength(0.05)) // ⚡ Force de centrage standard
 
-    // Force anti-collision MINIMALE pour serrer au maximum
+    // Force anti-collision NORMALE pour éviter chevauchement
     .force(
       "collision",
       d3
         .forceCollide()
-        .radius((d) => (d.node_size || 60) / 2 + (organicMode ? 3 : 2)) // 🎯🎯 Encore réduit (était 8/5)
-        .strength(organicMode ? 0.4 : 0.5) // 🎯🎯 Réduit pour permettre chevauchement
+        .radius((d) => (d.node_size || 60) / 2 + (organicMode ? 10 : 8)) // ⚡ Padding suffisant
+        .strength(organicMode ? 0.7 : 0.8) // ⚡ Force de collision standard
         .iterations(1)
     )
 
-    // Force de clustering TRÈS FORTE pour groupes compacts
+    // Force de clustering NORMALE
     .force(
       "cluster",
-      forceCluster().centers(clusterCenters).strength(clusterStrength * 4) // 🎯🎯 Quadruplé (était x2)
+      forceCluster().centers(clusterCenters).strength(clusterStrength * 2) // ⚡ Clustering modéré
     )
 
     // ⚡ PERFORMANCE: Force d'îles désactivée par défaut

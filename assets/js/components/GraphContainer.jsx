@@ -86,9 +86,9 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
   // ⚡ PERFORMANCE: Debounce pour updateGraph
   const updateGraphTimeoutRef = useRef(null);
 
-  // 🎯🎯 Paramètres de physique TRÈS RÉDUITS pour nœuds très serrés
-  const REPULSION_FORCE = 400;   // 🎯🎯 Encore réduit de 800 (moitié)
-  const MIN_DISTANCE = 50;       // 🎯🎯 Encore réduit de 80
+  // ⚡ Paramètres de physique ÉQUILIBRÉS pour viewBox 1200x800
+  const REPULSION_FORCE = 1000;  // ⚡ Force adaptée au viewBox standard
+  const MIN_DISTANCE = 100;      // ⚡ Distance minimum raisonnable
   const DAMPING = 0.8;
 
   // Configuration

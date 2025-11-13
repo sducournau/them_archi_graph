@@ -81,7 +81,7 @@ export const showNodeTooltip = (node, event, svgRef, transformRef, options = {})
   // Calculate screen position of node
   const nodeScreenX = svgRect.left + (node.x * transform.k + transform.x);
   const nodeScreenY = svgRect.top + (node.y * transform.k + transform.y);
-  const nodeSize = (node.node_size || 60) * transform.k;
+  const nodeSize = (node.node_size || 80) * transform.k;
   
   // Position to the right of node with offset
   const tooltipX = nodeScreenX + (nodeSize / 2) + 20;

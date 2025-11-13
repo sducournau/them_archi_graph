@@ -44,7 +44,7 @@ const GraphEditorPanel = ({
       setNodeParams({
         shape: selectedNode.node_shape || 'circle',
         color: selectedNode.node_color || '#3498db',
-        size: selectedNode.node_size || 60,
+        size: selectedNode.node_size || 80,
         icon: selectedNode.node_icon || '',
         badge: selectedNode.node_badge || ''
       });

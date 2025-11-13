@@ -19,10 +19,10 @@ const Node = ({ data, position, isSelected, onHover, onClick }) => {
       <image
         className="node-image"
         href={data.thumbnail}
-        width={data.node_size || 60}
-        height={data.node_size || 60}
-        x={-(data.node_size || 60) / 2}
-        y={-(data.node_size || 60) / 2}
+        width={data.node_size || 80}
+        height={data.node_size || 80}
+        x={-(data.node_size || 80) / 2}
+        y={-(data.node_size || 80) / 2}
         preserveAspectRatio="xMidYMid meet"
         style={{
           filter: "drop-shadow(2px 2px 4px rgba(0,0,0,0.3))",
@@ -36,8 +36,8 @@ const Node = ({ data, position, isSelected, onHover, onClick }) => {
         <circle
           className="priority-badge"
           r={8}
-          cx={(data.node_size || 60) / 2 - 5}
-          cy={-(data.node_size || 60) / 2 + 5}
+          cx={(data.node_size || 80) / 2 - 5}
+          cy={-(data.node_size || 80) / 2 + 5}
           fill={data.priority_level === "featured" ? "#e74c3c" : "#f39c12"}
           stroke="#ffffff"
           strokeWidth={2}
@@ -49,7 +49,7 @@ const Node = ({ data, position, isSelected, onHover, onClick }) => {
         <text
           className="node-label"
           textAnchor="middle"
-          y={(data.node_size || 60) / 2 + 20}
+          y={(data.node_size || 80) / 2 + 20}
           fontSize="12px"
           fill="#333"
           fontWeight="500"

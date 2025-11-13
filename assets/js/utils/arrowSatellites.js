@@ -103,7 +103,7 @@ export const getCategorySatelliteConfig = (nodeData) => {
  */
 export const calculateArrowCount = (nodeData) => {
   const config = getCategorySatelliteConfig(nodeData);
-  const nodeSize = nodeData.node_size || nodeData.nodeSize || 60;
+  const nodeSize = nodeData.node_size || nodeData.nodeSize || 80;
   
   // Base count from node size (similar to image size logic)
   let baseCount = 0;
@@ -136,7 +136,7 @@ export const calculateSatellitePositions = (nodeData, count) => {
   
   // Get category-specific configuration
   const config = getCategorySatelliteConfig(nodeData);
-  const nodeSize = nodeData.node_size || nodeData.nodeSize || 60;
+  const nodeSize = nodeData.node_size || nodeData.nodeSize || 80;
   
   // Calculate orbit radius: half of image size (radius of circle) + offset
   // This ensures arrows point AT the image, not over it
@@ -236,7 +236,7 @@ export const createArrowSatellites = (nodeData, nodeGroup) => {
     .style('pointer-events', 'none'); // Make non-clickable
   
   // Calculate arrow size based on node size and category multiplier
-  const nodeSize = nodeData.node_size || nodeData.nodeSize || 60;
+  const nodeSize = nodeData.node_size || nodeData.nodeSize || 80;
   const arrowSizeMultiplier = config.arrowSizeMultiplier || 1.0;
   
   // Base arrow size scales with node size (min 30px, max 80px)
@@ -266,7 +266,7 @@ export const createArrowSatellites = (nodeData, nodeGroup) => {
   // Store positions and config for animation
   nodeData._satellitePositions = positions;
   // Store the actual calculated orbit radius (image radius + offset)
-  const imageRadius = (nodeData.node_size || nodeData.nodeSize || 60) / 2;
+  const imageRadius = (nodeData.node_size || nodeData.nodeSize || 80) / 2;
   const orbitOffset = config.orbitRadiusOffset || 20;
   nodeData._satelliteOrbitRadius = imageRadius + orbitOffset;
   nodeData._satelliteSpeed = config.speed || 0.0005;

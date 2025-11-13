@@ -835,7 +835,7 @@ function archi_get_graph_defaults() {
     return [
         'post' => [
             'node_color' => '#3498db',
-            'node_size' => 60,
+            'node_size' => 80,
             'node_shape' => 'circle',
             'priority_level' => 'normal',
             'node_opacity' => 1.0,

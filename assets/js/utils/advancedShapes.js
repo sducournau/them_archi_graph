@@ -13,7 +13,7 @@ import * as d3 from "d3";
 export const createNodeShape = (selection, data) => {
   const params = data.advanced_graph_params || {};
   const shape = params.node_shape || 'circle';
-  const size = data.node_size || 60;
+  const size = data.node_size || 80;
   const radius = size / 2;
   
   let shapeElement;
@@ -215,7 +215,7 @@ export const addNodeIcon = (nodeGroup, data) => {
   
   if (!icon) return;
   
-  const size = data.node_size || 60;
+  const size = data.node_size || 80;
   const fontSize = size * 0.5;
   
   nodeGroup.append('text')
@@ -238,7 +238,7 @@ export const addNodeBadge = (nodeGroup, data) => {
   
   if (!badge) return;
   
-  const size = data.node_size || 60;
+  const size = data.node_size || 80;
   const radius = size / 2;
   
   // Mapping des badges vers emojis
@@ -281,7 +281,7 @@ export const addNodeLabel = (nodeGroup, data) => {
   
   if (!label) return;
   
-  const size = data.node_size || 60;
+  const size = data.node_size || 80;
   const radius = size / 2;
   
   const labelElement = nodeGroup.append('text')

@@ -121,8 +121,8 @@ export const areNodesColliding = (node1, node2, padding = 10) => {
   const dy = node1.y - node2.y;
   const distance = Math.sqrt(dx * dx + dy * dy);
   
-  const radius1 = (node1.node_size || 60) / 2 + padding;
-  const radius2 = (node2.node_size || 60) / 2 + padding;
+  const radius1 = (node1.node_size || 80) / 2 + padding;
+  const radius2 = (node2.node_size || 80) / 2 + padding;
   
   return distance < (radius1 + radius2);
 };

@@ -10,6 +10,38 @@
     'use strict';
     
     // ========================================
+    // INITIALIZE GRAPH SETTINGS UPDATE FUNCTION
+    // ========================================
+    
+    /**
+     * Initialize window.updateGraphSettings if not already defined by GraphContainer
+     * This ensures the function exists even if GraphContainer isn't mounted yet
+     */
+    if (typeof window.updateGraphSettings !== 'function') {
+        console.log('🎨 Initializing window.updateGraphSettings (Customizer fallback)');
+        
+        window.updateGraphSettings = function(newSettings) {
+            console.log('🎨 Graph settings update requested (via fallback):', newSettings);
+            
+            // Update window.archiGraphSettings
+            if (typeof window.archiGraphSettings === 'object') {
+                Object.assign(window.archiGraphSettings, newSettings);
+            } else {
+                window.archiGraphSettings = newSettings;
+            }
+            
+            // Dispatch event for GraphContainer to listen to
+            var event = new CustomEvent('graphSettingsUpdated', { 
+                detail: newSettings 
+            });
+            window.dispatchEvent(event);
+            
+            // If GraphContainer is mounted, it will handle the update via the event
+            // If not, the settings are still updated for when it mounts later
+        };
+    }
+    
+    // ========================================
     // HEADER OPTIONS
     // ========================================
     
@@ -307,6 +339,121 @@
         value.bind(function(newval) {
             if (typeof window.updateGraphSettings === 'function') {
                 window.updateGraphSettings({ popupTitleOnly: newval });
+            }
+        });
+    });
+    
+    // ========================================
+    // POST TYPE COLORS
+    // ========================================
+    
+    // Project color
+    wp.customize('archi_project_color', function(value) {
+        value.bind(function(newval) {
+            if (typeof window.updateGraphSettings === 'function') {
+                window.updateGraphSettings({ projectColor: newval });
+            }
+        });
+    });
+    
+    // Illustration color
+    wp.customize('archi_illustration_color', function(value) {
+        value.bind(function(newval) {
+            if (typeof window.updateGraphSettings === 'function') {
+                window.updateGraphSettings({ illustrationColor: newval });
+            }
+        });
+    });
+    
+    // Pages zone color
+    wp.customize('archi_pages_zone_color', function(value) {
+        value.bind(function(newval) {
+            if (typeof window.updateGraphSettings === 'function') {
+                window.updateGraphSettings({ pagesZoneColor: newval });
+            }
+        });
+    });
+    
+    // Guestbook link color
+    wp.customize('archi_guestbook_link_color', function(value) {
+        value.bind(function(newval) {
+            if (typeof window.updateGraphSettings === 'function') {
+                window.updateGraphSettings({ guestbookLinkColor: newval });
+            }
+        });
+    });
+    
+    // ========================================
+    // PRIORITY BADGES
+    // ========================================
+    
+    // Priority featured color
+    wp.customize('archi_priority_featured_color', function(value) {
+        value.bind(function(newval) {
+            if (typeof window.updateGraphSettings === 'function') {
+                window.updateGraphSettings({ priorityFeaturedColor: newval });
+            }
+        });
+    });
+    
+    // Priority high color
+    wp.customize('archi_priority_high_color', function(value) {
+        value.bind(function(newval) {
+            if (typeof window.updateGraphSettings === 'function') {
+                window.updateGraphSettings({ priorityHighColor: newval });
+            }
+        });
+    });
+    
+    // Priority badge size
+    wp.customize('archi_priority_badge_size', function(value) {
+        value.bind(function(newval) {
+            if (typeof window.updateGraphSettings === 'function') {
+                window.updateGraphSettings({ priorityBadgeSize: parseInt(newval) });
+            }
+        });
+    });
+    
+    // ========================================
+    // NODE SCALING
+    // ========================================
+    
+    // Active node scale
+    wp.customize('archi_active_node_scale', function(value) {
+        value.bind(function(newval) {
+            if (typeof window.updateGraphSettings === 'function') {
+                window.updateGraphSettings({ activeNodeScale: parseFloat(newval) });
+            }
+        });
+    });
+    
+    // ========================================
+    // CLUSTER APPEARANCE
+    // ========================================
+    
+    // Cluster fill opacity
+    wp.customize('archi_cluster_fill_opacity', function(value) {
+        value.bind(function(newval) {
+            if (typeof window.updateGraphSettings === 'function') {
+                window.updateGraphSettings({ clusterFillOpacity: parseFloat(newval) });
+            }
+        });
+    });
+    
+    // Cluster stroke width
+    wp.customize('archi_cluster_stroke_width', function(value) {
+        value.bind(function(newval) {
+            if (typeof window.updateGraphSettings === 'function') {
+                window.updateGraphSettings({ clusterStrokeWidth: parseInt(newval) });
+            }
+        });
+    });
+    
+    // Cluster stroke opacity
+    wp.customize('archi_cluster_stroke_opacity', function(value) {
+        value.bind(function(newval) {
+            if (typeof window.updateGraphSettings === 'function') {
+                window.updateGraphSettings({ clusterStrokeOpacity: parseFloat(newval) });
             }
         });
     });

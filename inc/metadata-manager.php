@@ -36,7 +36,7 @@ class Archi_Metadata_Manager {
             ],
             '_archi_node_size' => [
                 'type' => 'number',
-                'default' => 60,
+                'default' => 80,
                 'sanitize' => 'absint',
                 'validate' => ['min' => 40, 'max' => 120],
                 'label' => 'Taille du nœud'

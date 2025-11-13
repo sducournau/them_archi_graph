@@ -246,7 +246,7 @@ class Archi_Nodes_List_Table extends WP_List_Table {
      * Colonne taille
      */
     public function column_node_size($item) {
-        $size = get_post_meta($item->ID, '_archi_node_size', true) ?: 60;
+        $size = get_post_meta($item->ID, '_archi_node_size', true) ?: 80;
         return sprintf('%d px', intval($size));
     }
     

@@ -1,9 +1,15 @@
+/**
+ * Fichier principal de l'application Graph pour Archi-Graph
+ * Point d'entrée Webpack
+ * 
+ * NOTE: window.updateGraphSettings est défini dans graph-init-early.js
+ * qui est chargé AVANT ce bundle via functions.php
+ */
+
 import { createRoot } from "react-dom/client";
 import React from "react";
 import GraphContainer from "@components/GraphContainer";
 import "../css/main.scss";
-// Import du helper de settings pour rendre window.updateGraphSettings disponible
-import "@utils/graph-settings-helper";
 
 /**
  * Point d'entrée principal de l'application React
@@ -41,7 +47,10 @@ class ArchiGraphApp {
       window.location.pathname === "/" ||
       window.location.pathname === "/wordpress/";
 
-    if (!isHomePage) {
+    // 🔥 Dans le Customizer, toujours charger le graphe pour la prévisualisation
+    const isCustomizer = window.parent !== window && window.parent.wp && window.parent.wp.customize;
+
+    if (!isHomePage && !isCustomizer) {
       return;
     }
 

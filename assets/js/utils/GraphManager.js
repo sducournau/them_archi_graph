@@ -339,7 +339,7 @@ class GraphManager {
     nodes
       .append("circle")
       .attr("class", "node-halo")
-      .attr("r", (d) => (d.node_size || 60) / 2 + 4)
+      .attr("r", (d) => (d.node_size || 80) / 2 + 4)
       .attr("fill", "none")
       .attr("stroke", (d) => d.node_color || "#3498db")
       .attr("stroke-width", 0)
@@ -349,7 +349,7 @@ class GraphManager {
     nodes
       .append("circle")
       .attr("class", "node-circle")
-      .attr("r", (d) => (d.node_size || 60) / 2)
+      .attr("r", (d) => (d.node_size || 80) / 2)
       .attr("fill", (d) => d.node_color || "#3498db")
       .attr("stroke", "#fff")
       .attr("stroke-width", 2)
@@ -359,7 +359,7 @@ class GraphManager {
     nodes
       .append("circle")
       .attr("class", "node-shine")
-      .attr("r", (d) => (d.node_size || 60) / 4)
+      .attr("r", (d) => (d.node_size || 80) / 4)
       .attr("cx", -5)
       .attr("cy", -5)
       .attr("fill", "white")
@@ -370,7 +370,7 @@ class GraphManager {
       .append("text")
       .attr("class", "node-label")
       .attr("text-anchor", "middle")
-      .attr("dy", (d) => (d.node_size || 60) / 2 + 15)
+      .attr("dy", (d) => (d.node_size || 80) / 2 + 15)
       .attr("font-size", "12px")
       .attr("fill", "#333")
       .style("opacity", (d) => d.inactive ? 0.5 : 1)
@@ -697,7 +697,7 @@ class GraphManager {
         // Animer le cercle principal
         circle.transition()
           .duration(200)
-          .attr("r", (d.node_size || 60) / 2 * scale)
+          .attr("r", (d.node_size || 80) / 2 * scale)
           .style("opacity", 1);
 
         // Effet de halo (intensité selon le preset)
@@ -749,7 +749,7 @@ class GraphManager {
         }
 
         // Retour à l'état normal
-        const defaultSize = (d.node_size || 60) / 2;
+        const defaultSize = (d.node_size || 80) / 2;
         circle.transition()
           .duration(200)
           .attr("r", defaultSize)
@@ -793,7 +793,7 @@ class GraphManager {
         const circle = node.select(".node-circle");
         
         // Taille du node
-        const nodeSize = d.node_size || 60;
+        const nodeSize = d.node_size || 80;
         const nodeRadius = nodeSize / 2;
         
         // Créer une onde de choc temporaire
@@ -876,7 +876,7 @@ class GraphManager {
    * Appliquer une pulsation subtile pour les nodes inactifs
    */
   applyInactivePulse(circle, halo, nodeData) {
-    const baseRadius = (nodeData.node_size || 60) / 2;
+    const baseRadius = (nodeData.node_size || 80) / 2;
     const pulseRadius = baseRadius * 1.05;
 
     const pulse = () => {
@@ -949,7 +949,7 @@ class GraphManager {
    * Appliquer l'effet de pulsation
    */
   applyPulseEffect(circle, nodeData) {
-    const baseRadius = (nodeData.node_size || 60) / 2;
+    const baseRadius = (nodeData.node_size || 80) / 2;
     const pulseRadius = baseRadius * 1.1;
 
     const pulse = () => {

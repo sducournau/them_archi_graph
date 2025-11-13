@@ -82,7 +82,7 @@ export function createVisualEffectFilters(svg) {
  * @param {Object} nodeData - Node data with size and animation settings
  */
 export function applyPulseEffect(imageElement, nodeData) {
-  const baseSize = nodeData.node_size || 60;
+  const baseSize = nodeData.node_size || 80;
   const pulseSize = baseSize * 1.1;
   const duration = nodeData.animation_duration || 1000;
   
@@ -204,7 +204,7 @@ export function applyContinuousEffects(nodeElements, svg, settings = {}) {
  * @param {boolean} isHovering - Whether mouse is hovering
  */
 export function applyHoverScale(imageElement, nodeData, isHovering, settings = {}) {
-  const baseSize = nodeData.node_size || 60;
+  const baseSize = nodeData.node_size || 80;
   const hoverScale = nodeData.hover_scale || 1.15;
   const animationLevel = nodeData.animation_level || 'normal';
   

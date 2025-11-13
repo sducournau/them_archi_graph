@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Constantes du thème
-define('ARCHI_THEME_VERSION', '1.1.0');
+define('ARCHI_THEME_VERSION', '1.1.6-scale-harmonized'); // ✅ Harmonized all defaultNodeSize to 80px
 define('ARCHI_THEME_DIR', get_template_directory());
 define('ARCHI_THEME_URI', get_template_directory_uri());
 
@@ -173,6 +173,14 @@ function archi_enqueue_scripts() {
         ARCHI_THEME_VERSION
     );
     
+    // Category legend styles
+    wp_enqueue_style(
+        'archi-category-legend',
+        ARCHI_THEME_URI . '/assets/css/category-legend.css',
+        [],
+        ARCHI_THEME_VERSION
+    );
+    
     // Image comparison slider styles
     wp_register_style(
         'archi-image-comparison-slider',
@@ -330,10 +338,20 @@ function archi_enqueue_scripts() {
             ARCHI_THEME_VERSION
         );
         
+        // 🎨 CRITICAL: Charger le script d'initialisation AVANT le bundle principal
+        // Ce fichier définit window.updateGraphSettings pour le Customizer
+        wp_enqueue_script(
+            'archi-graph-init-early',
+            ARCHI_THEME_URI . '/assets/js/graph-init-early.js',
+            [],
+            ARCHI_THEME_VERSION,
+            true // In footer mais chargé avant les autres
+        );
+        
         wp_enqueue_script(
             'archi-vendors',
             ARCHI_THEME_URI . '/dist/js/vendors.bundle.js',
-            [],
+            ['archi-graph-init-early'], // Dépend de l'initialisation
             ARCHI_THEME_VERSION,
             true
         );
@@ -396,7 +414,8 @@ function archi_enqueue_scripts() {
         wp_localize_script('archi-app', 'archiGraphSettings', [
             // Node settings
             'defaultNodeColor' => get_theme_mod('archi_default_node_color', '#3498db'),
-            'defaultNodeSize' => get_theme_mod('archi_default_node_size', 60),
+            'defaultNodeSize' => get_theme_mod('archi_default_node_size', 80), // ✅ Harmonized to 80px for consistency
+            'nodeSymbolType' => get_theme_mod('archi_node_symbol_type', 'none'),
             'clusterStrength' => get_theme_mod('archi_cluster_strength', 0.1),
             
             // Display options
@@ -416,13 +435,83 @@ function archi_enqueue_scripts() {
             'showArrows' => get_theme_mod('archi_graph_show_arrows', false),
             'linkAnimation' => get_theme_mod('archi_graph_link_animation', 'none'),
             
+            // 🔥 NEW: Advanced link settings (OPTIMIZED VALUES)
+            'linkDistance' => get_theme_mod('archi_link_distance', 100), // 🔥 FIX: Reduced from 150
+            'linkDistanceVariation' => get_theme_mod('archi_link_distance_variation', 40), // 🔥 FIX: Reduced from 50
+            'linkStrengthDivisor' => get_theme_mod('archi_link_strength_divisor', 200),
+            'dashedLinePattern' => get_theme_mod('archi_dashed_line_pattern', '5,5'),
+            'dottedLinePattern' => get_theme_mod('archi_dotted_line_pattern', '2,2'),
+            
             // Category colors
             'categoryColorsEnabled' => get_theme_mod('archi_graph_category_colors_enabled', false),
             'categoryPalette' => get_theme_mod('archi_graph_category_palette', 'default'),
             'showCategoryLegend' => get_theme_mod('archi_graph_show_category_legend', true),
+            'categoryColors' => archi_get_category_color_palette(get_theme_mod('archi_graph_category_palette', 'default')),
             
-            // Get actual palette colors
-            'categoryColors' => archi_get_category_color_palette(get_theme_mod('archi_graph_category_palette', 'default'))
+            // Post type colors
+            'projectColor' => get_theme_mod('archi_project_color', '#f39c12'),
+            'illustrationColor' => get_theme_mod('archi_illustration_color', '#3498db'),
+            'pagesZoneColor' => get_theme_mod('archi_pages_zone_color', '#9b59b6'),
+            'guestbookLinkColor' => get_theme_mod('archi_guestbook_link_color', '#2ecc71'),
+            
+            // 🔥 NEW: Guestbook link settings
+            'guestbookLinkWidth' => get_theme_mod('archi_guestbook_link_width', 3),
+            'guestbookLinkOpacity' => get_theme_mod('archi_guestbook_link_opacity', 0.8),
+            'guestbookDashPattern' => get_theme_mod('archi_guestbook_dash_pattern', '10,5'),
+            
+            // Priority badges
+            'priorityFeaturedColor' => get_theme_mod('archi_priority_featured_color', '#e74c3c'),
+            'priorityHighColor' => get_theme_mod('archi_priority_high_color', '#f39c12'),
+            'priorityBadgeSize' => get_theme_mod('archi_priority_badge_size', 8),
+            
+            // 🔥 NEW: Priority badge settings
+            'priorityBadgeOffset' => get_theme_mod('archi_priority_badge_offset', 5),
+            'priorityBadgeStrokeColor' => get_theme_mod('archi_priority_badge_stroke_color', '#ffffff'),
+            'priorityBadgeStrokeWidth' => get_theme_mod('archi_priority_badge_stroke_width', 2),
+            
+            // Node scaling
+            'activeNodeScale' => get_theme_mod('archi_active_node_scale', 1.5),
+            
+            // Cluster appearance
+            'clusterFillOpacity' => get_theme_mod('archi_cluster_fill_opacity', 0.12),
+            'clusterStrokeWidth' => get_theme_mod('archi_cluster_stroke_width', 3),
+            'clusterStrokeOpacity' => get_theme_mod('archi_cluster_stroke_opacity', 0.35),
+            
+            // 🔥 NEW: Advanced cluster settings
+            'clusterLabelFontSize' => get_theme_mod('archi_cluster_label_font_size', 14),
+            'clusterLabelFontWeight' => get_theme_mod('archi_cluster_label_font_weight', 'bold'),
+            'clusterCountFontSize' => get_theme_mod('archi_cluster_count_font_size', 11),
+            'clusterCountOpacity' => get_theme_mod('archi_cluster_count_opacity', 0.7),
+            'clusterTextShadow' => get_theme_mod('archi_cluster_text_shadow', '2px 2px 4px rgba(255,255,255,0.8)'),
+            'clusterHullPadding' => get_theme_mod('archi_cluster_hull_padding', 40),
+            'clusterCircleRadius' => get_theme_mod('archi_cluster_circle_radius', 80),
+            'clusterCirclePoints' => get_theme_mod('archi_cluster_circle_points', 12),
+            
+            // 🔥 NEW: Simulation physics (OPTIMIZED VALUES)
+            'chargeStrength' => get_theme_mod('archi_charge_strength', -800), // 🔥 FIX: Increased from -300
+            'chargeDistance' => get_theme_mod('archi_charge_distance', 150), // 🔥 FIX: Reduced from 200
+            'collisionPadding' => get_theme_mod('archi_collision_padding', 15), // 🔥 FIX: Increased from 10
+            'simulationAlpha' => get_theme_mod('archi_simulation_alpha', 1),
+            'simulationAlphaDecay' => get_theme_mod('archi_simulation_alpha_decay', 0.02),
+            'simulationVelocityDecay' => get_theme_mod('archi_simulation_velocity_decay', 0.3),
+            'resizeAlpha' => get_theme_mod('archi_resize_alpha', 0.3),
+            
+            // 🔥 NEW: Island settings
+            'islandHullPadding' => get_theme_mod('archi_island_hull_padding', 60),
+            'islandSmoothFactor' => get_theme_mod('archi_island_smooth_factor', 0.3),
+            'islandCircleRadius' => get_theme_mod('archi_island_circle_radius', 80),
+            'islandCirclePoints' => get_theme_mod('archi_island_circle_points', 12),
+            'islandInnerPadding' => get_theme_mod('archi_island_inner_padding', -20),
+            'islandStrokeDashArray' => get_theme_mod('archi_island_stroke_dash_array', '8,4'),
+            'islandLabelFontSize' => get_theme_mod('archi_island_label_font_size', 14),
+            'islandLabelFontWeight' => get_theme_mod('archi_island_label_font_weight', '600'),
+            'islandLabelOpacity' => get_theme_mod('archi_island_label_opacity', 0.7),
+            'islandLabelYOffset' => get_theme_mod('archi_island_label_y_offset', -10),
+            'islandTextShadow' => get_theme_mod('archi_island_text_shadow', '2px 2px 6px rgba(255,255,255,0.9)'),
+            'islandCountFontSize' => get_theme_mod('archi_island_count_font_size', 11),
+            'islandCountOpacity' => get_theme_mod('archi_island_count_opacity', 0.6),
+            'islandTextureOpacity' => get_theme_mod('archi_island_texture_opacity', 0.15),
+            'islandTextureDashArray' => get_theme_mod('archi_island_texture_dash_array', '3,3')
         ]);
         
         // Éditeur de graphique pour les administrateurs

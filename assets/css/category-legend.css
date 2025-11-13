@@ -1,0 +1,206 @@
+/**
+ * Category Legend Styles
+ * 
+ * Styles for the category color legend that appears in the graph view.
+ * Only visible when categoryColorsEnabled and showCategoryLegend are true.
+ */
+
+.category-legend {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  padding: 16px;
+  max-width: 280px;
+  max-height: 400px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  z-index: 1000;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+}
+
+.category-legend.collapsed {
+  max-height: 60px;
+}
+
+.category-legend .legend-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+.category-legend.collapsed .legend-header {
+  margin-bottom: 0;
+  border-bottom: none;
+}
+
+.category-legend .legend-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #2c3e50;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.category-legend .legend-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.category-legend .toggle-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: #7f8c8d;
+  padding: 4px 8px;
+  transition: color 0.2s ease;
+}
+
+.category-legend .toggle-btn:hover {
+  color: #2c3e50;
+}
+
+.category-legend .legend-content {
+  max-height: 320px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Custom scrollbar for legend */
+.category-legend .legend-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.category-legend .legend-content::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 3px;
+}
+
+.category-legend .legend-content::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.category-legend .legend-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.category-legend .legend-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.category-legend .legend-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 4px;
+  transition: background-color 0.2s ease;
+  border-radius: 6px;
+  gap: 8px;
+}
+
+.category-legend .legend-item:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.category-legend .legend-color {
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.category-legend .legend-item:hover .legend-color {
+  transform: scale(1.1);
+}
+
+.category-legend .legend-name {
+  flex: 1;
+  font-size: 14px;
+  color: #2c3e50;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.category-legend .legend-count {
+  font-size: 12px;
+  color: #7f8c8d;
+  font-weight: 400;
+  margin-left: 4px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .category-legend {
+    bottom: 10px;
+    right: 10px;
+    max-width: 220px;
+    padding: 12px;
+  }
+
+  .category-legend .legend-header h3 {
+    font-size: 14px;
+  }
+
+  .category-legend .legend-name {
+    font-size: 13px;
+  }
+
+  .category-legend .legend-count {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .category-legend {
+    bottom: 5px;
+    right: 5px;
+    left: 5px;
+    max-width: none;
+  }
+}
+
+/* Animation for legend appearance */
+@keyframes legendFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.category-legend {
+  animation: legendFadeIn 0.4s ease-out;
+}
+
+/* Category color ring styles (for nodes in graph) */
+.category-color-ring {
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+.graph-node:hover .category-color-ring {
+  stroke-width: 6;
+  opacity: 1 !important;
+}
+
+.graph-node.active .category-color-ring {
+  stroke-width: 6;
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 8px currentColor);
+}

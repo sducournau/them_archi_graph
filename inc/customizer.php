@@ -247,7 +247,7 @@ function archi_customize_register($wp_customize) {
     
     // Taille nœud par défaut
     $wp_customize->add_setting('archi_default_node_size', [
-        'default' => 60,
+        'default' => 80,
         'transport' => 'refresh',
         'sanitize_callback' => 'absint'
     ]);
@@ -533,6 +533,208 @@ function archi_customize_register($wp_customize) {
         'type' => 'checkbox'
     ]);
     
+    // --- COULEURS PAR TYPE DE CONTENU ---
+    
+    // Couleur des projets
+    $wp_customize->add_setting('archi_project_color', [
+        'default' => '#f39c12',
+        'transport' => 'refresh',
+        'sanitize_callback' => 'sanitize_hex_color'
+    ]);
+    
+    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'archi_project_color', [
+        'label' => __('Couleur des projets', 'archi-graph'),
+        'description' => __('Couleur utilisée pour identifier les projets architecturaux.', 'archi-graph'),
+        'section' => 'archi_graph_options',
+    ]));
+    
+    // Couleur des illustrations
+    $wp_customize->add_setting('archi_illustration_color', [
+        'default' => '#3498db',
+        'transport' => 'refresh',
+        'sanitize_callback' => 'sanitize_hex_color'
+    ]);
+    
+    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'archi_illustration_color', [
+        'label' => __('Couleur des illustrations', 'archi-graph'),
+        'description' => __('Couleur utilisée pour identifier les illustrations.', 'archi-graph'),
+        'section' => 'archi_graph_options',
+    ]));
+    
+    // Couleur de la zone des pages
+    $wp_customize->add_setting('archi_pages_zone_color', [
+        'default' => '#9b59b6',
+        'transport' => 'refresh',
+        'sanitize_callback' => 'sanitize_hex_color'
+    ]);
+    
+    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'archi_pages_zone_color', [
+        'label' => __('Couleur de la zone des pages', 'archi-graph'),
+        'description' => __('Couleur de l\'enveloppe regroupant les pages.', 'archi-graph'),
+        'section' => 'archi_graph_options',
+    ]));
+    
+    // Couleur des liens du livre d'or
+    $wp_customize->add_setting('archi_guestbook_link_color', [
+        'default' => '#2ecc71',
+        'transport' => 'refresh',
+        'sanitize_callback' => 'sanitize_hex_color'
+    ]);
+    
+    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'archi_guestbook_link_color', [
+        'label' => __('Couleur des liens du livre d\'or', 'archi-graph'),
+        'description' => __('Couleur distinctive pour les liens créés depuis le livre d\'or.', 'archi-graph'),
+        'section' => 'archi_graph_options',
+    ]));
+    
+    // --- BADGES DE PRIORITÉ ---
+    
+    // Couleur du badge "Featured"
+    $wp_customize->add_setting('archi_priority_featured_color', [
+        'default' => '#e74c3c',
+        'transport' => 'refresh',
+        'sanitize_callback' => 'sanitize_hex_color'
+    ]);
+    
+    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'archi_priority_featured_color', [
+        'label' => __('Couleur du badge "En vedette"', 'archi-graph'),
+        'description' => __('Couleur du badge pour les articles en vedette.', 'archi-graph'),
+        'section' => 'archi_graph_options',
+    ]));
+    
+    // Couleur du badge "High"
+    $wp_customize->add_setting('archi_priority_high_color', [
+        'default' => '#f39c12',
+        'transport' => 'refresh',
+        'sanitize_callback' => 'sanitize_hex_color'
+    ]);
+    
+    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'archi_priority_high_color', [
+        'label' => __('Couleur du badge "Haute priorité"', 'archi-graph'),
+        'description' => __('Couleur du badge pour les articles de haute priorité.', 'archi-graph'),
+        'section' => 'archi_graph_options',
+    ]));
+    
+    // Taille du badge de priorité
+    $wp_customize->add_setting('archi_priority_badge_size', [
+        'default' => 8,
+        'transport' => 'refresh',
+        'sanitize_callback' => 'absint'
+    ]);
+    
+    $wp_customize->add_control('archi_priority_badge_size', [
+        'label' => __('Taille du badge de priorité', 'archi-graph'),
+        'description' => __('Rayon du badge en pixels (5-15).', 'archi-graph'),
+        'section' => 'archi_graph_options',
+        'type' => 'range',
+        'input_attrs' => [
+            'min' => 5,
+            'max' => 15,
+            'step' => 1
+        ]
+    ]);
+    
+    // --- ÉCHELLE ET APPARENCE DES NŒUDS ---
+    
+    // Type de symbole pour les nœuds
+    $wp_customize->add_setting('archi_node_symbol_type', [
+        'default' => 'none',
+        'transport' => 'refresh',
+        'sanitize_callback' => 'sanitize_text_field'
+    ]);
+    
+    $wp_customize->add_control('archi_node_symbol_type', [
+        'label' => __('Type de symbole des nœuds', 'archi-graph'),
+        'description' => __('Choisissez l\'apparence des nœuds dans le graphique.', 'archi-graph'),
+        'section' => 'archi_graph_options',
+        'type' => 'select',
+        'choices' => [
+            'none' => __('Aucun symbole (images uniquement)', 'archi-graph'),
+            'circle' => __('Cercles', 'archi-graph'),
+            'square' => __('Carrés', 'archi-graph'),
+            'diamond' => __('Losanges', 'archi-graph'),
+            'triangle' => __('Triangles', 'archi-graph')
+        ]
+    ]);
+    
+    // Échelle du nœud actif
+    $wp_customize->add_setting('archi_active_node_scale', [
+        'default' => 1.5,
+        'transport' => 'refresh',
+        'sanitize_callback' => 'archi_sanitize_float'
+    ]);
+    
+    $wp_customize->add_control('archi_active_node_scale', [
+        'label' => __('Échelle du nœud actif', 'archi-graph'),
+        'description' => __('Agrandissement du nœud sélectionné (1.0-2.5).', 'archi-graph'),
+        'section' => 'archi_graph_options',
+        'type' => 'range',
+        'input_attrs' => [
+            'min' => 1.0,
+            'max' => 2.5,
+            'step' => 0.1
+        ]
+    ]);
+    
+    // --- APPARENCE DES CLUSTERS ---
+    
+    // Opacité de remplissage des clusters
+    $wp_customize->add_setting('archi_cluster_fill_opacity', [
+        'default' => 0.12,
+        'transport' => 'refresh',
+        'sanitize_callback' => 'archi_sanitize_float'
+    ]);
+    
+    $wp_customize->add_control('archi_cluster_fill_opacity', [
+        'label' => __('Opacité de remplissage des clusters', 'archi-graph'),
+        'description' => __('Transparence du fond des enveloppes (0.0-0.5).', 'archi-graph'),
+        'section' => 'archi_graph_options',
+        'type' => 'range',
+        'input_attrs' => [
+            'min' => 0.0,
+            'max' => 0.5,
+            'step' => 0.01
+        ]
+    ]);
+    
+    // Épaisseur du contour des clusters
+    $wp_customize->add_setting('archi_cluster_stroke_width', [
+        'default' => 3,
+        'transport' => 'refresh',
+        'sanitize_callback' => 'absint'
+    ]);
+    
+    $wp_customize->add_control('archi_cluster_stroke_width', [
+        'label' => __('Épaisseur du contour des clusters', 'archi-graph'),
+        'description' => __('Largeur de la bordure des enveloppes en pixels (1-6).', 'archi-graph'),
+        'section' => 'archi_graph_options',
+        'type' => 'range',
+        'input_attrs' => [
+            'min' => 1,
+            'max' => 6,
+            'step' => 1
+        ]
+    ]);
+    
+    // Opacité du contour des clusters
+    $wp_customize->add_setting('archi_cluster_stroke_opacity', [
+        'default' => 0.35,
+        'transport' => 'refresh',
+        'sanitize_callback' => 'archi_sanitize_float'
+    ]);
+    
+    $wp_customize->add_control('archi_cluster_stroke_opacity', [
+        'label' => __('Opacité du contour des clusters', 'archi-graph'),
+        'description' => __('Transparence de la bordure des enveloppes (0.0-1.0).', 'archi-graph'),
+        'section' => 'archi_graph_options',
+        'type' => 'range',
+        'input_attrs' => [
+            'min' => 0.0,
+            'max' => 1.0,
+            'step' => 0.05
+        ]
+    ]);
+    
     // ========================================
     // SECTION 4: TYPOGRAPHIE
     // ========================================
@@ -746,7 +948,7 @@ function archi_localize_graph_settings() {
     $graph_settings = [
         // Node settings
         'defaultNodeColor' => get_theme_mod('archi_default_node_color', '#3498db'),
-        'defaultNodeSize' => get_theme_mod('archi_default_node_size', 60),
+        'defaultNodeSize' => get_theme_mod('archi_default_node_size', 80), // ✅ Harmonized to 80px for consistency
         'clusterStrength' => get_theme_mod('archi_cluster_strength', 0.1),
         
         // Display options

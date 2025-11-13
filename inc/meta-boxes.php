@@ -86,7 +86,7 @@ function archi_graph_meta_box_callback($post) {
     $show_in_graph = get_post_meta($post->ID, '_archi_show_in_graph', true);
     $hide_links = get_post_meta($post->ID, '_archi_hide_links', true);
     $node_color = get_post_meta($post->ID, '_archi_node_color', true) ?: '#3498db';
-    $node_size = get_post_meta($post->ID, '_archi_node_size', true) ?: 60;
+    $node_size = get_post_meta($post->ID, '_archi_node_size', true) ?: 80;
     $graph_position = get_post_meta($post->ID, '_archi_graph_position', true);
     $priority_level = get_post_meta($post->ID, '_archi_priority_level', true) ?: 'normal';
     

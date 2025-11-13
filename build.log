@@ -1,0 +1,204 @@
+
+> archi-graph-template@1.0.0 build
+> webpack --mode production
+
+asset app.bundle.js 148 KiB [emitted] [minimized] (name: app) 1 related asset
+asset vendors.bundle.js 133 KiB [compared for emit] [minimized] (name: vendors) (id hint: vendors) 1 related asset
+asset admin.bundle.js 0 bytes [compared for emit] [minimized] (name: admin)
+Entrypoint app 281 KiB = vendors.bundle.js 133 KiB app.bundle.js 148 KiB
+Entrypoint admin = admin.bundle.js
+orphan modules 831 KiB [orphan] 559 modules
+runtime modules 3.09 KiB 6 modules
+cacheable modules 511 KiB
+  modules by path ./node_modules/ 306 KiB 40 modules
+  modules by path ./assets/ 204 KiB
+    modules by path ./assets/js/*.js 175 KiB
+      ./assets/js/app.js + 16 modules 175 KiB [built] [code generated]
+      ./assets/js/admin.js 40 bytes [built] [code generated]
+    modules by path ./assets/css/ 28.6 KiB
+      ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./assets/css/main.scss 17.3 KiB [built] [code generated] [10 warnings]
+      ./node_modules/css-loader/dist/cjs.js!./assets/css/organic-islands.css 11.3 KiB [built] [code generated]
+
+WARNING in ./assets/css/main.scss (./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./assets/css/main.scss)
+Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Deprecation Warning on line 273, column 20 of file:///mnt/c/wamp64/www/wordpress/wp-content/themes/archi-graph-template/assets/css/main.scss:273:20:
+Global built-in functions are deprecated and will be removed in Dart Sass 3.0.0.
+Use color.adjust instead.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+273 |         background: darken($accent-color, 10%);
+
+
+assets/css/main.scss 274:21  root stylesheet
+ @ ./assets/css/main.scss 8:6-145 20:17-24 25:22-29 25:33-47 25:50-64 24:0-115 24:0-115
+ @ ./assets/js/app.js 12:0-26
+
+WARNING in ./assets/css/main.scss (./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./assets/css/main.scss)
+Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Deprecation Warning on line 273, column 20 of file:///mnt/c/wamp64/www/wordpress/wp-content/themes/archi-graph-template/assets/css/main.scss:273:20:
+darken() is deprecated. Suggestions:
+
+color.scale($color, $lightness: -17.5257731959%)
+color.adjust($color, $lightness: -10%)
+
+More info: https://sass-lang.com/d/color-functions
+
+273 |         background: darken($accent-color, 10%);
+
+
+assets/css/main.scss 274:21  root stylesheet
+ @ ./assets/css/main.scss 8:6-145 20:17-24 25:22-29 25:33-47 25:50-64 24:0-115 24:0-115
+ @ ./assets/js/app.js 12:0-26
+
+WARNING in ./assets/css/main.scss (./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./assets/css/main.scss)
+Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Deprecation Warning on line 358, column 20 of file:///mnt/c/wamp64/www/wordpress/wp-content/themes/archi-graph-template/assets/css/main.scss:358:20:
+Global built-in functions are deprecated and will be removed in Dart Sass 3.0.0.
+Use color.adjust instead.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+358 |         background: darken($primary-color, 10%);
+
+
+assets/css/main.scss 359:21  root stylesheet
+ @ ./assets/css/main.scss 8:6-145 20:17-24 25:22-29 25:33-47 25:50-64 24:0-115 24:0-115
+ @ ./assets/js/app.js 12:0-26
+
+WARNING in ./assets/css/main.scss (./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./assets/css/main.scss)
+Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Deprecation Warning on line 358, column 20 of file:///mnt/c/wamp64/www/wordpress/wp-content/themes/archi-graph-template/assets/css/main.scss:358:20:
+darken() is deprecated. Suggestions:
+
+color.scale($color, $lightness: -18.8191881919%)
+color.adjust($color, $lightness: -10%)
+
+More info: https://sass-lang.com/d/color-functions
+
+358 |         background: darken($primary-color, 10%);
+
+
+assets/css/main.scss 359:21  root stylesheet
+ @ ./assets/css/main.scss 8:6-145 20:17-24 25:22-29 25:33-47 25:50-64 24:0-115 24:0-115
+ @ ./assets/js/app.js 12:0-26
+
+WARNING in ./assets/css/main.scss (./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./assets/css/main.scss)
+Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Deprecation Warning on line 972, column 20 of file:///mnt/c/wamp64/www/wordpress/wp-content/themes/archi-graph-template/assets/css/main.scss:972:20:
+Global built-in functions are deprecated and will be removed in Dart Sass 3.0.0.
+Use color.adjust instead.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+972 |         background: darken($primary-color, 10%);
+
+
+assets/css/main.scss 973:21  root stylesheet
+ @ ./assets/css/main.scss 8:6-145 20:17-24 25:22-29 25:33-47 25:50-64 24:0-115 24:0-115
+ @ ./assets/js/app.js 12:0-26
+
+WARNING in ./assets/css/main.scss (./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./assets/css/main.scss)
+Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Deprecation Warning on line 972, column 20 of file:///mnt/c/wamp64/www/wordpress/wp-content/themes/archi-graph-template/assets/css/main.scss:972:20:
+darken() is deprecated. Suggestions:
+
+color.scale($color, $lightness: -18.8191881919%)
+color.adjust($color, $lightness: -10%)
+
+More info: https://sass-lang.com/d/color-functions
+
+972 |         background: darken($primary-color, 10%);
+
+
+assets/css/main.scss 973:21  root stylesheet
+ @ ./assets/css/main.scss 8:6-145 20:17-24 25:22-29 25:33-47 25:50-64 24:0-115 24:0-115
+ @ ./assets/js/app.js 12:0-26
+
+WARNING in ./assets/css/main.scss (./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./assets/css/main.scss)
+Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Deprecation Warning on line 1092, column 18 of file:///mnt/c/wamp64/www/wordpress/wp-content/themes/archi-graph-template/assets/css/main.scss:1092:18:
+Global built-in functions are deprecated and will be removed in Dart Sass 3.0.0.
+Use color.adjust instead.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+1092 |       background: darken($primary-color, 10%);
+
+
+assets/css/main.scss 1093:19  root stylesheet
+ @ ./assets/css/main.scss 8:6-145 20:17-24 25:22-29 25:33-47 25:50-64 24:0-115 24:0-115
+ @ ./assets/js/app.js 12:0-26
+
+WARNING in ./assets/css/main.scss (./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./assets/css/main.scss)
+Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Deprecation Warning on line 1092, column 18 of file:///mnt/c/wamp64/www/wordpress/wp-content/themes/archi-graph-template/assets/css/main.scss:1092:18:
+darken() is deprecated. Suggestions:
+
+color.scale($color, $lightness: -18.8191881919%)
+color.adjust($color, $lightness: -10%)
+
+More info: https://sass-lang.com/d/color-functions
+
+1092 |       background: darken($primary-color, 10%);
+
+
+assets/css/main.scss 1093:19  root stylesheet
+ @ ./assets/css/main.scss 8:6-145 20:17-24 25:22-29 25:33-47 25:50-64 24:0-115 24:0-115
+ @ ./assets/js/app.js 12:0-26
+
+WARNING in ./assets/css/main.scss (./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./assets/css/main.scss)
+Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Deprecation Warning on line 1128, column 18 of file:///mnt/c/wamp64/www/wordpress/wp-content/themes/archi-graph-template/assets/css/main.scss:1128:18:
+Global built-in functions are deprecated and will be removed in Dart Sass 3.0.0.
+Use color.adjust instead.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+1128 |       background: darken($primary-color, 10%);
+
+
+assets/css/main.scss 1129:19  root stylesheet
+ @ ./assets/css/main.scss 8:6-145 20:17-24 25:22-29 25:33-47 25:50-64 24:0-115 24:0-115
+ @ ./assets/js/app.js 12:0-26
+
+WARNING in ./assets/css/main.scss (./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./assets/css/main.scss)
+Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Deprecation Warning on line 1128, column 18 of file:///mnt/c/wamp64/www/wordpress/wp-content/themes/archi-graph-template/assets/css/main.scss:1128:18:
+darken() is deprecated. Suggestions:
+
+color.scale($color, $lightness: -18.8191881919%)
+color.adjust($color, $lightness: -10%)
+
+More info: https://sass-lang.com/d/color-functions
+
+1128 |       background: darken($primary-color, 10%);
+
+
+assets/css/main.scss 1129:19  root stylesheet
+ @ ./assets/css/main.scss 8:6-145 20:17-24 25:22-29 25:33-47 25:50-64 24:0-115 24:0-115
+ @ ./assets/js/app.js 12:0-26
+
+webpack 5.102.1 compiled with 10 warnings in 14242 ms
+
+asset image-block.bundle.js 30.5 KiB [compared for emit] [minimized] (name: image-block)
+asset blocks-editor.bundle.js 15.9 KiB [compared for emit] [minimized] (name: blocks-editor)
+asset interactive-map.bundle.js 9.31 KiB [compared for emit] [minimized] (name: interactive-map)
+asset hero-cover.bundle.js 7.72 KiB [compared for emit] [minimized] (name: hero-cover)
+asset d3-bar-chart.bundle.js 7.04 KiB [compared for emit] [minimized] (name: d3-bar-chart)
+asset article-manager-block.bundle.js 6.62 KiB [compared for emit] [minimized] (name: article-manager-block)
+asset d3-timeline.bundle.js 6.42 KiB [compared for emit] [minimized] (name: d3-timeline)
+asset comparison-slider.bundle.js 1.32 KiB [compared for emit] [minimized] (name: comparison-slider)
+orphan modules 252 bytes [orphan] 6 modules
+built modules 150 KiB [built]
+  modules by path ./assets/js/blocks/*.jsx 112 KiB
+    ./assets/js/blocks/article-manager.jsx + 5 modules 11.2 KiB [not cacheable] [built] [code generated]
+    ./assets/js/blocks/image-block.jsx + 4 modules 48.7 KiB [not cacheable] [built] [code generated]
+    ./assets/js/blocks/hero-cover.jsx + 6 modules 13.4 KiB [not cacheable] [built] [code generated]
+    ./assets/js/blocks/interactive-map.jsx + 5 modules 15.9 KiB [not cacheable] [built] [code generated]
+    ./assets/js/blocks/d3-bar-chart.jsx + 5 modules 12 KiB [not cacheable] [built] [code generated]
+    ./assets/js/blocks/d3-timeline.jsx + 5 modules 10.3 KiB [not cacheable] [built] [code generated]
+  cacheable modules 38.2 KiB
+    ./assets/js/blocks-editor.js 35.6 KiB [built] [code generated]
+    ./assets/js/comparison-slider.js 2.64 KiB [built] [code generated]
+webpack 5.102.1 compiled successfully in 11962 ms

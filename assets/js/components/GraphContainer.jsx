@@ -1162,13 +1162,13 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
     // Mettre à jour la position des labels
     clusterUpdate
       .select(".cluster-label")
-      .attr("x", (d) => d.labelX || 0)
-      .attr("y", (d) => d.labelY || 0);
+      .attr("x", (d) => parseFloat(d.labelX || 0))
+      .attr("y", (d) => parseFloat(d.labelY || 0));
 
     clusterUpdate
       .select(".cluster-count")
-      .attr("x", (d) => d.labelX || 0)
-      .attr("y", (d) => d.labelY || 0);
+      .attr("x", (d) => parseFloat(d.labelX || 0))
+      .attr("y", (d) => parseFloat(d.labelY || 0));
   };
 
   /**
@@ -1435,12 +1435,12 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
 
     // Mettre à jour les labels
     islandUpdate.select(".island-label")
-      .attr("x", d => (d.center && d.center.x) || 0)
-      .attr("y", d => ((d.center && d.center.y) || 0) + islandLabelYOffset);
+      .attr("x", d => parseFloat((d.center && d.center.x) || 0))
+      .attr("y", d => parseFloat((d.center && d.center.y) || 0) + islandLabelYOffset);
 
     islandUpdate.select(".island-count")
-      .attr("x", d => (d.center && d.center.x) || 0)
-      .attr("y", d => ((d.center && d.center.y) || 0) + islandLabelYOffset);
+      .attr("x", d => parseFloat((d.center && d.center.x) || 0))
+      .attr("y", d => parseFloat((d.center && d.center.y) || 0) + islandLabelYOffset);
   };
 
   // smoothHull function is now imported from geometryUtils

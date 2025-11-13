@@ -146,6 +146,26 @@ export function applyContinuousEffects(nodeElements, svg, settings = {}) {
   // 🔥 RÉCUPÉRER LES PARAMÈTRES DU CUSTOMIZER
   const hoverEffect = settings.hoverEffect || 'highlight';
   
+  // ⚡ PERFORMANCE: Désactiver les animations continues par défaut
+  // Elles consomment trop de ressources avec requestAnimationFrame
+  // Utiliser uniquement des effets CSS ou au hover
+  const enableContinuousAnimations = settings.enableContinuousAnimations === true;
+  
+  if (!enableContinuousAnimations) {
+    // Seulement appliquer les filtres statiques (glow)
+    nodeElements.each(function(d) {
+      const node = d3.select(this);
+      const imageElement = node.select('.node-image');
+      
+      // Appliquer uniquement le glow statique si configuré
+      if (hoverEffect === 'glow') {
+        applyGlowEffect(imageElement);
+      }
+    });
+    return;
+  }
+  
+  // Code original seulement si animations continues activées
   nodeElements.each(function(d) {
     const node = d3.select(this);
     const imageElement = node.select('.node-image');

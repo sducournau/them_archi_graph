@@ -12,71 +12,71 @@ export const createForceSimulation = (nodes, categories, options = {}) => {
     width = 1200,
     height = 800,
     nodeSpacing = 100,
-    clusterStrength = 0.1,
+    clusterStrength = 0.05, // ⚡ Réduit de 0.1 à 0.05
     linkStrength = 0.1,
-    organicMode = true, // Nouveau mode organique
+    organicMode = false, // ⚡ Désactivé par défaut pour meilleures performances
   } = options;
 
   // Créer les centres de clusters basés sur les catégories
   const clusterCenters = createClusterCenters(categories, width, height);
 
-  // Îles architecturales activées
+  // ⚡ PERFORMANCE: Îles architecturales désactivées par défaut
   const islands = organicMode ? createArchitecturalIslands(nodes) : null;
 
-  // Simulation de force avec paramètres organiques
+  // Simulation de force avec paramètres optimisés
   const simulation = d3
     .forceSimulation(nodes)
-    // Force de répulsion plus douce et organique
+    // ⚡ Force de répulsion réduite pour meilleures performances
     .force("charge", d3.forceManyBody()
       .strength((d) => {
-        // Répulsion plus faible pour les projets architecturaux entre eux
+        // Répulsion réduite pour éviter calculs intensifs
         if (organicMode && d.post_type === 'archi_project') {
-          return -200; // Répulsion réduite
+          return -150; // ⚡ Réduit de -200
         }
-        return -300;
+        return -200; // ⚡ Réduit de -300
       })
-      .distanceMax(250) // Distance max augmentée pour effet plus diffus
+      .distanceMax(200) // ⚡ Réduit de 250 pour moins de calculs
     )
 
     // Force de centrage général plus douce
     .force("center", d3.forceCenter(width / 2, height / 2).strength(0.05))
 
-    // Force anti-collision plus souple et organique
+    // Force anti-collision optimisée
     .force(
       "collision",
       d3
         .forceCollide()
         .radius((d) => (d.node_size || 60) / 2 + (organicMode ? 15 : 10))
-        .strength(organicMode ? 0.5 : 0.7) // Collision plus souple
-        .iterations(2) // Plus d'itérations pour collision douce
+        .strength(organicMode ? 0.5 : 0.6) // ⚡ Réduit de 0.7
+        .iterations(1) // ⚡ Réduit de 2 à 1 pour meilleures performances
     )
 
-    // Force de clustering par catégories
+    // Force de clustering par catégories (réduite)
     .force(
       "cluster",
       forceCluster().centers(clusterCenters).strength(clusterStrength)
     )
 
-    // Force d'îles activée
+    // ⚡ PERFORMANCE: Force d'îles désactivée par défaut
     .force(
       "islands",
-      organicMode ? forceIslands().islands(islands).strength(0.15) : null
+      organicMode ? forceIslands().islands(islands).strength(0.1) : null // ⚡ Réduit de 0.15
     )
 
-    // Force de gravité douce vers le bas
-    .force(
-      "gravity",
-      organicMode ? d3.forceY(height / 2).strength(0.01) : null
-    )
+    // ⚡ PERFORMANCE: Gravité désactivée par défaut (une force de moins)
+    // .force(
+    //   "gravity",
+    //   organicMode ? d3.forceY(height / 2).strength(0.01) : null
+    // )
 
     // Force vers les bords (éviter que les nœuds sortent de l'écran)
     .force("boundary", forceBoundary(width, height, 50));
 
-  // Configuration de la simulation avec mouvement plus organique
+  // ⚡ PERFORMANCE: Configuration optimisée pour stabilisation plus rapide
   simulation
-    .alpha(1)
-    .alphaDecay(organicMode ? 0.015 : 0.02) // Décélération plus lente
-    .velocityDecay(organicMode ? 0.4 : 0.3); // Plus de friction pour mouvement fluide
+    .alpha(0.8) // ⚡ Réduit de 1 pour démarrage moins violent
+    .alphaDecay(0.03) // ⚡ Augmenté de 0.015 pour stabilisation plus rapide
+    .velocityDecay(0.5); // ⚡ Augmenté de 0.3/0.4 pour freiner plus vite
 
   return simulation;
 };

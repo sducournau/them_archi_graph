@@ -41,6 +41,14 @@ import {
   showInfoPanel,
   hideInfoPanel,
 } from "../utils/sidebarUtils";
+import {
+  applyEntranceAnimation,
+} from "../utils/entranceAnimations";
+import {
+  applyLinkAnimation,
+  updateLinkAnimations,
+} from "../utils/linkAnimations";
+import CategoryLegend from "./CategoryLegend";
 // Arrow satellites désactivés
 // import {
 //   createArrowSatellites,
@@ -56,7 +64,7 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
   const [articles, setArticles] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedCategories, setSelectedCategories] = useState(new Set());
   const [hoveredNode, setHoveredNode] = useState(null);
   const [selectedNode, setSelectedNode] = useState(null);
 
@@ -68,6 +76,15 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
   const animationFrameRef = useRef(null);
   const clickTimerRef = useRef(null); // Timer pour détecter double-clic
   const customizerSettingsRef = useRef({}); // 🔥 STOCKER LES SETTINGS DU CUSTOMIZER
+  
+  // ⚡ PERFORMANCE: Contrôles pour applyRepulsionForces
+  const repulsionStartTimeRef = useRef(null);
+  const repulsionIterationsRef = useRef(0);
+  const MAX_REPULSION_DURATION = 3000; // 3 secondes max
+  const MAX_REPULSION_ITERATIONS = 180; // ~3s à 60fps
+  
+  // ⚡ PERFORMANCE: Debounce pour updateGraph
+  const updateGraphTimeoutRef = useRef(null);
 
   // Paramètres de physique pour la répulsion
   const REPULSION_FORCE = 2000;
@@ -152,10 +169,25 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
    * Mise à jour quand les articles changent
    */
   useEffect(() => {
+    // ⚡ PERFORMANCE: Debounce updateGraph pour éviter appels multiples
     if (articles.length > 0 && svgRef.current) {
-      updateGraph();
+      if (updateGraphTimeoutRef.current) {
+        clearTimeout(updateGraphTimeoutRef.current);
+      }
+      
+      updateGraphTimeoutRef.current = setTimeout(() => {
+        updateGraph();
+        updateGraphTimeoutRef.current = null;
+      }, 150); // 150ms de debounce
     }
-  }, [articles, selectedCategory]);
+    
+    // Cleanup
+    return () => {
+      if (updateGraphTimeoutRef.current) {
+        clearTimeout(updateGraphTimeoutRef.current);
+      }
+    };
+  }, [articles, selectedCategories]);
 
   /**
    * Écouter les changements de paramètres du Customizer
@@ -170,6 +202,9 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
         Object.assign(window.archiGraphSettings, newSettings);
       }
 
+      // Mettre à jour customizerSettingsRef
+      customizerSettingsRef.current = window.archiGraphSettings || {};
+
       // Redessiner le graphe avec les nouveaux paramètres
       if (articles.length > 0 && svgRef.current) {
         updateGraph();
@@ -178,10 +213,34 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
 
     // Écouter l'événement personnalisé
     window.addEventListener('graphSettingsUpdated', handleSettingsUpdate);
+    
+    // 🔥 Exposer la fonction updateGraphSettings globalement pour le Customizer
+    // Cette fonction doit persister même si le composant se recharge
+    if (!window.updateGraphSettings) {
+      console.log('🎨 Exposing window.updateGraphSettings for Customizer');
+      
+      window.updateGraphSettings = (newSettings) => {
+        console.log('🎨 Graph settings update requested:', newSettings);
+        
+        // Mettre à jour window.archiGraphSettings
+        if (typeof window.archiGraphSettings === 'object') {
+          Object.assign(window.archiGraphSettings, newSettings);
+        } else {
+          window.archiGraphSettings = newSettings;
+        }
+        
+        // Déclencher l'événement pour que le composant se mette à jour
+        const event = new CustomEvent('graphSettingsUpdated', { 
+          detail: newSettings 
+        });
+        window.dispatchEvent(event);
+      };
+    }
 
     // Cleanup
     return () => {
       window.removeEventListener('graphSettingsUpdated', handleSettingsUpdate);
+      // NE PAS supprimer window.updateGraphSettings car customizer-preview.js en a besoin
     };
   }, [articles]); // Dépend de articles pour pouvoir redessiner
 
@@ -428,11 +487,11 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
     // 🔥 STOCKER DANS LA REF POUR L'ACCÈS GLOBAL
     customizerSettingsRef.current = customizerSettings;
 
-    // Filtrer les articles selon la catégorie sélectionnée
+    // Filtrer les articles selon les catégories sélectionnées
     let filteredArticles = articles;
-    if (selectedCategory) {
+    if (selectedCategories.size > 0) {
       filteredArticles = articles.filter((article) =>
-        article.categories.some((cat) => cat.id === parseInt(selectedCategory))
+        article.categories.some((cat) => selectedCategories.has(cat.id))
       );
     }
 
@@ -466,27 +525,39 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
 
     // 🔥 UTILISER LA TAILLE PAR DÉFAUT DU CUSTOMIZER
     const defaultNodeSize = customizerSettings.defaultNodeSize || 60;
+    
+    // 🔥 UTILISER LES FORCES DE SIMULATION DU CUSTOMIZER
+    const chargeStrength = customizerSettings.chargeStrength || -300;
+    const chargeDistance = customizerSettings.chargeDistance || 200;
+    const collisionPadding = customizerSettings.collisionPadding || 10;
+    const alphaValue = customizerSettings.simulationAlpha || 1;
+    const alphaDecayValue = customizerSettings.simulationAlphaDecay || 0.02;
+    const velocityDecayValue = customizerSettings.simulationVelocityDecay || 0.3;
 
     console.log('🎯 Cluster strength:', clusterStrength, 'Node size:', defaultNodeSize);
 
     // Créer la simulation de force
     const simulation = d3
       .forceSimulation(filteredArticles)
-      .force("charge", d3.forceManyBody().strength(-300).distanceMax(200))
+      .force("charge", d3.forceManyBody().strength(chargeStrength).distanceMax(chargeDistance))
       .force("center", d3.forceCenter(width / 2, height / 2))
       .force(
         "collision",
         d3
           .forceCollide()
-          .radius((d) => (d.node_size || defaultNodeSize) / 2 + 10)
+          .radius((d) => (d.node_size || defaultNodeSize) / 2 + collisionPadding)
           .strength(clusterStrength)
       )
-      .alpha(1)
-      .alphaDecay(0.02)
-      .velocityDecay(0.3);
+      .alpha(alphaValue)
+      .alphaDecay(alphaDecayValue)
+      .velocityDecay(velocityDecayValue);
 
     // Ajouter la force des liens seulement si l'option est activée
     if (shouldShowLinks) {
+      const linkDistance = customizerSettings.linkDistance || 150;
+      const linkDistanceVariation = customizerSettings.linkDistanceVariation || 50;
+      const linkStrengthDivisor = customizerSettings.linkStrengthDivisor || 200;
+      
       simulation.force(
         "link",
         d3
@@ -494,13 +565,12 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
           .id((d) => d.id)
           .distance((d) => {
             // Distance inversement proportionnelle au score
-            const baseDistance = 150;
             const scoreFactor = d.proximity?.normalizedScore || 50;
-            return baseDistance - (scoreFactor / 100) * 50;
+            return linkDistance - (scoreFactor / 100) * linkDistanceVariation;
           })
           .strength((d) => {
             // Force proportionnelle au score
-            return (d.proximity?.normalizedScore || 50) / 200;
+            return (d.proximity?.normalizedScore || 50) / linkStrengthDivisor;
           })
       );
     }
@@ -522,7 +592,7 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
     // updateClusters(g, categories, filteredArticles);
 
     // Îles architecturales par catégories activées
-    updateArchitecturalIslands(g, filteredArticles);
+    updateArchitecturalIslands(g, filteredArticles, customizerSettings);
 
 
     // Démarrer la simulation
@@ -533,17 +603,14 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
       if (shouldShowLinks) {
         updateLinkPositions(g, links);
       }
-      // Les îles architecturales remplacent les clusters de catégories
-      // updateClusters(g, categories, filteredArticles);
-      // Îles architecturales par catégories activées
-      updateArchitecturalIslands(g, filteredArticles);
       
-      // Satellites de flèches désactivés
-      // const nodeGroups = g.selectAll(".graph-node");
-      // animateArrowSatellites(nodeGroups);
-      
-      if (tickCount === 0) {
+      // ⚡ PERFORMANCE FIX: Ne mettre à jour les îles architecturales que périodiquement
+      // au lieu de chaque tick (60 fois par seconde !)
+      // Mettre à jour uniquement tous les 30 ticks (~0.5 secondes) ou quand la simulation ralentit
+      if (tickCount % 30 === 0 || simulation.alpha() < 0.1) {
+        updateArchitecturalIslands(g, filteredArticles, customizerSettings);
       }
+      
       tickCount++;
     });
 
@@ -561,7 +628,18 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
     // Exposer l'instance globalement avec la méthode resize
     window.graphInstance = {
       resetZoom: () => resetZoom(),
-      filterByCategory: (categoryId) => setSelectedCategory(categoryId),
+      toggleCategoryFilter: (categoryId) => {
+        setSelectedCategories(prev => {
+          const newSet = new Set(prev);
+          if (newSet.has(categoryId)) {
+            newSet.delete(categoryId);
+          } else {
+            newSet.add(categoryId);
+          }
+          return newSet;
+        });
+      },
+      clearCategoryFilters: () => setSelectedCategories(new Set()),
       resize: resize,
       simulation: simulation,
       data: filteredArticles,
@@ -576,11 +654,17 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
     const linksGroup = container.select(".links");
 
     // 🔥 UTILISER LES PARAMÈTRES DU CUSTOMIZER
-    const linkColor = settings.linkColor || '#999999';
+    const linkColor = settings.linkColor || settings.defaultNodeColor || '#999999';
     const linkWidth = settings.linkWidth || 1.5;
     const linkOpacity = settings.linkOpacity || 0.6;
     const linkStyle = settings.linkStyle || 'solid';
     const showArrows = settings.showArrows !== undefined ? settings.showArrows : false;
+    const guestbookLinkColor = settings.guestbookLinkColor || '#2ecc71';
+    const guestbookLinkWidth = settings.guestbookLinkWidth || 3;
+    const guestbookLinkOpacity = settings.guestbookLinkOpacity || 0.8;
+    const dashedLinePattern = settings.dashedLinePattern || "5,5";
+    const dottedLinePattern = settings.dottedLinePattern || "2,2";
+    const guestbookDashPattern = settings.guestbookDashPattern || "10,5";
 
     console.log('🔗 Link settings:', { linkColor, linkWidth, linkOpacity, linkStyle, showArrows });
 
@@ -601,7 +685,7 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
       .style("stroke", (d) => {
         // ✅ Lien de livre d'or : couleur distinctive
         if (d.type === 'guestbook') {
-          return '#2ecc71'; // Vert pour le livre d'or
+          return guestbookLinkColor;
         }
         
         // 🔥 UTILISER LA COULEUR DU CUSTOMIZER
@@ -610,7 +694,7 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
       .style("stroke-width", (d) => {
         // ✅ Lien de livre d'or : plus épais
         if (d.type === 'guestbook') {
-          return 3;
+          return guestbookLinkWidth;
         }
         
         // 🔥 UTILISER L'ÉPAISSEUR DU CUSTOMIZER
@@ -619,7 +703,7 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
       .style("stroke-opacity", (d) => {
         // ✅ Lien de livre d'or : bien visible
         if (d.type === 'guestbook') {
-          return 0.8;
+          return guestbookLinkOpacity;
         }
         
         // 🔥 UTILISER L'OPACITÉ DU CUSTOMIZER
@@ -628,14 +712,14 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
       .style("stroke-dasharray", (d) => {
         // ✅ Lien de livre d'or : tirets longs pour distinction
         if (d.type === 'guestbook') {
-          return "10,5";
+          return guestbookDashPattern;
         }
         
         // 🔥 UTILISER LE STYLE DU CUSTOMIZER
         if (linkStyle === 'dashed') {
-          return "5,5";
+          return dashedLinePattern;
         } else if (linkStyle === 'dotted') {
-          return "2,2";
+          return dottedLinePattern;
         }
         return "none"; // solid
       });
@@ -674,6 +758,9 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
     // Fusionner enter + update
     const linkUpdate = linkEnter.merge(linkElements);
 
+    // 🔥 Apply link animations based on settings
+    applyLinkAnimation(linkUpdate, settings);
+
     return linkUpdate;
   };
 
@@ -699,6 +786,10 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
     // 🔥 UTILISER LES PARAMÈTRES DU CUSTOMIZER
     const defaultNodeColor = settings.defaultNodeColor || '#3498db';
     const defaultNodeSize = settings.defaultNodeSize || 60;
+    const priorityBadgeSize = settings.priorityBadgeSize || 8;
+    const priorityBadgeOffset = settings.priorityBadgeOffset || 5;
+    const priorityBadgeStrokeColor = settings.priorityBadgeStrokeColor || '#ffffff';
+    const priorityBadgeStrokeWidth = settings.priorityBadgeStrokeWidth || 2;
 
     console.log('⭕ Node settings:', { defaultNodeColor, defaultNodeSize });
 
@@ -731,6 +822,88 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
       );
 
 
+    // 🔥 NOUVEAU: Ajouter symbole de fond selon le paramètre nodeSymbolType
+    const symbolType = settings.nodeSymbolType || 'none';
+    console.log('🎯 Symbol Type:', symbolType, 'Settings:', settings);
+    
+    if (symbolType !== 'none') {
+      const symbolGroup = nodeEnter.append("g").attr("class", "node-symbol");
+      
+      const applySymbol = (selection, d) => {
+        const size = d.node_size || defaultNodeSize;
+        const radius = size / 2;
+        const color = d.node_color || defaultNodeColor;
+        
+        switch(symbolType) {
+          case 'circle':
+            selection.append("circle")
+              .attr("class", "node-shape")
+              .attr("r", radius * 0.95)
+              .attr("fill", color)
+              .attr("fill-opacity", 0.2)
+              .attr("stroke", color)
+              .attr("stroke-width", 2)
+              .attr("stroke-opacity", 0.5);
+            break;
+            
+          case 'square':
+            selection.append("rect")
+              .attr("class", "node-shape")
+              .attr("width", size * 0.95)
+              .attr("height", size * 0.95)
+              .attr("x", -(size * 0.95) / 2)
+              .attr("y", -(size * 0.95) / 2)
+              .attr("rx", size * 0.1)
+              .attr("fill", color)
+              .attr("fill-opacity", 0.2)
+              .attr("stroke", color)
+              .attr("stroke-width", 2)
+              .attr("stroke-opacity", 0.5);
+            break;
+            
+          case 'diamond':
+            const diamondPoints = [
+              [0, -radius * 0.95],
+              [radius * 0.95, 0],
+              [0, radius * 0.95],
+              [-radius * 0.95, 0]
+            ].map(p => p.join(',')).join(' ');
+            
+            selection.append("polygon")
+              .attr("class", "node-shape")
+              .attr("points", diamondPoints)
+              .attr("fill", color)
+              .attr("fill-opacity", 0.2)
+              .attr("stroke", color)
+              .attr("stroke-width", 2)
+              .attr("stroke-opacity", 0.5);
+            break;
+            
+          case 'triangle':
+            const triangleHeight = radius * 0.95 * Math.sqrt(3);
+            const trianglePoints = [
+              [0, -triangleHeight * 0.6],
+              [radius * 0.95, triangleHeight * 0.4],
+              [-radius * 0.95, triangleHeight * 0.4]
+            ].map(p => p.join(',')).join(' ');
+            
+            selection.append("polygon")
+              .attr("class", "node-shape")
+              .attr("points", trianglePoints)
+              .attr("fill", color)
+              .attr("fill-opacity", 0.2)
+              .attr("stroke", color)
+              .attr("stroke-width", 2)
+              .attr("stroke-opacity", 0.5);
+            break;
+        }
+      };
+      
+      symbolGroup.each(function(d) {
+        applySymbol(d3.select(this), d);
+      });
+    }
+
     // Image du nœud PNG avec fond transparent (pas de bulle, pas de clip-path)
     // L'image apparaît en entier sans être coupée ni déformée
     nodeEnter
@@ -756,14 +929,14 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
       )
       .append("circle")
       .attr("class", "priority-badge")
-      .attr("r", 8)
-      .attr("cx", (d) => (d.node_size || defaultNodeSize) / 2 - 5)
-      .attr("cy", (d) => -(d.node_size || defaultNodeSize) / 2 + 5)
+      .attr("r", priorityBadgeSize)
+      .attr("cx", (d) => (d.node_size || defaultNodeSize) / 2 - priorityBadgeOffset)
+      .attr("cy", (d) => -(d.node_size || defaultNodeSize) / 2 + priorityBadgeOffset)
       .style("fill", (d) =>
-        d.priority_level === "featured" ? "#e74c3c" : "#f39c12"
+        d.priority_level === "featured" ? (settings.priorityFeaturedColor || defaultNodeColor) : (settings.priorityHighColor || defaultNodeColor)
       )
-      .style("stroke", "#ffffff")
-      .style("stroke-width", 2);
+      .style("stroke", priorityBadgeStrokeColor)
+      .style("stroke-width", priorityBadgeStrokeWidth);
 
     // Note: Les labels de titre sont maintenant complètement supprimés
     // Le titre s'affiche dans le panneau latéral au survol
@@ -773,6 +946,10 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
 
     // Satellites de flèches désactivés
     // updateArrowSatellites(nodeUpdate);
+
+    // 🔥 Apply entrance animation to new nodes
+    const centerPosition = { x: width / 2, y: height / 2 };
+    applyEntranceAnimation(nodeEnter, settings, centerPosition);
 
     // ✅ Apply continuous visual effects (pulse, glow)
     const svg = container.select('svg');
@@ -806,8 +983,21 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
   /**
    * Mise à jour des clusters de catégories avec enveloppes convexes
    */
-  const updateClusters = (container, categoriesData, articlesData) => {
+  const updateClusters = (container, categoriesData, articlesData, settings = {}) => {
     const clustersGroup = container.select(".clusters");
+    
+    // 🔥 UTILISER LES PARAMÈTRES DU CUSTOMIZER POUR LES CLUSTERS
+    const clusterFillOpacity = settings.clusterFillOpacity || 0.12;
+    const clusterStrokeWidth = settings.clusterStrokeWidth || 3;
+    const clusterStrokeOpacity = settings.clusterStrokeOpacity || 0.35;
+    const clusterLabelFontSize = settings.clusterLabelFontSize || 14;
+    const clusterLabelFontWeight = settings.clusterLabelFontWeight || 'bold';
+    const clusterCountFontSize = settings.clusterCountFontSize || 11;
+    const clusterCountOpacity = settings.clusterCountOpacity || 0.7;
+    const clusterTextShadow = settings.clusterTextShadow || '2px 2px 4px rgba(255,255,255,0.8)';
+    const clusterHullPadding = settings.clusterHullPadding || 40;
+    const clusterCircleRadius = settings.clusterCircleRadius || 80;
+    const clusterCirclePoints = settings.clusterCirclePoints || 12;
 
     // Calculer les enveloppes convexes pour chaque catégorie
     const clusterData = categoriesData
@@ -818,11 +1008,21 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
 
         if (categoryArticles.length === 0) return null;
 
-        // Points des nœuds de cette catégorie
-        const nodePoints = categoryArticles.map((article) => ({
-          x: article.x || 0,
-          y: article.y || 0,
-        }));
+        // Points des nœuds de cette catégorie - VALIDER LES COORDONNÉES
+        const nodePoints = categoryArticles
+          .filter(article => {
+            return typeof article.x === 'number' && isFinite(article.x) && 
+                   typeof article.y === 'number' && isFinite(article.y);
+          })
+          .map((article) => ({
+            x: article.x,
+            y: article.y,
+          }));
+        
+        // Si pas de points valides, skip ce cluster
+        if (nodePoints.length === 0) {
+          return null;
+        }
 
         // Calculer l'enveloppe convexe
         let hull = convexHull(nodePoints);
@@ -831,28 +1031,43 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
         if (hull.length < 3) {
           const avgX = nodePoints.reduce((sum, p) => sum + p.x, 0) / nodePoints.length;
           const avgY = nodePoints.reduce((sum, p) => sum + p.y, 0) / nodePoints.length;
-          const radius = 80;
           
-          // Créer un cercle avec 12 points
-          hull = Array.from({ length: 12 }, (_, i) => {
-            const angle = (i / 12) * Math.PI * 2;
+          // Valider les moyennes avant de créer le cercle
+          if (!isFinite(avgX) || !isFinite(avgY)) {
+            return null;
+          }
+          
+          // Créer un cercle avec N points
+          hull = Array.from({ length: clusterCirclePoints }, (_, i) => {
+            const angle = (i / clusterCirclePoints) * Math.PI * 2;
             return {
-              x: avgX + Math.cos(angle) * radius,
-              y: avgY + Math.sin(angle) * radius,
+              x: avgX + Math.cos(angle) * clusterCircleRadius,
+              y: avgY + Math.sin(angle) * clusterCircleRadius,
             };
           });
         } else {
           // Agrandir l'enveloppe pour englober les nœuds avec un padding
-          hull = expandHull(hull, 40);
+          hull = expandHull(hull, clusterHullPadding);
         }
 
-        // Position moyenne pour le label
-        const avgX =
-          categoryArticles.reduce((sum, a) => sum + (a.x || 0), 0) /
-          categoryArticles.length;
-        const avgY =
-          categoryArticles.reduce((sum, a) => sum + (a.y || 0), 0) /
-          categoryArticles.length;
+        // Position moyenne pour le label - VALIDER les coordonnées
+        const validArticles = categoryArticles.filter(a => {
+          return typeof a.x === 'number' && isFinite(a.x) && 
+                 typeof a.y === 'number' && isFinite(a.y);
+        });
+        
+        // Si pas d'articles valides, skip ce cluster
+        if (validArticles.length === 0) {
+          return null;
+        }
+        
+        const avgX = validArticles.reduce((sum, a) => sum + a.x, 0) / validArticles.length;
+        const avgY = validArticles.reduce((sum, a) => sum + a.y, 0) / validArticles.length;
+        
+        // Dernière validation des moyennes
+        if (!isFinite(avgX) || !isFinite(avgY)) {
+          return null;
+        }
 
         return {
           ...category,
@@ -883,10 +1098,10 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
       .append("path")
       .attr("class", "cluster-hull")
       .style("fill", (d) => d.color)
-      .style("fill-opacity", 0.12)  // Légèrement plus visible
+      .style("fill-opacity", clusterFillOpacity)
       .style("stroke", (d) => d.color)
-      .style("stroke-width", 3)  // Plus épais pour plus de visibilité
-      .style("stroke-opacity", 0.35)  // Plus visible
+      .style("stroke-width", clusterStrokeWidth)
+      .style("stroke-opacity", clusterStrokeOpacity)
       .style("stroke-dasharray", "none");  // Ligne continue au lieu de pointillés
 
     // Label du cluster
@@ -895,10 +1110,10 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
       .attr("class", "cluster-label")
       .attr("text-anchor", "middle")
       .attr("dy", "0.35em")
-      .style("font-size", "14px")
-      .style("font-weight", "bold")
+      .style("font-size", `${clusterLabelFontSize}px`)
+      .style("font-weight", clusterLabelFontWeight)
       .style("fill", (d) => d.color)
-      .style("text-shadow", "2px 2px 4px rgba(255,255,255,0.8)")
+      .style("text-shadow", clusterTextShadow)
       .style("pointer-events", "none")
       .text((d) => d.name.toUpperCase());
 
@@ -908,9 +1123,9 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
       .attr("class", "cluster-count")
       .attr("text-anchor", "middle")
       .attr("dy", "1.5em")
-      .style("font-size", "11px")
+      .style("font-size", `${clusterCountFontSize}px`)
       .style("fill", (d) => d.color)
-      .style("opacity", 0.7)
+      .style("opacity", clusterCountOpacity)
       .style("pointer-events", "none")
       .text((d) => `${d.count} ${d.count > 1 ? 'projets' : 'projet'}`);
 
@@ -948,11 +1163,31 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
    * Mise à jour des îles architecturales
    * Visualise les groupes de projets connectés comme des îles organiques
    */
-  const updateArchitecturalIslands = (container, articlesData) => {
+  const updateArchitecturalIslands = (container, articlesData, settings = {}) => {
     const islandsGroup = container.select(".islands");
     if (islandsGroup.empty()) return;
 
     const islandData = [];
+    
+    // 🔥 UTILISER LES PARAMÈTRES DU CUSTOMIZER POUR LES ÎLES
+    const islandHullPadding = settings.islandHullPadding || 60;
+    const islandSmoothFactor = settings.islandSmoothFactor || 0.3;
+    const islandCircleRadius = settings.islandCircleRadius || 80;
+    const islandCirclePoints = settings.islandCirclePoints || 12;
+    const islandInnerPadding = settings.islandInnerPadding || -20;
+    const islandFillOpacity = settings.clusterFillOpacity || 0.12;
+    const islandStrokeWidth = settings.clusterStrokeWidth || 3;
+    const islandStrokeOpacity = settings.clusterStrokeOpacity || 0.3;
+    const islandStrokeDashArray = settings.islandStrokeDashArray || "8,4";
+    const islandLabelFontSize = settings.islandLabelFontSize || 14;
+    const islandLabelFontWeight = settings.islandLabelFontWeight || '600';
+    const islandLabelOpacity = settings.islandLabelOpacity || 0.7;
+    const islandLabelYOffset = settings.islandLabelYOffset || -10;
+    const islandTextShadow = settings.islandTextShadow || '2px 2px 6px rgba(255,255,255,0.9)';
+    const islandCountFontSize = settings.islandCountFontSize || 11;
+    const islandCountOpacity = settings.islandCountOpacity || 0.6;
+    const islandTextureOpacity = settings.islandTextureOpacity || 0.15;
+    const islandTextureDashArray = settings.islandTextureDashArray || "3,3";
 
     // 1. Récupérer toutes les catégories uniques présentes dans les articles
     const categoriesMap = new Map();
@@ -980,34 +1215,49 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
       
       // Ne créer une zone que s'il y a au moins 2 articles
       if (categoryArticles.length >= 2) {
-        // Points des nœuds de cette catégorie
-        const points = categoryArticles.map(article => ({
-          x: article.x || 0,
-          y: article.y || 0
-        }));
+        // Points des nœuds de cette catégorie - VALIDER que x et y sont des nombres
+        const points = categoryArticles
+          .filter(article => {
+            const hasValidX = typeof article.x === 'number' && isFinite(article.x);
+            const hasValidY = typeof article.y === 'number' && isFinite(article.y);
+            return hasValidX && hasValidY;
+          })
+          .map(article => ({
+            x: article.x,
+            y: article.y
+          }));
+
+        // Si pas assez de points valides, skip cette catégorie
+        if (points.length < 2) {
+          return;
+        }
 
         // Calculer le centre de la zone
         const centerX = points.reduce((sum, p) => sum + p.x, 0) / points.length;
         const centerY = points.reduce((sum, p) => sum + p.y, 0) / points.length;
+        
+        // Valider que le centre est un nombre fini
+        if (!isFinite(centerX) || !isFinite(centerY)) {
+          return;
+        }
 
         // Créer une enveloppe convexe organique
         let hull = convexHull(points);
         
         if (hull.length < 3) {
           // Si moins de 3 points, créer un cercle
-          const radius = 80;
-          hull = Array.from({ length: 12 }, (_, i) => {
-            const angle = (i / 12) * Math.PI * 2;
+          hull = Array.from({ length: islandCirclePoints }, (_, i) => {
+            const angle = (i / islandCirclePoints) * Math.PI * 2;
             return {
-              x: centerX + Math.cos(angle) * radius,
-              y: centerY + Math.sin(angle) * radius
+              x: centerX + Math.cos(angle) * islandCircleRadius,
+              y: centerY + Math.sin(angle) * islandCircleRadius
             };
           });
         } else {
           // Agrandir l'enveloppe pour un padding généreux
-          hull = expandHull(hull, 60);
+          hull = expandHull(hull, islandHullPadding);
           // Arrondir les coins pour un effet organique
-          hull = smoothHull(hull, 0.3);
+          hull = smoothHull(hull, islandSmoothFactor);
         }
 
         const island = {
@@ -1031,35 +1281,50 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
     const pageNodes = articlesData.filter(a => a.post_type === 'page');
     
     if (pageNodes.length >= 2) {
-      const points = pageNodes.map(page => ({
-        x: page.x || 0,
-        y: page.y || 0
-      }));
+      const points = pageNodes
+        .filter(page => {
+          const hasValidX = typeof page.x === 'number' && isFinite(page.x);
+          const hasValidY = typeof page.y === 'number' && isFinite(page.y);
+          return hasValidX && hasValidY;
+        })
+        .map(page => ({
+          x: page.x,
+          y: page.y
+        }));
+
+      // Si pas assez de points valides, skip
+      if (points.length < 2) {
+        return;
+      }
 
       const centerX = points.reduce((sum, p) => sum + p.x, 0) / points.length;
       const centerY = points.reduce((sum, p) => sum + p.y, 0) / points.length;
+      
+      // Valider que le centre est un nombre fini
+      if (!isFinite(centerX) || !isFinite(centerY)) {
+        return;
+      }
 
       let hull = convexHull(points);
       
       if (hull.length < 3) {
-        const radius = 80;
-        hull = Array.from({ length: 12 }, (_, i) => {
-          const angle = (i / 12) * Math.PI * 2;
+        hull = Array.from({ length: islandCirclePoints }, (_, i) => {
+          const angle = (i / islandCirclePoints) * Math.PI * 2;
           return {
-            x: centerX + Math.cos(angle) * radius,
-            y: centerY + Math.sin(angle) * radius
+            x: centerX + Math.cos(angle) * islandCircleRadius,
+            y: centerY + Math.sin(angle) * islandCircleRadius
           };
         });
       } else {
-        hull = expandHull(hull, 60);
-        hull = smoothHull(hull, 0.3);
+        hull = expandHull(hull, islandHullPadding);
+        hull = smoothHull(hull, islandSmoothFactor);
       }
 
       const pageIsland = {
         id: 'pages_zone',
         categoryName: 'Pages',
         categorySlug: 'pages',
-        color: '#9b59b6', // Violet pour les pages
+        color: settings.pagesZoneColor || settings.defaultNodeColor || '#9b59b6',
         members: pageNodes,
         center: { x: centerX, y: centerY },
         hull: hull,
@@ -1091,11 +1356,11 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
       .append("path")
       .attr("class", "island-background")
       .style("fill", d => d.color)
-      .style("fill-opacity", 0.12)
+      .style("fill-opacity", islandFillOpacity)
       .style("stroke", d => d.color)
-      .style("stroke-width", 3)
-      .style("stroke-opacity", 0.3)
-      .style("stroke-dasharray", "8,4")
+      .style("stroke-width", islandStrokeWidth)
+      .style("stroke-opacity", islandStrokeOpacity)
+      .style("stroke-dasharray", islandStrokeDashArray)
       .style("filter", "url(#island-glow)");
 
     // Texture interne pour effet d'île
@@ -1105,8 +1370,8 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
       .style("fill", "none")
       .style("stroke", d => d.color)
       .style("stroke-width", 1)
-      .style("stroke-opacity", 0.15)
-      .style("stroke-dasharray", "3,3");
+      .style("stroke-opacity", islandTextureOpacity)
+      .style("stroke-dasharray", islandTextureDashArray);
 
     // Label de la catégorie
     islandEnter
@@ -1114,12 +1379,12 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
       .attr("class", "island-label")
       .attr("text-anchor", "middle")
       .attr("dy", "0.35em")
-      .style("font-size", "14px")
-      .style("font-weight", "600")
+      .style("font-size", `${islandLabelFontSize}px`)
+      .style("font-weight", islandLabelFontWeight)
       .style("fill", d => d.color)
-      .style("text-shadow", "2px 2px 6px rgba(255,255,255,0.9)")
+      .style("text-shadow", islandTextShadow)
       .style("pointer-events", "none")
-      .style("opacity", 0.7)
+      .style("opacity", islandLabelOpacity)
       .text(d => d.categoryName.toUpperCase());
 
     // Nombre d'éléments dans la catégorie
@@ -1128,9 +1393,9 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
       .attr("class", "island-count")
       .attr("text-anchor", "middle")
       .attr("dy", "1.8em")
-      .style("font-size", "11px")
+      .style("font-size", `${islandCountFontSize}px`)
       .style("fill", d => d.color)
-      .style("opacity", 0.6)
+      .style("opacity", islandCountOpacity)
       .style("pointer-events", "none")
       .text(d => `${d.count} ${d.count > 1 ? 'éléments' : 'élément'}`);
 
@@ -1149,7 +1414,7 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
     // Texture interne (enveloppe réduite)
     islandUpdate.select(".island-texture").attr("d", d => {
       if (!d.hull || d.hull.length < 3) return "";
-      const innerHull = expandHull(d.hull, -20);
+      const innerHull = expandHull(d.hull, islandInnerPadding);
       const pathData = innerHull
         .map((point, i) => `${i === 0 ? 'M' : 'L'}${point.x},${point.y}`)
         .join(" ");
@@ -1159,11 +1424,11 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
     // Mettre à jour les labels
     islandUpdate.select(".island-label")
       .attr("x", d => d.center.x)
-      .attr("y", d => d.center.y - 10);
+      .attr("y", d => d.center.y + islandLabelYOffset);
 
     islandUpdate.select(".island-count")
       .attr("x", d => d.center.x)
-      .attr("y", d => d.center.y - 10);
+      .attr("y", d => d.center.y + islandLabelYOffset);
   };
 
   // smoothHull function is now imported from geometryUtils
@@ -1172,10 +1437,31 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
    * Calculer et appliquer les forces de répulsion (wrapper using utility)
    */
   const applyRepulsionForces = () => {
+    // ⚡ PERFORMANCE: Vérifier les limites de temps et d'itérations
+    if (!repulsionStartTimeRef.current) {
+      repulsionStartTimeRef.current = Date.now();
+      repulsionIterationsRef.current = 0;
+    }
+    
+    const elapsed = Date.now() - repulsionStartTimeRef.current;
+    repulsionIterationsRef.current++;
+    
+    // Arrêter si dépassement des limites
+    if (elapsed > MAX_REPULSION_DURATION || repulsionIterationsRef.current > MAX_REPULSION_ITERATIONS) {
+      console.log(`⚡ Repulsion stopped: ${elapsed}ms, ${repulsionIterationsRef.current} iterations`);
+      repulsionStartTimeRef.current = null;
+      repulsionIterationsRef.current = 0;
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
+      }
+      return;
+    }
+    
     const nodesList = articles.filter(
       (article) =>
-        !selectedCategory ||
-        article.categories.some((cat) => cat.id === parseInt(selectedCategory))
+        selectedCategories.size === 0 ||
+        article.categories.some((cat) => selectedCategories.has(cat.id))
     );
 
     const hasMovement = applyRepulsionForcesUtil(
@@ -1201,6 +1487,11 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
     // Continuer l'animation si au moins un nœud est en mouvement
     if (hasMovement) {
       animationFrameRef.current = requestAnimationFrame(applyRepulsionForces);
+    } else {
+      // Plus de mouvement, réinitialiser les compteurs
+      repulsionStartTimeRef.current = null;
+      repulsionIterationsRef.current = 0;
+      animationFrameRef.current = null;
     }
   };
 
@@ -1212,6 +1503,10 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
     d.fx = d.x;
     d.fy = d.y;
 
+    // ⚡ PERFORMANCE: Réinitialiser les compteurs avant de démarrer la répulsion
+    repulsionStartTimeRef.current = null;
+    repulsionIterationsRef.current = 0;
+    
     // Déclencher la répulsion
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
@@ -1242,6 +1537,10 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
     d.fx = null;
     d.fy = null;
 
+    // ⚡ PERFORMANCE: Réinitialiser les compteurs avant de continuer la répulsion
+    repulsionStartTimeRef.current = null;
+    repulsionIterationsRef.current = 0;
+    
     // Continuer la répulsion après le drag
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
@@ -1366,11 +1665,15 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
 
     // Utiliser la couleur de la catégorie principale du nœud pour l'accentuation
     // Cela assure la cohérence visuelle entre le polygone et le nœud actif
-    let accentColor = '#3498db'; // Bleu par défaut (fallback)
+    const settings = customizerSettingsRef.current;
+    let accentColor = settings.defaultNodeColor || '#3498db'; // Couleur par défaut du Customizer
     
     if (d.categories && d.categories.length > 0) {
       // Utiliser la couleur de la première catégorie
       accentColor = d.categories[0].color || accentColor;
+    } else if (d.node_color) {
+      // Sinon utiliser la couleur personnalisée du nœud
+      accentColor = d.node_color;
     }
 
     // Ajouter la classe "active" au node
@@ -1388,13 +1691,17 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
     // Cancel any ongoing pulse effect transition
     imageElement.interrupt();
     
+    // 🔥 Use settings from Customizer
+    const graphSettings = customizerSettingsRef.current;
+    const scale = graphSettings.activeNodeScale || 1.5;
+    
     imageElement
       .transition()
       .duration(400)
-      .attr("width", (d.node_size || 60) * 1.5)
-      .attr("height", (d.node_size || 60) * 1.5)
-      .attr("x", (-(d.node_size || 60) * 1.5) / 2)
-      .attr("y", (-(d.node_size || 60) * 1.5) / 2);
+      .attr("width", (d.node_size || 60) * scale)
+      .attr("height", (d.node_size || 60) * scale)
+      .attr("x", (-(d.node_size || 60) * scale) / 2)
+      .attr("y", (-(d.node_size || 60) * scale) / 2);
 
     // Afficher le panneau latéral avec le lien "Consulter"
     showSideTitlePanel(d, true);
@@ -1492,9 +1799,12 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
       .attr("viewBox", `0 0 ${newWidth} ${newHeight}`);
 
     if (simulationRef.current) {
+      const settings = customizerSettingsRef.current;
+      const alphaValue = settings.resizeAlpha || 0.3;
+      
       simulationRef.current
         .force("center", d3.forceCenter(newWidth / 2, newHeight / 2))
-        .alpha(0.3)
+        .alpha(alphaValue)
         .restart();
     }
   };
@@ -1564,6 +1874,25 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
       />
 
       {/* Plus de popup NodeTooltip - le titre est maintenant intégré dans le SVG */}
+
+      {/* Category Legend */}
+      <CategoryLegend
+        articles={articles}
+        settings={customizerSettingsRef.current}
+        selectedCategories={selectedCategories}
+        onCategoryToggle={(categoryId) => {
+          setSelectedCategories(prev => {
+            const newSet = new Set(prev);
+            if (newSet.has(categoryId)) {
+              newSet.delete(categoryId);
+            } else {
+              newSet.add(categoryId);
+            }
+            return newSet;
+          });
+        }}
+        onClearFilters={() => setSelectedCategories(new Set())}
+      />
     </div>
   );
 };

@@ -680,7 +680,7 @@ function archi_get_graph_meta_defaults() {
         '_archi_pin_node' => '0',
         '_archi_visual_group' => '',
         '_archi_node_color' => '#3498db',
-        '_archi_node_size' => 60,
+        '_archi_node_size' => 80, // 🔥 FIX: Harmonized to 80px (was 60)
         '_archi_node_shape' => 'circle',
         '_archi_node_icon' => '',
         '_archi_node_opacity' => 1.0,

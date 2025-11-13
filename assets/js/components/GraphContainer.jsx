@@ -7,6 +7,7 @@ import {
   createForceSimulation,
   updateNodePositions,
   calculateNodeLinks,
+  forceBoundary,
 } from "../utils/graphHelpers";
 import {
   preprocessArticleImages,
@@ -523,16 +524,16 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
       ? customizerSettings.clusterStrength 
       : 0.1;
 
-    // 🔥 TAILLE PAR DÉFAUT DOUBLÉE pour visibilité dans viewBox 1200x800
-    const defaultNodeSize = customizerSettings.defaultNodeSize || 120; // 🔥 Doublé de 60 à 120px
+    // 🔥 TAILLE PAR DÉFAUT OPTIMISÉE pour visibilité dans viewBox 1200x800
+    const defaultNodeSize = customizerSettings.defaultNodeSize || 80; // 🔥 FIX: Réduit de 120 à 80 pour meilleure densité
     
-    // 🔥 UTILISER LES FORCES DE SIMULATION DU CUSTOMIZER
-    const chargeStrength = customizerSettings.chargeStrength || -300;
-    const chargeDistance = customizerSettings.chargeDistance || 200;
-    const collisionPadding = customizerSettings.collisionPadding || 10;
+    // 🔥 UTILISER LES FORCES DE SIMULATION DU CUSTOMIZER (VALEURS OPTIMISÉES)
+    const chargeStrength = customizerSettings.chargeStrength || -200; // 🔥 FIX: Réduit de -800 à -200 pour moins de répulsion
+    const chargeDistance = customizerSettings.chargeDistance || 300; // 🔥 FIX: Augmenté de 150 à 300 pour meilleure répartition
+    const collisionPadding = customizerSettings.collisionPadding || 10; // 🔥 FIX: Réduit de 15 à 10 pour nœuds 80px
     const alphaValue = customizerSettings.simulationAlpha || 1;
     const alphaDecayValue = customizerSettings.simulationAlphaDecay || 0.02;
-    const velocityDecayValue = customizerSettings.simulationVelocityDecay || 0.3;
+    const velocityDecayValue = customizerSettings.simulationVelocityDecay || 0.5; // 🔥 FIX: Augmenté de 0.3 à 0.5 pour stabilisation rapide
 
     console.log('🎯 Cluster strength:', clusterStrength, 'Node size:', defaultNodeSize);
 
@@ -540,22 +541,24 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
     const simulation = d3
       .forceSimulation(filteredArticles)
       .force("charge", d3.forceManyBody().strength(chargeStrength).distanceMax(chargeDistance))
-      .force("center", d3.forceCenter(width / 2, height / 2))
+      .force("center", d3.forceCenter(width / 2, height / 2).strength(0.05)) // 🔥 FIX: Force de centrage douce
       .force(
         "collision",
         d3
           .forceCollide()
           .radius((d) => (d.node_size || defaultNodeSize) / 2 + collisionPadding)
-          .strength(clusterStrength)
+          .strength(0.9) // 🔥 FIX: Force de collision très forte (0.9) pour éviter chevauchements
+          .iterations(3) // 🔥 FIX: 3 itérations pour collision précise
       )
+      .force("boundary", forceBoundary(width, height, 80)) // 🔥 FIX: Padding augmenté à 80px pour plus de marge
       .alpha(alphaValue)
       .alphaDecay(alphaDecayValue)
       .velocityDecay(velocityDecayValue);
 
     // Ajouter la force des liens seulement si l'option est activée
     if (shouldShowLinks) {
-      const linkDistance = customizerSettings.linkDistance || 150;
-      const linkDistanceVariation = customizerSettings.linkDistanceVariation || 50;
+      const linkDistance = customizerSettings.linkDistance || 100; // 🔥 FIX: Reduced from 150 to bring nodes closer
+      const linkDistanceVariation = customizerSettings.linkDistanceVariation || 40; // 🔥 FIX: Reduced from 50
       const linkStrengthDivisor = customizerSettings.linkStrengthDivisor || 200;
       
       simulation.force(
@@ -783,9 +786,9 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
   const updateNodes = (container, data, simulation, settings = {}) => {
     const nodesGroup = container.select(".nodes");
 
-    // 🔥 UTILISER LES PARAMÈTRES DU CUSTOMIZER (taille doublée pour visibilité)
+    // 🔥 UTILISER LES PARAMÈTRES DU CUSTOMIZER (taille optimisée pour viewBox 1200x800)
     const defaultNodeColor = settings.defaultNodeColor || '#3498db';
-    const defaultNodeSize = settings.defaultNodeSize || 120; // 🔥 Doublé de 60 à 120px
+    const defaultNodeSize = settings.defaultNodeSize || 80; // 🔥 FIX: 80px pour meilleure densité dans viewBox
     const priorityBadgeSize = settings.priorityBadgeSize || 8;
     const priorityBadgeOffset = settings.priorityBadgeOffset || 5;
     const priorityBadgeStrokeColor = settings.priorityBadgeStrokeColor || '#ffffff';
@@ -910,12 +913,21 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
       .append("image")
       .attr("class", "node-image")
       .attr("width", (d) => {
-        const size = d.node_size || defaultNodeSize;
-        return size;
+        const size = d.node_size || defaultNodeSize || 80;
+        return isFinite(size) ? size : 80;
       })
-      .attr("height", (d) => d.node_size || defaultNodeSize)
-      .attr("x", (d) => -(d.node_size || defaultNodeSize) / 2)
-      .attr("y", (d) => -(d.node_size || defaultNodeSize) / 2)
+      .attr("height", (d) => {
+        const size = d.node_size || defaultNodeSize || 80;
+        return isFinite(size) ? size : 80;
+      })
+      .attr("x", (d) => {
+        const size = d.node_size || defaultNodeSize || 80;
+        return isFinite(size) ? -(size / 2) : -40;
+      })
+      .attr("y", (d) => {
+        const size = d.node_size || defaultNodeSize || 80;
+        return isFinite(size) ? -(size / 2) : -40;
+      })
       .attr("href", (d) => d.thumbnail || "")
       .attr("preserveAspectRatio", "xMidYMid meet")
       .style("filter", "url(#drop-shadow)")
@@ -1150,13 +1162,13 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
     // Mettre à jour la position des labels
     clusterUpdate
       .select(".cluster-label")
-      .attr("x", (d) => d.labelX)
-      .attr("y", (d) => d.labelY);
+      .attr("x", (d) => d.labelX || 0)
+      .attr("y", (d) => d.labelY || 0);
 
     clusterUpdate
       .select(".cluster-count")
-      .attr("x", (d) => d.labelX)
-      .attr("y", (d) => d.labelY);
+      .attr("x", (d) => d.labelX || 0)
+      .attr("y", (d) => d.labelY || 0);
   };
 
   /**
@@ -1423,12 +1435,12 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
 
     // Mettre à jour les labels
     islandUpdate.select(".island-label")
-      .attr("x", d => d.center.x)
-      .attr("y", d => d.center.y + islandLabelYOffset);
+      .attr("x", d => (d.center && d.center.x) || 0)
+      .attr("y", d => ((d.center && d.center.y) || 0) + islandLabelYOffset);
 
     islandUpdate.select(".island-count")
-      .attr("x", d => d.center.x)
-      .attr("y", d => d.center.y + islandLabelYOffset);
+      .attr("x", d => (d.center && d.center.x) || 0)
+      .attr("y", d => ((d.center && d.center.y) || 0) + islandLabelYOffset);
   };
 
   // smoothHull function is now imported from geometryUtils
@@ -1694,14 +1706,15 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
     // 🔥 Use settings from Customizer
     const graphSettings = customizerSettingsRef.current;
     const scale = graphSettings.activeNodeScale || 1.5;
+    const defaultSize = graphSettings.defaultNodeSize || 80; // 🔥 FIX: Cohérent avec la taille définie (80px)
     
     imageElement
       .transition()
       .duration(400)
-      .attr("width", (d.node_size || 60) * scale)
-      .attr("height", (d.node_size || 60) * scale)
-      .attr("x", (-(d.node_size || 60) * scale) / 2)
-      .attr("y", (-(d.node_size || 60) * scale) / 2);
+      .attr("width", (d.node_size || defaultSize) * scale)
+      .attr("height", (d.node_size || defaultSize) * scale)
+      .attr("x", (-(d.node_size || defaultSize) * scale) / 2)
+      .attr("y", (-(d.node_size || defaultSize) * scale) / 2);
 
     // Afficher le panneau latéral avec le lien "Consulter"
     showSideTitlePanel(d, true);
@@ -1756,13 +1769,15 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
         // Cancel any ongoing transitions
         imageElement.interrupt();
         
+        const defaultSize = customizerSettingsRef.current?.defaultNodeSize || 80; // 🔥 FIX: Cohérent avec la taille définie (80px)
+        
         imageElement
           .transition()
           .duration(400)
-          .attr("width", selectedNode.node_size || 60)
-          .attr("height", selectedNode.node_size || 60)
-          .attr("x", -(selectedNode.node_size || 60) / 2)
-          .attr("y", -(selectedNode.node_size || 60) / 2)
+          .attr("width", selectedNode.node_size || defaultSize)
+          .attr("height", selectedNode.node_size || defaultSize)
+          .attr("x", -(selectedNode.node_size || defaultSize) / 2)
+          .attr("y", -(selectedNode.node_size || defaultSize) / 2)
           .on("end", () => {
             // Restart pulse effect after transition if enabled
             const svg = d3.select(svgRef.current);

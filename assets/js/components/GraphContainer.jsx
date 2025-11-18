@@ -96,8 +96,8 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
   // Le SVG s'adaptera avec width/height 100% mais le viewBox reste fixe
   const getGraphDimensions = () => {
     return {
-      width: config.width || 2800,   // ✅ Espace virtuel réduit à 2800px pour graphe ultra-compact
-      height: config.height || 2100  // ✅ Espace virtuel réduit à 2100px pour graphe ultra-compact
+      width: config.width || 3200,   // 🔥 Augmenté à 3200px pour plus d'espace entre les îles
+      height: config.height || 2600  // 🔥 Augmenté à 2600px (ratio ~5:4 conservé)
     };
   };
   
@@ -354,16 +354,32 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
           .on("zoom", handleZoom)
       );
 
-    // 🔥 Zoom initial ADAPTATIF basé sur les dimensions réelles
-    // Pour un grand écran, on zoom moins ; pour un petit écran, on zoom plus
-    const viewportArea = width * height;
-    const referenceArea = 3000 * 2400; // Référence basée sur nos dimensions optimales
-    const initialScale = Math.max(0.3, Math.min(1.0, Math.sqrt(referenceArea / viewportArea)));
+    // 🔥 Zoom initial ADAPTATIF basé sur les dimensions RÉELLES du conteneur
+    // Obtenir les dimensions réelles du conteneur SVG dans le DOM
+    const svgElement = svgRef.current;
+    if (!svgElement) {
+      console.error("SVG element not found during zoom initialization");
+      return;
+    }
     
-    console.log(`🔍 Initial zoom scale: ${initialScale.toFixed(2)} (viewport: ${width}x${height})`);
+    const containerRect = svgElement.getBoundingClientRect();
+    const containerWidth = containerRect.width || window.innerWidth;
+    const containerHeight = containerRect.height || window.innerHeight * 0.9; // ~90% de la hauteur de l'écran
+    
+    // Calculer le scale pour faire rentrer le viewBox dans le conteneur
+    // avec une marge de confort (zoom à 85% pour laisser de l'espace)
+    const scaleX = containerWidth / width;
+    const scaleY = containerHeight / height;
+    const initialScale = Math.min(scaleX, scaleY) * 0.85; // 85% pour avoir de la marge
+    
+    console.log(`🔍 Initial zoom scale: ${initialScale.toFixed(2)} (container: ${containerWidth.toFixed(0)}x${containerHeight.toFixed(0)}, viewBox: ${width}x${height})`);
+    
+    // Centrer le graphe dans le conteneur
+    const translateX = (containerWidth - (width * initialScale)) / 2;
+    const translateY = (containerHeight - (height * initialScale)) / 2;
     
     const initialTransform = d3.zoomIdentity
-      .translate(0, 0)
+      .translate(translateX, translateY)
       .scale(initialScale);
     
     container.call(d3.zoom().transform, initialTransform);
@@ -622,14 +638,14 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
       velocityDecayValue
     });
 
-    // 🔥 UTILISER createForceSimulation avec toutes les forces avancées (clustering, islands, boundary)
+    // 🔥 UTILISER createForceSimulation avec toutes les forces avancées (clustering, boundary)
     const simulation = createForceSimulation(filteredArticles, categories, {
       width: width,
       height: height,
       nodeSpacing: collisionPadding * 2, // Convertir collisionPadding en nodeSpacing
       clusterStrength: clusterStrength,
       linkStrength: 0.08,
-      organicMode: true, // Activer le mode island pour tous les clusters
+      organicMode: false, // ❌ Mode island désactivé
     });
 
     // 🔥 Appliquer les paramètres personnalisés du Customizer sur la simulation

@@ -9,97 +9,132 @@ import * as d3 from "d3";
  */
 export const createForceSimulation = (nodes, categories, options = {}) => {
   const {
-    width = 3000, // 🔥 RÉDUIT de 8000 à 3000 - espace plus compact
-    height = 2400, // 🔥 RÉDUIT de 6000 à 2400 - ratio 5:4 pour meilleure densité
-    nodeSpacing = 80, // 🔥 RÉDUIT de 120 à 80 pour nœuds plus proches
-    clusterStrength = 0.35, // 🔥 AUGMENTÉ de 0.25 à 0.35 pour clusters plus serrés
-    linkStrength = 0.08,
-    organicMode = true, // ✅ ACTIVÉ pour mode island sur tous les clusters
+    width = 1800, // 🎯 ZOOM++ Réduit pour meilleure visibilité
+    height = 1400, // 🎯 ZOOM++ Ratio harmonieux ~4:3
+    nodeSpacing = 70, // 🎯 RÉDUIT pour proximité accrue
+    clusterStrength = 0.10, // 🎯 FORTEMENT RÉDUIT pour éviter dispersion brutale
+    linkStrength = 0.25, // 🎯 DOUBLÉ pour rapprocher nodes connectés
+    organicMode = false, // ❌ DÉSACTIVÉ - Mode island désactivé
   } = options;
 
   // Créer les centres de clusters basés sur les catégories
   const clusterCenters = createClusterCenters(categories, width, height);
 
-  // ⚡ Mode island TOUJOURS activé pour tous les clusters
-  const islands = createArchitecturalIslands(nodes);
+  // ❌ Mode island DÉSACTIVÉ
+  const islands = [];
+  
+  // 🔗 NOUVEAU: Calculer les liens entre nœuds pour la force d'attraction
+  const links = calculateNodeLinks(nodes, {
+    minProximityScore: 25, // 🚀 ENCORE RÉDUIT pour créer plus de connexions
+    maxLinksPerNode: 15, // 🚀 AUGMENTÉ pour densité maximale de liens
+    useProximityScore: true,
+  });
 
-  // 🎯 PLACEMENT INITIAL COMPACT: Les nœuds démarrent plus proches du centre
+  // 🎯 PLACEMENT INITIAL ORGANIQUE: Distribution naturelle au centre
   nodes.forEach((node, index) => {
-    // Toujours réinitialiser les positions pour garantir l'aléatoire
+    // Toujours réinitialiser les positions pour garantir le placement
     if (!node.fx && !node.fy) {
-      // 🔥 Utiliser 40% de l'espace au lieu de 80% pour démarrage plus compact
-      const spreadRadius = Math.min(width, height) * 0.4;
-      const angle = (index / nodes.length) * Math.PI * 2; // Distribution circulaire
-      const distance = Math.random() * spreadRadius;
+      // 🌟 PLACEMENT CONCENTRÉ AU CENTRE - éviter dispersion
+      const centerRadius = Math.min(width, height) * 0.10; // 🚀 ULTRA-RÉDUIT à 10% pour concentration extrême
       
-      // Position initiale concentrée vers le centre
+      // Distribution circulaire ULTRA-DENSE autour du centre
+      const angle = Math.random() * Math.PI * 2; // Angle aléatoire complet
+      const distance = Math.random() * centerRadius; // Distance très limitée
+      
+      // Position ULTRA-COMPACTE au centre
       node.x = width / 2 + Math.cos(angle) * distance;
       node.y = height / 2 + Math.sin(angle) * distance;
       
-      // Vélocité initiale réduite pour mouvement plus doux
-      node.vx = (Math.random() - 0.5) * 20; // 🔥 RÉDUIT de 50 à 20
-      node.vy = (Math.random() - 0.5) * 20;
+      // Vélocité initiale MINIMALE pour stabilité maximale
+      node.vx = (Math.random() - 0.5) * 2; // 🚀 RÉDUIT de 3 à 2
+      node.vy = (Math.random() - 0.5) * 2;
     }
   });
 
   // Simulation de force avec paramètres optimisés
   const simulation = d3
     .forceSimulation(nodes)
-    // 🎯 Force de répulsion RÉDUITE - nœuds plus proches
+    // 🚀 Force de répulsion ULTRA-MINIMALE - permet densité maximale
     .force("charge", d3.forceManyBody()
       .strength((d) => {
-        // 🔥 Forces réduites pour permettre rapprochement naturel
-        if (organicMode && d.post_type === 'archi_project') {
-          return -80; // 🔥 RÉDUIT de -200 à -80
-        }
-        return -100; // 🔥 RÉDUIT de -250 à -100
+        // Répulsion ULTRA-FAIBLE pour permettre proximité extrême
+        const linkCount = d.linkCount || 0;
+        const baseStrength = organicMode && d.post_type === 'archi_project' ? -30 : -38; // 🚀 RÉDUIT encore
+        
+        // Plus un nœud a de liens, BEAUCOUP MOINS il repousse
+        // 0 liens → force complète, 10+ liens → force réduite de 70%
+        const linkFactor = 1 - Math.min(linkCount / 12, 0.70); // 🚀 Réduction encore plus forte
+        
+        return baseStrength * linkFactor;
       })
-      .distanceMax(400) // 🔥 RÉDUIT de 1200 à 400 pour influence locale
-      .distanceMin(50) // 🔥 AUGMENTÉ de 40 à 50 pour respiration minimale
+      .distanceMax(180) // 🚀 FORTEMENT RÉDUIT pour influence ultra-locale
+      .distanceMin(25) // 🚀 RÉDUIT pour permettre proximité extrême
+    )
+    
+    // 🚀 Force de liens MAXIMALE pour groupes ultra-cohésifs
+    .force("link", d3.forceLink(links)
+      .id(d => d.id)
+      .distance(d => {
+        // Distance ULTRA-COURTE pour cohésion maximale
+        const baseDistance = 65; // 🚀 FORTEMENT RÉDUIT à 65px pour rapprochement maximal
+        const strengthFactor = d.strength || 1;
+        
+        // Plus le lien est fort, plus les nœuds sont ULTRA-PROCHES
+        // strength de 1-5 → distance de 30-65px (TRÈS COURT)
+        return baseDistance - (strengthFactor * 15); // 🚀 AUGMENTÉ l'effet à 15
+      })
+      .strength(d => {
+        // Force de lien ULTRA-FORTE pour rapprochement maximal
+        const proximityScore = d.proximity?.score || 50;
+        
+        // Score 25-100 → strength 0.50-0.85 (ULTRA-FORT)
+        const normalizedStrength = 0.50 + (proximityScore / 100) * 0.35; // 🚀 FORTEMENT AUGMENTÉ
+        return Math.min(normalizedStrength, 0.85); // 🚀 Max à 0.85
+      })
     )
 
-    // Force de centrage MOYENNE pour grouper sans contraindre
-    .force("center", d3.forceCenter(width / 2, height / 2).strength(0.08)) // 🔥 AUGMENTÉ de 0.03 à 0.08
+    // Force de centrage MODÉRÉE pour permettre expansion des liens
+    .force("center", d3.forceCenter(width / 2, height / 2).strength(0.08)) // 🚀 RÉDUIT pour laisser les liens agir
 
-    // Force anti-collision ÉQUILIBRÉE pour espacement naturel
+    // Force anti-collision ULTRA-SOUPLE pour densité maximale
     .force(
       "collision",
       d3
         .forceCollide()
         .radius((d) => {
-          // Calculer le rayon réel du nœud + marge adaptée
-          const nodeRadius = (d.node_size || 80) / 2;
-          const safetyMargin = organicMode ? 25 : 20; // 🔥 AUGMENTÉ de 15/12 à 25/20
-          return nodeRadius + safetyMargin;
+          // Rayon ULTRA-MINIMAL pour permettre proximité extrême
+          const nodeRadius = (d.node_size || 80) / 2; // 40px par défaut
+          const safetyMargin = organicMode ? 4 : 3; // 🚀 ULTRA-RÉDUIT pour densité extrême
+          return nodeRadius + safetyMargin; // ~43-44px total = proximité maximale
         })
-        .strength(0.85) // 🔥 RÉDUIT de 0.9 à 0.85 pour permettre plus de proximité
-        .iterations(4) // 🔥 RÉDUIT de 5 à 4 pour performance
+        .strength(0.35) // 🚀 FORTEMENT RÉDUIT pour permettre superposition
+        .iterations(1) // 🚀 Minimal pour fluidité
     )
 
-    // Force de clustering FORTE pour groupes bien formés
+    // Force de clustering ULTRA-MINIMAL pour éviter dispersion
     .force(
       "cluster",
-      forceCluster().centers(clusterCenters).strength(clusterStrength * 1.5) // 🔥 AUGMENTÉ le multiplicateur de 1 à 1.5
+      forceCluster().centers(clusterCenters).strength(clusterStrength * 0.08) // � ULTRA-RÉDUIT à 0.08
     )
 
-    // ✅ Force d'îles FORTE pour séparation nette des clusters
-    .force(
-      "islands",
-      forceIslands().islands(islands).strength(0.5) // 🔥 AUGMENTÉ de 0.3 à 0.5 pour isolation forte
-    )
+    // ❌ Force d'îles DÉSACTIVÉE
+    // .force(
+    //   "islands",
+    //   forceIslands().islands(islands).strength(0.65)
+    // )
 
-    // 🔥 BOUNDARY RÉACTIVÉE pour confiner les nodes dans la zone visible
-    .force("boundary", forceBoundary(width, height, 80));
+    // 🎯 BOUNDARY ajustée pour espace 1800x1400
+    .force("boundary", forceBoundary(width, height, 50));
 
-  // ⚡ Configuration optimisée pour CONVERGENCE RAPIDE
+  // ⚡ Configuration optimisée pour CONVERGENCE RAPIDE ET STABLE
   simulation
-    .alpha(0.8) // 🔥 RÉDUIT de 1.5 à 0.8 pour démarrage plus doux
-    .alphaDecay(0.025) // 🔥 AUGMENTÉ de 0.02 à 0.025 pour stabilisation plus rapide
-    .alphaMin(0.001) // 🔥 AUGMENTÉ de 0.0005 à 0.001 pour arrêt plus rapide
-    .velocityDecay(0.6); // 🔥 AUGMENTÉ de 0.5 à 0.6 pour freinage plus efficace
+    .alpha(0.8) // 🚀 AUGMENTÉ pour plus d'énergie initiale et convergence efficace
+    .alphaDecay(0.035) // 🚀 AUGMENTÉ pour convergence plus rapide
+    .alphaMin(0.001) // 🚀 Arrêt ultra-précis
+    .velocityDecay(0.75); // 🚀 AUGMENTÉ pour freinage plus fort et stabilité
 
   return simulation;
-};;;
+};
 
 /**
  * Créer des îles architecturales basées sur les relations entre projets
@@ -180,7 +215,7 @@ const findRelatedProjects = (project, allProjects, visited) => {
 const forceIslands = () => {
   let nodes = [];
   let islands = [];
-  let strength = 0.3; // ✅ Doublé de 0.15 à 0.3 pour attraction plus forte
+  let strength = 0.4; // 🔥 AUGMENTÉ de 0.3 à 0.4 pour attraction plus forte
   let alpha = 1;
   
   const force = () => {
@@ -212,13 +247,13 @@ const forceIslands = () => {
         if (distance > 0 && distance < island.radius) {
           // Force d'attraction RENFORCÉE au sein de l'île
           const force = strength * alpha * (distance / island.radius);
-          node.vx += (dx / distance) * force * 0.8; // ✅ Augmenté de 0.5 à 0.8
-          node.vy += (dy / distance) * force * 0.8; // ✅ Augmenté de 0.5 à 0.8
+          node.vx += (dx / distance) * force * 0.9; // 🔥 AUGMENTÉ de 0.8 à 0.9
+          node.vy += (dy / distance) * force * 0.9; // 🔥 AUGMENTÉ de 0.8 à 0.9
         }
       });
     });
     
-    // Répulsion douce entre îles
+    // Répulsion RENFORCÉE entre îles
     for (let i = 0; i < islands.length; i++) {
       for (let j = i + 1; j < islands.length; j++) {
         const islandA = islands[i];
@@ -230,8 +265,8 @@ const forceIslands = () => {
         const minDistance = islandA.radius + islandB.radius;
         
         if (distance < minDistance && distance > 0) {
-          // Repousser légèrement les îles qui se chevauchent
-          const repulsion = (minDistance - distance) * 0.01;
+          // Repousser FORTEMENT les îles qui se chevauchent
+          const repulsion = (minDistance - distance) * 0.015; // 🔥 AUGMENTÉ de 0.01 à 0.015
           
           islandA.members.forEach(member => {
             const node = nodes.find(n => n.id === member.id);
@@ -286,7 +321,7 @@ const forceIslands = () => {
  */
 const createClusterCenters = (categories, width, height) => {
   const centers = {};
-  const padding = 150;
+  const padding = 100; // 🎯 RÉDUIT de 150 à 100 pour centres plus proches
   const usableWidth = width - 2 * padding;
   const usableHeight = height - 2 * padding;
 
@@ -304,9 +339,9 @@ const createClusterCenters = (categories, width, height) => {
         padding +
         (row + 0.5) * (usableHeight / Math.ceil(categories.length / cols));
     } else {
-      // Disposition en cercle pour plus de catégories
+      // Disposition en cercle PLUS COMPACT pour superposition naturelle
       const angle = (index / categories.length) * 2 * Math.PI;
-      const radius = Math.min(usableWidth, usableHeight) / 3;
+      const radius = Math.min(usableWidth, usableHeight) / 4; // 🎯 RÉDUIT de /3 à /4
       x = width / 2 + Math.cos(angle) * radius;
       y = height / 2 + Math.sin(angle) * radius;
     }
@@ -337,13 +372,19 @@ const forceCluster = () => {
 
       if (!center) return;
 
+      // 🎯 Réduire FORTEMENT la force de clustering si le nœud a beaucoup de liens
+      // Les nœuds fortement connectés restent près de leurs voisins, pas du centre
+      const linkCount = node.linkCount || 0;
+      const clusterReduction = Math.min(linkCount / 8, 0.75); // 🎯 Max 75% de réduction
+      const adjustedStrength = strength * (1 - clusterReduction);
+
       // Calculer la force vers le centre du cluster
       const dx = center.x - node.x;
       const dy = center.y - node.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
 
       if (distance > 0) {
-        const force = strength * alpha * distance;
+        const force = adjustedStrength * alpha * distance;
         node.vx += (dx / distance) * force;
         node.vy += (dy / distance) * force;
       }
@@ -352,6 +393,32 @@ const forceCluster = () => {
 
   force.initialize = (newNodes) => {
     nodes = newNodes;
+    
+    // 🔗 NOUVEAU: Calculer le nombre de liens par nœud pour ajuster le clustering
+    nodes.forEach(node => {
+      node.linkCount = 0;
+    });
+    
+    // Compter les liens (approximation basée sur les catégories/tags partagés)
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const nodeA = nodes[i];
+        const nodeB = nodes[j];
+        
+        const sharedCategories = (nodeA.categories || []).filter(catA =>
+          (nodeB.categories || []).some(catB => catA.id === catB.id)
+        );
+        
+        const sharedTags = (nodeA.tags || []).filter(tagA =>
+          (nodeB.tags || []).some(tagB => tagA.id === tagB.id)
+        );
+        
+        if (sharedCategories.length > 0 || sharedTags.length > 0) {
+          nodeA.linkCount++;
+          nodeB.linkCount++;
+        }
+      }
+    }
   };
 
   force.centers = function(newCenters) {
@@ -495,8 +562,8 @@ export const updateNodePositions = (container, nodes) => {
  */
 export const calculateNodeLinks = (nodes, options = {}) => {
   const {
-    minProximityScore = 20, // Score minimum pour créer un lien visible
-    maxLinksPerNode = 8, // Nombre maximum de liens par nœud
+    minProximityScore = 35, // ⬆️ Score minimum augmenté de 20 à 35 pour des liens plus pertinents
+    maxLinksPerNode = 10, // ⬆️ Augmenté de 8 à 10 pour plus de connexions
     useProximityScore = true, // Utiliser le nouveau système de score
   } = options;
 
@@ -544,18 +611,6 @@ export const calculateNodeLinks = (nodes, options = {}) => {
 
       // Ignorer les liens si un des nœuds a hide_links activé
       if (nodeA.hide_links || nodeB.hide_links) {
-        continue;
-      }
-
-      // NOUVELLE RÈGLE: Ne pas créer de liens entre articles de même catégorie
-      // Vérifier si les deux nœuds partagent TOUTES leurs catégories
-      const categoriesA = (nodeA.categories || []).map(c => c.id).sort();
-      const categoriesB = (nodeB.categories || []).map(c => c.id).sort();
-      
-      // Si les deux nœuds ont exactement les mêmes catégories, ignorer
-      if (categoriesA.length > 0 && 
-          categoriesA.length === categoriesB.length &&
-          categoriesA.every((catId, idx) => catId === categoriesB[idx])) {
         continue;
       }
 
@@ -630,7 +685,13 @@ const calculateProximity = (nodeA, nodeB) => {
     SHARED_TAG: 25,
     SAME_PRIMARY_CATEGORY: 20,
     DATE_PROXIMITY: 10,
-    CONTENT_SIMILARITY: 5,
+    CONTENT_SIMILARITY: 15,      // ⬆️ Augmenté de 5 à 15
+    PROJECT_SAME_TYPE: 30,       // ✨ NOUVEAU: Projets de même type
+    PROJECT_SAME_CLIENT: 35,     // ✨ NOUVEAU: Même client
+    PROJECT_SAME_LOCATION: 25,   // ✨ NOUVEAU: Même localisation
+    ILLUSTRATION_SAME_TECHNIQUE: 30, // ✨ NOUVEAU: Même technique
+    ILLUSTRATION_SAME_SOFTWARE: 20,  // ✨ NOUVEAU: Même logiciel
+    ILLUSTRATION_LINKED_PROJECT: 50, // ✨ NOUVEAU: Lié au même projet
   };
 
   let score = 0;
@@ -700,15 +761,116 @@ const calculateProximity = (nodeA, nodeB) => {
     }
   }
 
-  // Similarité de contenu
-  if (nodeA.excerpt && nodeB.excerpt) {
-    const lengthA = nodeA.excerpt.length;
-    const lengthB = nodeB.excerpt.length;
-    const lengthRatio = Math.min(lengthA, lengthB) / Math.max(lengthA, lengthB);
-
-    if (lengthRatio > 0.7) {
+  // Similarité de contenu (améliorée)
+  if (nodeA.title && nodeB.title && nodeA.excerpt && nodeB.excerpt) {
+    const titleA = nodeA.title.toLowerCase();
+    const titleB = nodeB.title.toLowerCase();
+    const excerptA = nodeA.excerpt.toLowerCase();
+    const excerptB = nodeB.excerpt.toLowerCase();
+    
+    // Extraire les mots-clés significatifs (plus de 4 lettres)
+    const getKeywords = (text) => {
+      return text.match(/\b\w{4,}\b/g) || [];
+    };
+    
+    const keywordsA = [...getKeywords(titleA), ...getKeywords(excerptA)];
+    const keywordsB = [...getKeywords(titleB), ...getKeywords(excerptB)];
+    
+    // Compter les mots-clés communs
+    const commonKeywords = keywordsA.filter(word => keywordsB.includes(word));
+    const uniqueCommon = [...new Set(commonKeywords)];
+    
+    if (uniqueCommon.length >= 3) {
       score += WEIGHTS.CONTENT_SIMILARITY;
-      details.factors.contentSimilarity = WEIGHTS.CONTENT_SIMILARITY;
+      details.factors.contentSimilarity = {
+        score: WEIGHTS.CONTENT_SIMILARITY,
+        keywords: uniqueCommon.length
+      };
+    } else if (uniqueCommon.length >= 1) {
+      const partialScore = WEIGHTS.CONTENT_SIMILARITY * 0.5;
+      score += partialScore;
+      details.factors.contentSimilarity = {
+        score: partialScore,
+        keywords: uniqueCommon.length
+      };
+    }
+  }
+
+  // ✨ NOUVEAU: Liens spécifiques aux PROJETS ARCHITECTURAUX
+  if (nodeA.post_type === 'archi_project' && nodeB.post_type === 'archi_project') {
+    const metaA = nodeA.project_meta || {};
+    const metaB = nodeB.project_meta || {};
+    
+    // Même type de projet (résidentiel, commercial, etc.)
+    if (metaA.project_type && metaB.project_type && 
+        metaA.project_type === metaB.project_type) {
+      score += WEIGHTS.PROJECT_SAME_TYPE;
+      details.factors.projectType = WEIGHTS.PROJECT_SAME_TYPE;
+    }
+    
+    // Même client
+    if (metaA.client && metaB.client && 
+        metaA.client.toLowerCase() === metaB.client.toLowerCase()) {
+      score += WEIGHTS.PROJECT_SAME_CLIENT;
+      details.factors.projectClient = WEIGHTS.PROJECT_SAME_CLIENT;
+    }
+    
+    // Même localisation (ville/région)
+    if (metaA.location && metaB.location) {
+      const locA = metaA.location.toLowerCase();
+      const locB = metaB.location.toLowerCase();
+      
+      // Correspondance exacte ou partielle
+      if (locA === locB || locA.includes(locB) || locB.includes(locA)) {
+        score += WEIGHTS.PROJECT_SAME_LOCATION;
+        details.factors.projectLocation = WEIGHTS.PROJECT_SAME_LOCATION;
+      }
+    }
+    
+    // Surface similaire (± 20%)
+    if (metaA.surface && metaB.surface) {
+      const surfA = parseFloat(metaA.surface);
+      const surfB = parseFloat(metaB.surface);
+      const ratio = Math.min(surfA, surfB) / Math.max(surfA, surfB);
+      
+      if (ratio >= 0.8) {
+        score += 10;
+        details.factors.similarSurface = 10;
+      }
+    }
+  }
+
+  // ✨ NOUVEAU: Liens spécifiques aux ILLUSTRATIONS
+  if (nodeA.post_type === 'archi_illustration' && nodeB.post_type === 'archi_illustration') {
+    const metaA = nodeA.illustration_meta || {};
+    const metaB = nodeB.illustration_meta || {};
+    
+    // Même technique (dessin, 3D, aquarelle, etc.)
+    if (metaA.technique && metaB.technique && 
+        metaA.technique.toLowerCase() === metaB.technique.toLowerCase()) {
+      score += WEIGHTS.ILLUSTRATION_SAME_TECHNIQUE;
+      details.factors.illustrationTechnique = WEIGHTS.ILLUSTRATION_SAME_TECHNIQUE;
+    }
+    
+    // Même logiciel (AutoCAD, SketchUp, etc.)
+    if (metaA.software && metaB.software && 
+        metaA.software.toLowerCase() === metaB.software.toLowerCase()) {
+      score += WEIGHTS.ILLUSTRATION_SAME_SOFTWARE;
+      details.factors.illustrationSoftware = WEIGHTS.ILLUSTRATION_SAME_SOFTWARE;
+    }
+  }
+
+  // ✨ NOUVEAU: Liens PROJET <-> ILLUSTRATION
+  if ((nodeA.post_type === 'archi_project' && nodeB.post_type === 'archi_illustration') ||
+      (nodeA.post_type === 'archi_illustration' && nodeB.post_type === 'archi_project')) {
+    
+    const illustration = nodeA.post_type === 'archi_illustration' ? nodeA : nodeB;
+    const project = nodeA.post_type === 'archi_project' ? nodeA : nodeB;
+    
+    // Vérifier si l'illustration est liée au projet
+    if (illustration.illustration_meta?.project_link === project.id) {
+      score += WEIGHTS.ILLUSTRATION_LINKED_PROJECT;
+      details.factors.linkedProject = WEIGHTS.ILLUSTRATION_LINKED_PROJECT;
     }
   }
 

@@ -162,6 +162,21 @@ function archi_get_articles_for_graph($request) {
             ];
         }
         
+        // ✨ NOUVEAU: Métadonnées spécifiques aux projets architecturaux
+        $project_meta = [];
+        if ($post->post_type === 'archi_project') {
+            $project_meta = [
+                'surface' => get_post_meta($post->ID, '_archi_project_surface', true),
+                'cost' => get_post_meta($post->ID, '_archi_project_cost', true),
+                'client' => get_post_meta($post->ID, '_archi_project_client', true),
+                'location' => get_post_meta($post->ID, '_archi_project_location', true),
+                'start_date' => get_post_meta($post->ID, '_archi_project_start_date', true),
+                'end_date' => get_post_meta($post->ID, '_archi_project_end_date', true),
+                'project_type' => get_post_meta($post->ID, '_archi_project_type', true),
+                'certifications' => get_post_meta($post->ID, '_archi_project_certifications', true),
+            ];
+        }
+        
         // Métadonnées spécifiques au livre d'or
         $guestbook_meta = [];
         if ($post->post_type === 'archi_guestbook') {
@@ -227,6 +242,11 @@ function archi_get_articles_for_graph($request) {
         // Ajouter les métadonnées spécifiques aux illustrations
         if (!empty($illustration_meta)) {
             $article['illustration_meta'] = $illustration_meta;
+        }
+        
+        // ✨ NOUVEAU: Ajouter les métadonnées spécifiques aux projets
+        if (!empty($project_meta)) {
+            $article['project_meta'] = $project_meta;
         }
         
         // Ajouter les métadonnées du livre d'or

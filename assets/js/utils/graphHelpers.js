@@ -9,10 +9,10 @@ import * as d3 from "d3";
  */
 export const createForceSimulation = (nodes, categories, options = {}) => {
   const {
-    width = 8000, // 🔥 Espace raisonnable pour graphique (réduit de 20000)
-    height = 6000, // 🔥 Ratio 4:3 pour meilleure répartition (réduit de 14000)
-    nodeSpacing = 120, // 🔥 FIX: Reduced from 200 to 120 for tighter spacing
-    clusterStrength = 0.25, // 🔥 FIX: Increased from 0.02 to 0.25 for tighter clusters
+    width = 3000, // 🔥 RÉDUIT de 8000 à 3000 - espace plus compact
+    height = 2400, // 🔥 RÉDUIT de 6000 à 2400 - ratio 5:4 pour meilleure densité
+    nodeSpacing = 80, // 🔥 RÉDUIT de 120 à 80 pour nœuds plus proches
+    clusterStrength = 0.35, // 🔥 AUGMENTÉ de 0.25 à 0.35 pour clusters plus serrés
     linkStrength = 0.08,
     organicMode = true, // ✅ ACTIVÉ pour mode island sur tous les clusters
   } = options;
@@ -20,92 +20,86 @@ export const createForceSimulation = (nodes, categories, options = {}) => {
   // Créer les centres de clusters basés sur les catégories
   const clusterCenters = createClusterCenters(categories, width, height);
 
-  // ⚡ PERFORMANCE: Îles architecturales désactivées par défaut
-  const islands = organicMode ? createArchitecturalIslands(nodes) : null;
+  // ⚡ Mode island TOUJOURS activé pour tous les clusters
+  const islands = createArchitecturalIslands(nodes);
 
-  // 🎯 PLACEMENT INITIAL DISPERSÉ: Les nœuds se répartissent sur tout l'espace
+  // 🎯 PLACEMENT INITIAL COMPACT: Les nœuds démarrent plus proches du centre
   nodes.forEach((node, index) => {
     // Toujours réinitialiser les positions pour garantir l'aléatoire
     if (!node.fx && !node.fy) {
-      // 🔥 FIX: Utiliser 80% de l'espace au lieu de 30% pour une dispersion maximale
-      const spreadRadius = Math.min(width, height) * 0.8; // 🔥 Augmenté de 0.3 à 0.8
+      // 🔥 Utiliser 40% de l'espace au lieu de 80% pour démarrage plus compact
+      const spreadRadius = Math.min(width, height) * 0.4;
       const angle = (index / nodes.length) * Math.PI * 2; // Distribution circulaire
       const distance = Math.random() * spreadRadius;
       
-      // Position initiale dispersée sur tout l'espace disponible
+      // Position initiale concentrée vers le centre
       node.x = width / 2 + Math.cos(angle) * distance;
       node.y = height / 2 + Math.sin(angle) * distance;
       
-      // Vélocité initiale modérée pour dispersion naturelle
-      node.vx = (Math.random() - 0.5) * 50; // 🔥 Augmenté de 20 à 50 pour plus de mouvement
-      node.vy = (Math.random() - 0.5) * 50;
+      // Vélocité initiale réduite pour mouvement plus doux
+      node.vx = (Math.random() - 0.5) * 20; // 🔥 RÉDUIT de 50 à 20
+      node.vy = (Math.random() - 0.5) * 20;
     }
   });
 
   // Simulation de force avec paramètres optimisés
   const simulation = d3
     .forceSimulation(nodes)
-    // 🎯 Force de répulsion ÉQUILIBRÉE - dispersion naturelle
+    // 🎯 Force de répulsion RÉDUITE - nœuds plus proches
     .force("charge", d3.forceManyBody()
       .strength((d) => {
-        // 🔥 FIX: Force équilibrée pour dispersion sans trop de contrainte
+        // 🔥 Forces réduites pour permettre rapprochement naturel
         if (organicMode && d.post_type === 'archi_project') {
-          return -200; // 🔥 FIX: Reduced from -300 to -200 for natural dispersion
+          return -80; // 🔥 RÉDUIT de -200 à -80
         }
-        return -250; // 🔥 FIX: Reduced from -400 to -250 for natural dispersion
+        return -100; // 🔥 RÉDUIT de -250 à -100
       })
-      .distanceMax(1200) // 🔥 FIX: Increased from 800 to 1200 for wider influence
-      .distanceMin(40) // 🔥 FIX: Increased from 30 to 40 for breathing room
+      .distanceMax(400) // 🔥 RÉDUIT de 1200 à 400 pour influence locale
+      .distanceMin(50) // 🔥 AUGMENTÉ de 40 à 50 pour respiration minimale
     )
 
-    // Force de centrage TRÈS FAIBLE pour permettre la dispersion
-    .force("center", d3.forceCenter(width / 2, height / 2).strength(0.03)) // 🔥 FIX: Reduced from 0.15 to 0.03 for more freedom
+    // Force de centrage MOYENNE pour grouper sans contraindre
+    .force("center", d3.forceCenter(width / 2, height / 2).strength(0.08)) // 🔥 AUGMENTÉ de 0.03 à 0.08
 
-    // Force anti-collision AJUSTÉE pour proximité contrôlée
+    // Force anti-collision ÉQUILIBRÉE pour espacement naturel
     .force(
       "collision",
       d3
         .forceCollide()
         .radius((d) => {
-          // Calculer le rayon réel du nœud + marge réduite
+          // Calculer le rayon réel du nœud + marge adaptée
           const nodeRadius = (d.node_size || 80) / 2;
-          const safetyMargin = organicMode ? 15 : 12; // 🔥 FIX: Reduced from 30/25 to 15/12 for tighter spacing
+          const safetyMargin = organicMode ? 25 : 20; // 🔥 AUGMENTÉ de 15/12 à 25/20
           return nodeRadius + safetyMargin;
         })
-        .strength(0.9) // Force élevée pour éviter superposition
-        .iterations(5)
+        .strength(0.85) // 🔥 RÉDUIT de 0.9 à 0.85 pour permettre plus de proximité
+        .iterations(4) // 🔥 RÉDUIT de 5 à 4 pour performance
     )
 
-    // Force de clustering MODÉRÉE pour groupes naturels
+    // Force de clustering FORTE pour groupes bien formés
     .force(
       "cluster",
-      forceCluster().centers(clusterCenters).strength(clusterStrength * 1) // 🔥 FIX: Reduced multiplier from 2 to 1 for natural grouping
+      forceCluster().centers(clusterCenters).strength(clusterStrength * 1.5) // 🔥 AUGMENTÉ le multiplicateur de 1 à 1.5
     )
 
-    // ✅ Force d'îles ACTIVÉE pour tous les clusters avec force augmentée
+    // ✅ Force d'îles FORTE pour séparation nette des clusters
     .force(
       "islands",
-      organicMode ? forceIslands().islands(islands).strength(0.3) : null // ✅ Triplé de 0.1 à 0.3
+      forceIslands().islands(islands).strength(0.5) // 🔥 AUGMENTÉ de 0.3 à 0.5 pour isolation forte
     )
 
-    // ⚡ PERFORMANCE: Gravité désactivée par défaut (une force de moins)
-    // .force(
-    //   "gravity",
-    //   organicMode ? d3.forceY(height / 2).strength(0.01) : null
-    // )
+    // 🔥 BOUNDARY RÉACTIVÉE pour confiner les nodes dans la zone visible
+    .force("boundary", forceBoundary(width, height, 80));
 
-    // Force vers les bords ASSOUPLIE - permet l'utilisation de tout l'espace
-    .force("boundary", forceBoundary(width, height, 100)); // 🔥 FIX: Reduced padding from 200 to 100 for more usable space
-
-  // ⚡ PERFORMANCE: Configuration optimisée pour SÉPARATION MAXIMALE
+  // ⚡ Configuration optimisée pour CONVERGENCE RAPIDE
   simulation
-    .alpha(1.5) // 🔥 Démarrage TRÈS fort pour exploser la masse (était 1.0)
-    .alphaDecay(0.02) // 🔥 Stabilisation TRÈS lente pour parfait équilibre (était 0.03)
-    .alphaMin(0.0005) // 🔥 Seuil ULTRA bas pour stabilisation parfaite (était 0.001)
-    .velocityDecay(0.5); // 🔥 Freinage encore réduit pour mouvement maximal (était 0.6)
+    .alpha(0.8) // 🔥 RÉDUIT de 1.5 à 0.8 pour démarrage plus doux
+    .alphaDecay(0.025) // 🔥 AUGMENTÉ de 0.02 à 0.025 pour stabilisation plus rapide
+    .alphaMin(0.001) // 🔥 AUGMENTÉ de 0.0005 à 0.001 pour arrêt plus rapide
+    .velocityDecay(0.6); // 🔥 AUGMENTÉ de 0.5 à 0.6 pour freinage plus efficace
 
   return simulation;
-};
+};;;
 
 /**
  * Créer des îles architecturales basées sur les relations entre projets
@@ -263,19 +257,19 @@ const forceIslands = () => {
     nodes = newNodes;
   };
   
-  force.islands = (newIslands) => {
+  force.islands = function(newIslands) {
     if (!arguments.length) return islands;
     islands = newIslands || [];
     return force;
   };
   
-  force.strength = (newStrength) => {
+  force.strength = function(newStrength) {
     if (!arguments.length) return strength;
     strength = newStrength;
     return force;
   };
   
-  force.alpha = (newAlpha) => {
+  force.alpha = function(newAlpha) {
     alpha = newAlpha;
     return force;
   };
@@ -360,19 +354,19 @@ const forceCluster = () => {
     nodes = newNodes;
   };
 
-  force.centers = (newCenters) => {
+  force.centers = function(newCenters) {
     if (!arguments.length) return centers;
     centers = newCenters;
     return force;
   };
 
-  force.strength = (newStrength) => {
+  force.strength = function(newStrength) {
     if (!arguments.length) return strength;
     strength = newStrength;
     return force;
   };
 
-  force.alpha = (newAlpha) => {
+  force.alpha = function(newAlpha) {
     alpha = newAlpha;
     return force;
   };
@@ -389,45 +383,49 @@ const forceCluster = () => {
  */
 export const forceBoundary = (width, height, padding = 50) => {
   let nodes = [];
-  let strength = 0.3; // 🔥 FIX: Force réduite de 1.0 à 0.3 pour permettre plus de liberté
+  let strength = 0.6; // 🔥 Force DOUBLÉE de 0.3 à 0.6 pour contenir les nœuds
 
   const force = () => {
     nodes.forEach((node) => {
       const radius = (node.node_size || 80) / 2;
 
-      // 🔥 FIX: Contraintes souples - force progressive au lieu de clamping dur
+      // 🔥 Contraintes fermes - empêcher l'échappement
       const minX = padding + radius;
       const maxX = width - padding - radius;
       const minY = padding + radius;
       const maxY = height - padding - radius;
 
-      // Force progressive X - poussée douce vers l'intérieur
+      // Force progressive X - poussée ferme vers l'intérieur
       if (node.x < minX) {
-        node.vx += (minX - node.x) * strength * 0.1; // 🔥 Force progressive
+        node.vx += (minX - node.x) * strength * 0.3; // 🔥 Force TRIPLÉE de 0.1 à 0.3
+        node.x = Math.max(node.x, minX); // 🔥 Clamping pour empêcher sortie
       } else if (node.x > maxX) {
-        node.vx += (maxX - node.x) * strength * 0.1;
+        node.vx += (maxX - node.x) * strength * 0.3;
+        node.x = Math.min(node.x, maxX);
       }
 
-      // Force progressive Y - poussée douce vers l'intérieur
+      // Force progressive Y - poussée ferme vers l'intérieur
       if (node.y < minY) {
-        node.vy += (minY - node.y) * strength * 0.1;
+        node.vy += (minY - node.y) * strength * 0.3;
+        node.y = Math.max(node.y, minY);
       } else if (node.y > maxY) {
-        node.vy += (maxY - node.y) * strength * 0.1;
+        node.vy += (maxY - node.y) * strength * 0.3;
+        node.y = Math.min(node.y, maxY);
       }
 
-      // Force douce pour éviter les bords (zone de 100px)
-      const softBoundary = 100;
+      // Force douce pour éviter les bords (zone de 80px)
+      const softBoundary = 80; // 🔥 RÉDUIT de 100 à 80
       if (node.x < padding + radius + softBoundary) {
-        node.vx += (padding + radius + softBoundary - node.x) * strength;
+        node.vx += (padding + radius + softBoundary - node.x) * strength * 0.5; // 🔥 Force augmentée
       }
       if (node.x > width - padding - radius - softBoundary) {
-        node.vx += (width - padding - radius - softBoundary - node.x) * strength;
+        node.vx += (width - padding - radius - softBoundary - node.x) * strength * 0.5;
       }
       if (node.y < padding + radius + softBoundary) {
-        node.vy += (padding + radius + softBoundary - node.y) * strength;
+        node.vy += (padding + radius + softBoundary - node.y) * strength * 0.5;
       }
       if (node.y > height - padding - radius - softBoundary) {
-        node.vy += (height - padding - radius - softBoundary - node.y) * strength;
+        node.vy += (height - padding - radius - softBoundary - node.y) * strength * 0.5;
       }
     });
   };
@@ -443,7 +441,7 @@ export const forceBoundary = (width, height, padding = 50) => {
   };
 
   return force;
-};
+};;
 
 /**
  * Mettre à jour les positions des nœuds dans le DOM

@@ -905,37 +905,6 @@ function archi_render_node_options() {
 }
 
 /**
- * Obtenir la configuration du graphique - CONSOLIDATED
- */
-function archi_get_graph_config() {
-    return [
-        'animation_duration' => get_option('archi_animation_duration', 1000),
-        'node_spacing' => get_option('archi_node_spacing', 100),
-        'cluster_strength' => get_option('archi_cluster_strength', 10),
-        'enabled_post_types' => get_option('archi_enabled_post_types', ['post', 'archi_article', 'archi_illustration'])
-    ];
-}
-
-/**
- * Récupérer toutes les options du graphique (merged from admin-settings.php)
- */
-function archi_get_all_graph_options() {
-    return [
-        'graph_animation_duration' => get_option('graph_animation_duration', 1000),
-        'graph_node_spacing' => get_option('graph_node_spacing', 100),
-        'graph_cluster_strength' => get_option('graph_cluster_strength', 0.1),
-        'graph_show_categories' => (bool) get_option('graph_show_categories', 1),
-        'graph_show_links' => (bool) get_option('graph_show_links', 1),
-        'graph_auto_save_positions' => (bool) get_option('graph_auto_save_positions', 0),
-        'graph_max_articles' => get_option('graph_max_articles', 100),
-        'default_node_color' => get_option('default_node_color', '#3498db'),
-        'background_gradient_start' => get_option('background_gradient_start', '#667eea'),
-        'background_gradient_end' => get_option('background_gradient_end', '#764ba2'),
-        'cache_duration' => get_option('cache_duration', 3600)
-    ];
-}
-
-/**
  * Sauvegarder la configuration - CONSOLIDATED
  */
 function archi_save_graph_config() {

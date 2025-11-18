@@ -127,13 +127,13 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
     const handleResize = () => {
       clearTimeout(resizeTimeout);
       resizeTimeout = setTimeout(() => {
-        console.log("🔄 Screen resized, updating graph dimensions");
-        // Le viewBox reste FIXE même lors du resize - seul le SVG responsive change
-        if (svgRef.current && simulationRef.current) {
-          const { width: fixedWidth, height: fixedHeight } = getGraphDimensions();
-          d3.select(svgRef.current)
-            .attr("viewBox", `0 0 ${fixedWidth} ${fixedHeight}`);
-          console.log(`📐 ViewBox remains: ${fixedWidth}x${fixedHeight}`);
+        console.log("🔄 Screen resized, reinitializing graph");
+        // 🔥 Réinitialiser complètement le graphe avec les nouvelles dimensions
+        if (svgRef.current) {
+          setupSVG();
+          if (articles.length > 0) {
+            updateGraph();
+          }
         }
       }, 300); // Debounce de 300ms
     };
@@ -335,7 +335,10 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
       .style("visibility", "visible")
       .style("opacity", "1");
 
-    // 🖥️ Log des dimensions calculées
+    // � Récupérer les dimensions DYNAMIQUES du conteneur
+    const { width, height } = getGraphDimensions();
+
+    // �🖥️ Log des dimensions calculées
     console.log(`📐 Graph ViewBox: ${width}x${height} (Screen: ${window.innerWidth}x${window.innerHeight})`);
 
     // Container principal avec zoom
@@ -347,13 +350,18 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
       .style("background", "#ffffff")
       .call(
         d3.zoom()
-          .scaleExtent([0.05, 4])  // ✅ Permettre plus de dézoom (0.05 au lieu de 0.1)
+          .scaleExtent([0.1, 3])  // 🔥 Limites ajustées: min 0.1 (vue large) max 3 (zoom détail)
           .on("zoom", handleZoom)
       );
 
-    // ✅ Appliquer un zoom initial pour avoir une vue d'ensemble confortable
-    // Zoom à 100% pour voir tout le graphe compact au démarrage
-    const initialScale = 1.0;
+    // 🔥 Zoom initial ADAPTATIF basé sur les dimensions réelles
+    // Pour un grand écran, on zoom moins ; pour un petit écran, on zoom plus
+    const viewportArea = width * height;
+    const referenceArea = 3000 * 2400; // Référence basée sur nos dimensions optimales
+    const initialScale = Math.max(0.3, Math.min(1.0, Math.sqrt(referenceArea / viewportArea)));
+    
+    console.log(`🔍 Initial zoom scale: ${initialScale.toFixed(2)} (viewport: ${width}x${height})`);
+    
     const initialTransform = d3.zoomIdentity
       .translate(0, 0)
       .scale(initialScale);
@@ -552,6 +560,10 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
       return;
     }
 
+    // 🔥 RÉCUPÉRER LES DIMENSIONS DYNAMIQUES DU CONTENEUR
+    const { width, height } = getGraphDimensions();
+    console.log(`📐 UpdateGraph with dimensions: ${width}x${height}`);
+
     // 🔥 RÉCUPÉRER LES PARAMÈTRES DU CUSTOMIZER
     const customizerSettings = window.archiGraphSettings || {};
     console.log('🎨 Using Customizer settings:', customizerSettings);
@@ -589,14 +601,14 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
     // 🔥 TAILLE PAR DÉFAUT OPTIMISÉE pour meilleure visibilité
     const defaultNodeSize = parseInt(customizerSettings.defaultNodeSize) || 200; // ✅ Augmenté à 200px pour nœuds énormes et bien visibles
     
-    // 🔥 UTILISER LES FORCES DE SIMULATION DU CUSTOMIZER (OPTIMISÉES POUR PROXIMITÉ MAXIMALE)
-    const chargeStrength = parseFloat(customizerSettings.chargeStrength) || -10; // ✅ Réduit à -10 pour rapprocher ÉNORMÉMENT les nœuds
-    const chargeDistance = parseFloat(customizerSettings.chargeDistance) || 60; // ✅ Réduit à 60 pour rapprocher ÉNORMÉMENT les nœuds
-    const collisionPadding = parseFloat(customizerSettings.collisionPadding) || 8; // ✅ Réduit à 8 pour permettre proximité maximale
-    const centerStrength = parseFloat(customizerSettings.centerStrength) || 0.4; // ✅ Augmenté à 0.4 pour centrage ultra-fort
-    const alphaValue = parseFloat(customizerSettings.simulationAlpha) || 0.3; // 🔥 FIX: Démarrage plus doux
+    // 🔥 UTILISER LES FORCES DE SIMULATION DU CUSTOMIZER (OPTIMISÉES POUR ÉQUILIBRE NATUREL)
+    const chargeStrength = parseFloat(customizerSettings.chargeStrength) || -100; // 🔥 Augmenté à -100 pour respiration naturelle
+    const chargeDistance = parseFloat(customizerSettings.chargeDistance) || 300; // 🔥 Augmenté à 300 pour influence plus large
+    const collisionPadding = parseFloat(customizerSettings.collisionPadding) || 15; // 🔥 Augmenté à 15 pour espacement correct
+    const centerStrength = parseFloat(customizerSettings.centerStrength) || 0.05; // 🔥 RÉDUIT à 0.05 pour éviter confinement (était 0.4)
+    const alphaValue = parseFloat(customizerSettings.simulationAlpha) || 0.5; // 🔥 Démarrage modéré
     const alphaDecayValue = parseFloat(customizerSettings.simulationAlphaDecay) || 0.02;
-    const velocityDecayValue = parseFloat(customizerSettings.simulationVelocityDecay) || 0.4; // 🔥 FIX: Plus de friction pour limiter les mouvements
+    const velocityDecayValue = parseFloat(customizerSettings.simulationVelocityDecay) || 0.5; // 🔥 Friction équilibrée
 
     console.log('🎯 Graph Physics Settings:', {
       chargeStrength,
@@ -610,21 +622,18 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
       velocityDecayValue
     });
 
-    // Créer la simulation de force
-    const simulation = d3
-      .forceSimulation(filteredArticles)
-      .force("charge", d3.forceManyBody().strength(chargeStrength).distanceMax(chargeDistance))
-      .force("center", d3.forceCenter(width / 2, height / 2).strength(centerStrength)) // 🔥 FIX: Force de centrage ajustable
-      .force(
-        "collision",
-        d3
-          .forceCollide()
-          .radius((d) => (d.node_size || defaultNodeSize) / 2 + collisionPadding)
-          .strength(1.0) // 🔥 FIX: Force de collision MAXIMALE (1.0) pour garantir l'espacement
-          .iterations(6) // 🔥 FIX: 6 itérations pour collision ultra-précise sans chevauchements
-      )
-      // 🔥 FIX: Boundary désactivée pour permettre un espace libre
-      // .force("boundary", forceBoundary(width, height, 80))
+    // 🔥 UTILISER createForceSimulation avec toutes les forces avancées (clustering, islands, boundary)
+    const simulation = createForceSimulation(filteredArticles, categories, {
+      width: width,
+      height: height,
+      nodeSpacing: collisionPadding * 2, // Convertir collisionPadding en nodeSpacing
+      clusterStrength: clusterStrength,
+      linkStrength: 0.08,
+      organicMode: true, // Activer le mode island pour tous les clusters
+    });
+
+    // 🔥 Appliquer les paramètres personnalisés du Customizer sur la simulation
+    simulation
       .alpha(alphaValue)
       .alphaDecay(alphaDecayValue)
       .velocityDecay(velocityDecayValue);

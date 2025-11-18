@@ -1,0 +1,267 @@
+/* ================================================
+   CATEGORY POLYGONS VISUAL ENHANCEMENTS
+   Improved styling for category island backgrounds
+   ================================================ */
+
+/* Base polygon styling */
+.category-polygon,
+polygon.category-area {
+  -webkit-transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  -moz-transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  -o-transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0.12;
+  stroke-width: 2;
+  stroke-opacity: 0.3;
+  /* Effet de texture subtil */
+  fill: url(#category-pattern);
+  /* Ombre portée légère */
+  -webkit-filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.08));
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.08));
+}
+
+/* Hover state for polygons */
+.category-polygon:hover,
+polygon.category-area:hover {
+  opacity: 0.25;
+  stroke-width: 3;
+  stroke-opacity: 0.5;
+  -webkit-filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.15));
+  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.15));
+  -webkit-transform: scale(1.02);
+  -moz-transform: scale(1.02);
+  -ms-transform: scale(1.02);
+  transform: scale(1.02);
+}
+
+/* Active category polygon */
+.category-polygon.active,
+polygon.category-area.active {
+  opacity: 0.2;
+  stroke-width: 2.5;
+  stroke-opacity: 0.6;
+  -webkit-animation: polygon-glow 3s ease-in-out infinite;
+  -moz-animation: polygon-glow 3s ease-in-out infinite;
+  animation: polygon-glow 3s ease-in-out infinite;
+}
+
+@-webkit-keyframes polygon-glow {
+  0%, 100% {
+    -webkit-filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.08));
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.08));
+  }
+  50% {
+    -webkit-filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.15)) drop-shadow(0 0 20px currentColor);
+    filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.15)) drop-shadow(0 0 20px currentColor);
+  }
+}
+
+@-moz-keyframes polygon-glow {
+  0%, 100% {
+    -moz-filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.08));
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.08));
+  }
+  50% {
+    -moz-filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.15)) drop-shadow(0 0 20px currentColor);
+    filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.15)) drop-shadow(0 0 20px currentColor);
+  }
+}
+
+@keyframes polygon-glow {
+  0%, 100% {
+    -webkit-filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.08));
+    -moz-filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.08));
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.08));
+  }
+  50% {
+    -webkit-filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.15)) drop-shadow(0 0 20px currentColor);
+    -moz-filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.15)) drop-shadow(0 0 20px currentColor);
+    filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.15)) drop-shadow(0 0 20px currentColor);
+  }
+}
+
+/* Gradient overlays for depth */
+.category-polygon-overlay {
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+}
+
+/* Different styles for different category types */
+.category-polygon.type-project {
+  fill: url(#project-gradient);
+}
+
+.category-polygon.type-illustration {
+  fill: url(#illustration-gradient);
+}
+
+.category-polygon.type-article {
+  fill: url(#article-gradient);
+}
+
+/* Pulsing animation for featured categories */
+.category-polygon.featured {
+  -webkit-animation: polygon-pulse 4s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  -moz-animation: polygon-pulse 4s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  animation: polygon-pulse 4s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+@-webkit-keyframes polygon-pulse {
+  0%, 100% {
+    opacity: 0.12;
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.22;
+    -webkit-transform: scale(1.03);
+    transform: scale(1.03);
+  }
+}
+
+@-moz-keyframes polygon-pulse {
+  0%, 100% {
+    opacity: 0.12;
+    -moz-transform: scale(1);
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.22;
+    -moz-transform: scale(1.03);
+    transform: scale(1.03);
+  }
+}
+
+@keyframes polygon-pulse {
+  0%, 100% {
+    opacity: 0.12;
+    -webkit-transform: scale(1);
+    -moz-transform: scale(1);
+    -ms-transform: scale(1);
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.22;
+    -webkit-transform: scale(1.03);
+    -moz-transform: scale(1.03);
+    -ms-transform: scale(1.03);
+    transform: scale(1.03);
+  }
+}
+
+/* Border enhancement */
+.category-polygon-border {
+  stroke-dasharray: 5, 3;
+  stroke-opacity: 0.2;
+  -webkit-animation: border-flow 20s linear infinite;
+  -moz-animation: border-flow 20s linear infinite;
+  animation: border-flow 20s linear infinite;
+}
+
+@-webkit-keyframes border-flow {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: 100;
+  }
+}
+
+@-moz-keyframes border-flow {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: 100;
+  }
+}
+
+@keyframes border-flow {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: 100;
+  }
+}
+
+/* Loading state */
+.category-polygon.loading {
+  opacity: 0.05;
+  -webkit-animation: polygon-loading 2s ease-in-out infinite;
+  -moz-animation: polygon-loading 2s ease-in-out infinite;
+  animation: polygon-loading 2s ease-in-out infinite;
+}
+
+@-webkit-keyframes polygon-loading {
+  0%, 100% {
+    opacity: 0.05;
+  }
+  50% {
+    opacity: 0.15;
+  }
+}
+
+@-moz-keyframes polygon-loading {
+  0%, 100% {
+    opacity: 0.05;
+  }
+  50% {
+    opacity: 0.15;
+  }
+}
+
+@keyframes polygon-loading {
+  0%, 100% {
+    opacity: 0.05;
+  }
+  50% {
+    opacity: 0.15;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .category-polygon,
+  polygon.category-area {
+    opacity: 0.08;
+    stroke-width: 1.5;
+  }
+  
+  .category-polygon:hover,
+  polygon.category-area:hover {
+    opacity: 0.15;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .category-polygon,
+  polygon.category-area {
+    opacity: 0.3;
+    stroke-width: 3;
+    stroke-opacity: 0.8;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .category-polygon,
+  polygon.category-area,
+  .category-polygon-border {
+    animation: none !important;
+    transition: opacity 0.3s ease !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  .category-polygon,
+  polygon.category-area {
+    opacity: 0.2;
+    fill: none;
+    stroke-width: 2;
+    stroke-opacity: 0.8;
+  }
+}

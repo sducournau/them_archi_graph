@@ -20,11 +20,11 @@
  * @param {number} height - Canvas height for boundary checking
  * @returns {boolean} True if any node moved
  */
-export const applyRepulsionForces = (nodes, velocitiesRef, config = {}, width = 1200, height = 800) => {
+export const applyRepulsionForces = (nodes, velocitiesRef, config = {}, width = 16000, height = 11200) => {
   const {
-    repulsionForce = 2000,
-    minDistance = 120,
-    damping = 0.8
+    repulsionForce = 3000, // 🔥 Augmenté pour grand espace
+    minDistance = 200, // 🔥 Augmenté pour meilleur espacement
+    damping = 0.85 // 🔥 Légèrement augmenté
   } = config;
 
   let hasMovement = false;
@@ -89,22 +89,63 @@ export const applyRepulsionForces = (nodes, velocitiesRef, config = {}, width = 
 };
 
 /**
- * Initialize node positions if they don't have any
+ * Initialize node positions with intelligent clustering by category
+ * Les nœuds de la même catégorie sont positionnés plus proches
  * Places nodes randomly near the center
  * 
  * @param {Array} nodes - Array of node objects
  * @param {number} width - Canvas width
  * @param {number} height - Canvas height
- * @param {number} spread - Random spread distance (default: 100)
+ * @param {number} spread - Random spread distance (default: 150 pour équilibre optimal)
  */
-export const initializeNodePositions = (nodes, width, height, spread = 100) => {
+export const initializeNodePositions = (nodes, width, height, spread = 150) => {
+  // 🔥 NOUVELLE LOGIQUE: Grouper par catégorie pour positionnement intelligent
+  const categoryGroups = {};
+  
+  // Regrouper les nœuds par catégorie principale
   nodes.forEach((node) => {
-    if (node.x === undefined || node.x === null) {
-      node.x = width / 2 + (Math.random() - 0.5) * spread;
+    // Utiliser la première catégorie ou "uncategorized"
+    const categoryId = node.categories && node.categories.length > 0 
+      ? node.categories[0].id 
+      : 'uncategorized';
+    
+    if (!categoryGroups[categoryId]) {
+      categoryGroups[categoryId] = [];
     }
-    if (node.y === undefined || node.y === null) {
-      node.y = height / 2 + (Math.random() - 0.5) * spread;
-    }
+    categoryGroups[categoryId].push(node);
+  });
+  
+  // Calculer le nombre de groupes et créer une disposition en cercle
+  const categoryIds = Object.keys(categoryGroups);
+  const numCategories = categoryIds.length;
+  const centerX = width / 2;
+  const centerY = height / 2;
+  
+  // Rayon du cercle principal (distance du centre)
+  // Équilibre entre visibilité et compacité
+  const mainRadius = Math.min(width, height) * 0.22; // 🔥 Ajusté à 0.22 pour meilleur équilibre
+  
+  categoryIds.forEach((categoryId, index) => {
+    const categoryNodes = categoryGroups[categoryId];
+    
+    // Position du centre de ce groupe (disposition circulaire)
+    const angle = (index / numCategories) * 2 * Math.PI;
+    const groupCenterX = centerX + mainRadius * Math.cos(angle);
+    const groupCenterY = centerY + mainRadius * Math.sin(angle);
+    
+    // 🔥 Spread équilibré pour les nœuds d'un même groupe
+    const groupSpread = spread * 0.5; // 50% du spread global pour bonne visibilité
+    
+    // Positionner chaque nœud du groupe autour du centre du groupe
+    categoryNodes.forEach((node) => {
+      if (node.x === undefined || node.x === null) {
+        // Position aléatoire autour du centre du groupe
+        node.x = groupCenterX + (Math.random() - 0.5) * groupSpread;
+      }
+      if (node.y === undefined || node.y === null) {
+        node.y = groupCenterY + (Math.random() - 0.5) * groupSpread;
+      }
+    });
   });
 };
 

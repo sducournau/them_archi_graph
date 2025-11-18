@@ -261,8 +261,9 @@ export const validateArticleData = (articles) => {
     }
 
     // Valeurs par défaut pour les paramètres de base
-    article.node_size = article.node_size || 80;
-    article.node_color = article.node_color || "#3498db";
+    const settings = window.archiGraphSettings || {};
+    article.node_size = article.node_size || settings.defaultNodeSize || 80;
+    article.node_color = article.node_color || settings.defaultNodeColor || "#3498db";
     article.priority_level = article.priority_level || "normal";
 
     // Valeurs par défaut pour les paramètres avancés

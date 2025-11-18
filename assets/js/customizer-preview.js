@@ -642,5 +642,250 @@
         return palettes[paletteName] || palettes['default'];
     }
     
+    // ========================================
+    // 🔥 VISUAL EFFECTS (NEW 2.0.0)
+    // ========================================
+    
+    /**
+     * 🎯 PRESET HANDLER - Apply complete preset when user selects one
+     */
+    wp.customize('archi_effects_preset', function(value) {
+        value.bind(function(newval) {
+            if (newval === 'custom') return; // Don't override custom settings
+            
+            var presets = {
+                none: {
+                    archi_active_node_glow_enabled: false,
+                    archi_node_shadow_enabled: false,
+                    archi_node_pulse_enabled: false,
+                    archi_particles_enabled: false,
+                    archi_ambient_glow_enabled: false,
+                    archi_hover_scale: 1.0,
+                    archi_hover_brightness: 1.0,
+                },
+                subtle: {
+                    archi_active_node_glow_enabled: true,
+                    archi_active_node_glow_intensity: 15,
+                    archi_active_node_glow_opacity: 0.5,
+                    archi_node_shadow_enabled: true,
+                    archi_node_shadow_blur: 4,
+                    archi_node_shadow_opacity: 0.2,
+                    archi_node_pulse_enabled: false,
+                    archi_particles_enabled: true,
+                    archi_particles_count: 10,
+                    archi_particles_opacity: 0.08,
+                    archi_particles_speed: 20,
+                    archi_ambient_glow_enabled: true,
+                    archi_ambient_glow_opacity: 0.15,
+                    archi_ambient_glow_duration: 10,
+                    archi_hover_scale: 1.1,
+                    archi_hover_transition_duration: 400,
+                    archi_hover_brightness: 1.08,
+                    archi_active_node_scale: 1.3,
+                },
+                normal: {
+                    archi_active_node_glow_enabled: true,
+                    archi_active_node_glow_intensity: 25,
+                    archi_active_node_glow_opacity: 0.8,
+                    archi_node_shadow_enabled: true,
+                    archi_node_shadow_blur: 6,
+                    archi_node_shadow_opacity: 0.3,
+                    archi_node_pulse_enabled: true,
+                    archi_node_pulse_duration: 2500,
+                    archi_node_pulse_intensity: 0.85,
+                    archi_particles_enabled: true,
+                    archi_particles_count: 20,
+                    archi_particles_opacity: 0.15,
+                    archi_particles_speed: 15,
+                    archi_ambient_glow_enabled: true,
+                    archi_ambient_glow_opacity: 0.3,
+                    archi_ambient_glow_duration: 8,
+                    archi_hover_scale: 1.2,
+                    archi_hover_transition_duration: 300,
+                    archi_hover_brightness: 1.15,
+                    archi_active_node_scale: 1.5,
+                    archi_active_node_glow_animation: 'pulse',
+                },
+                intense: {
+                    archi_active_node_glow_enabled: true,
+                    archi_active_node_glow_intensity: 40,
+                    archi_active_node_glow_opacity: 1.0,
+                    archi_node_shadow_enabled: true,
+                    archi_node_shadow_blur: 12,
+                    archi_node_shadow_opacity: 0.5,
+                    archi_node_pulse_enabled: true,
+                    archi_node_pulse_duration: 1500,
+                    archi_node_pulse_intensity: 0.7,
+                    archi_particles_enabled: true,
+                    archi_particles_count: 40,
+                    archi_particles_opacity: 0.25,
+                    archi_particles_speed: 10,
+                    archi_ambient_glow_enabled: true,
+                    archi_ambient_glow_opacity: 0.5,
+                    archi_ambient_glow_duration: 5,
+                    archi_hover_scale: 1.35,
+                    archi_hover_transition_duration: 200,
+                    archi_hover_brightness: 1.3,
+                    archi_active_node_scale: 1.8,
+                    archi_active_node_glow_animation: 'breathe',
+                },
+            };
+            
+            var presetValues = presets[newval];
+            if (!presetValues) return;
+            
+            // Apply all preset values to controls
+            Object.entries(presetValues).forEach(function(entry) {
+                var key = entry[0];
+                var val = entry[1];
+                var control = wp.customize.control(key);
+                if (control) {
+                    control.setting.set(val);
+                }
+            });
+        });
+    });
+    
+    /**
+     * 🎨 CSS VARIABLES LIVE UPDATES
+     */
+    
+    // Active Node Glow
+    wp.customize('archi_active_node_glow_intensity', function(value) {
+        value.bind(function(newval) {
+            document.documentElement.style.setProperty('--archi-active-glow-intensity', newval + 'px');
+        });
+    });
+    
+    wp.customize('archi_active_node_glow_opacity', function(value) {
+        value.bind(function(newval) {
+            document.documentElement.style.setProperty('--archi-active-glow-opacity', newval);
+        });
+    });
+    
+    // Shadows
+    wp.customize('archi_node_shadow_blur', function(value) {
+        value.bind(function(newval) {
+            document.documentElement.style.setProperty('--archi-shadow-blur', newval + 'px');
+        });
+    });
+    
+    wp.customize('archi_node_shadow_opacity', function(value) {
+        value.bind(function(newval) {
+            document.documentElement.style.setProperty('--archi-shadow-opacity', newval);
+        });
+    });
+    
+    // Pulse
+    wp.customize('archi_node_pulse_duration', function(value) {
+        value.bind(function(newval) {
+            document.documentElement.style.setProperty('--archi-pulse-duration', newval + 'ms');
+        });
+    });
+    
+    wp.customize('archi_node_pulse_intensity', function(value) {
+        value.bind(function(newval) {
+            document.documentElement.style.setProperty('--archi-pulse-intensity', newval);
+        });
+    });
+    
+    // Particles
+    wp.customize('archi_particles_opacity', function(value) {
+        value.bind(function(newval) {
+            document.documentElement.style.setProperty('--archi-particles-opacity', newval);
+        });
+    });
+    
+    wp.customize('archi_particles_speed', function(value) {
+        value.bind(function(newval) {
+            document.documentElement.style.setProperty('--archi-particles-speed', newval + 's');
+        });
+    });
+    
+    wp.customize('archi_particles_count', function(value) {
+        value.bind(function(newval) {
+            // Particles count requires React component update
+            if (window.location.pathname === '/' || window.location.pathname.includes('home')) {
+                wp.customize.previewer.refresh();
+            }
+        });
+    });
+    
+    // Ambient Glow
+    wp.customize('archi_ambient_glow_opacity', function(value) {
+        value.bind(function(newval) {
+            document.documentElement.style.setProperty('--archi-ambient-glow-opacity', newval);
+        });
+    });
+    
+    wp.customize('archi_ambient_glow_duration', function(value) {
+        value.bind(function(newval) {
+            document.documentElement.style.setProperty('--archi-ambient-glow-duration', newval + 's');
+        });
+    });
+    
+    // Hover Effects
+    wp.customize('archi_hover_scale', function(value) {
+        value.bind(function(newval) {
+            document.documentElement.style.setProperty('--archi-hover-scale', newval);
+        });
+    });
+    
+    wp.customize('archi_hover_transition_duration', function(value) {
+        value.bind(function(newval) {
+            document.documentElement.style.setProperty('--archi-hover-transition', newval + 'ms');
+        });
+    });
+    
+    wp.customize('archi_hover_brightness', function(value) {
+        value.bind(function(newval) {
+            document.documentElement.style.setProperty('--archi-hover-brightness', newval);
+        });
+    });
+    
+    // Active Node
+    wp.customize('archi_active_node_scale', function(value) {
+        value.bind(function(newval) {
+            document.documentElement.style.setProperty('--archi-active-scale', newval);
+            // Also update graph settings for D3
+            if (typeof window.updateGraphSettings === 'function') {
+                window.updateGraphSettings({ activeNodeScale: parseFloat(newval) });
+            }
+        });
+    });
+    
+    wp.customize('archi_active_node_glow_animation', function(value) {
+        value.bind(function(newval) {
+            document.documentElement.style.setProperty('--archi-active-animation', newval);
+        });
+    });
+    
+    /**
+     * 🔄 ENABLED/DISABLED TOGGLES
+     * These require React re-render so we refresh the preview
+     */
+    var toggleSettings = [
+        'archi_active_node_glow_enabled',
+        'archi_node_shadow_enabled',
+        'archi_node_pulse_enabled',
+        'archi_particles_enabled',
+        'archi_ambient_glow_enabled',
+    ];
+    
+    toggleSettings.forEach(function(setting) {
+        wp.customize(setting, function(value) {
+            value.bind(function(newval) {
+                // Update CSS variable
+                var varName = '--' + setting.replace(/_/g, '-');
+                document.documentElement.style.setProperty(varName, newval ? '1' : '0');
+                
+                // Refresh preview for React components
+                if (window.location.pathname === '/' || window.location.pathname.includes('home')) {
+                    wp.customize.previewer.refresh();
+                }
+            });
+        });
+    });
+    
 })(jQuery);
 

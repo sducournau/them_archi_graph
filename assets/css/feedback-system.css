@@ -42,7 +42,7 @@
    SECTION FEEDBACK COMMUNE
    ========================================================================== */
 
-.unified-feedback-section {
+.archi-feedback-section {
     max-width: 1200px;
     margin: var(--unified-spacing-lg) auto;
     padding: 0 var(--unified-spacing);
@@ -52,7 +52,7 @@
    TITRES DE SECTION
    ========================================================================== */
 
-.unified-section-title {
+.archi-feedback-title {
     font-size: 2rem;
     font-weight: 700;
     color: var(--unified-text);
@@ -64,8 +64,8 @@
     gap: 0.5rem;
 }
 
-.unified-section-title .comment-icon,
-.unified-section-title .icon {
+.archi-feedback-title .comment-icon,
+.archi-feedback-title .icon {
     font-size: 1.75rem;
 }
 
@@ -74,7 +74,7 @@
    Style identique aux articles similaires (3 colonnes)
    ========================================================================== */
 
-.unified-feedback-grid {
+.archi-feedback-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 30px;
@@ -86,7 +86,7 @@
    Style identique aux articles similaires
    ========================================================================== */
 
-.unified-feedback-card {
+.archi-feedback-card {
     background: #fff;
     border-radius: 12px;
     overflow: hidden;
@@ -97,18 +97,18 @@
     position: relative;
 }
 
-.unified-feedback-card:hover {
+.archi-feedback-card:hover {
     transform: translateY(-8px);
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
 }
 
 /* Carte guestbook - bordure verte en bas */
-.guestbook-entry-card.unified-feedback-card {
+.guestbook-entry-card.archi-feedback-card {
     border-bottom: 4px solid var(--guestbook-primary);
 }
 
 /* Carte commentaire - bordure turquoise en bas */
-.comment-item.unified-feedback-card {
+.comment-item.archi-feedback-card {
     border-bottom: 4px solid var(--comment-primary);
 }
 
@@ -129,7 +129,7 @@
    AVATAR UNIFIÉ
    ========================================================================== */
 
-.unified-author-avatar {
+.archi-feedback-avatar {
     width: 60px;
     height: 60px;
     min-width: 60px;
@@ -147,8 +147,8 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.unified-author-avatar img,
-.unified-author-avatar .avatar-circle {
+.archi-feedback-avatar img,
+.archi-feedback-avatar .avatar-circle {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -156,12 +156,12 @@
 }
 
 /* Avatar pour les commentaires approuvés */
-.comment-item .unified-author-avatar {
+.comment-item .archi-feedback-avatar {
     background: linear-gradient(135deg, var(--comment-primary), var(--comment-hover));
 }
 
 /* Avatar pour le livre d'or */
-.guestbook-entry-card .unified-author-avatar {
+.guestbook-entry-card .archi-feedback-avatar {
     background: linear-gradient(135deg, var(--guestbook-primary), var(--guestbook-hover));
 }
 
@@ -169,7 +169,7 @@
    MÉTA INFORMATIONS
    ========================================================================== */
 
-.unified-meta-info {
+.archi-feedback-meta {
     flex: 1;
     min-width: 0; /* Pour le text-overflow */
 }
@@ -246,7 +246,7 @@
    CONTENU
    ========================================================================== */
 
-.unified-content-area {
+.archi-feedback-content {
     line-height: 1.7;
     color: var(--unified-text);
     padding: 20px;
@@ -254,11 +254,11 @@
     word-wrap: break-word;
 }
 
-.unified-content-area p {
+.archi-feedback-content p {
     margin-bottom: 0.75rem;
 }
 
-.unified-content-area p:last-child {
+.archi-feedback-content p:last-child {
     margin-bottom: 0;
 }
 
@@ -266,7 +266,7 @@
    ACTIONS (Boutons Répondre, Modifier, etc.)
    ========================================================================== */
 
-.unified-action-buttons {
+.archi-feedback-actions {
     display: flex;
     gap: var(--unified-spacing);
     padding: 0 20px 20px;
@@ -275,8 +275,8 @@
     flex-wrap: wrap;
 }
 
-.unified-action-buttons a,
-.unified-action-buttons button {
+.archi-feedback-actions a,
+.archi-feedback-actions button {
     color: var(--comment-primary);
     text-decoration: none;
     font-size: 0.875rem;
@@ -291,12 +291,12 @@
     padding: 0;
 }
 
-.unified-action-buttons a:hover,
-.unified-action-buttons button:hover {
+.archi-feedback-actions a:hover,
+.archi-feedback-actions button:hover {
     color: var(--guestbook-primary);
 }
 
-.unified-action-buttons .icon {
+.archi-feedback-actions .icon {
     font-size: 1rem;
 }
 
@@ -304,14 +304,14 @@
    FORMULAIRE UNIFIÉ
    ========================================================================== */
 
-.unified-comment-form {
+.archi-feedback-form {
     background: var(--unified-bg);
     border-radius: var(--unified-radius);
     padding: var(--unified-spacing-lg);
     margin-top: var(--unified-spacing-lg);
 }
 
-.unified-comment-form h3 {
+.archi-feedback-form h3 {
     font-size: 1.5rem;
     margin-bottom: var(--unified-spacing);
     color: var(--unified-text);
@@ -321,17 +321,17 @@
 }
 
 /* Champs de formulaire */
-.unified-comment-form label {
+.archi-feedback-form label {
     display: block;
     font-weight: 600;
     margin-bottom: 0.5rem;
     color: var(--unified-text);
 }
 
-.unified-comment-form input[type="text"],
-.unified-comment-form input[type="email"],
-.unified-comment-form input[type="url"],
-.unified-comment-form textarea {
+.archi-feedback-form input[type="text"],
+.archi-feedback-form input[type="email"],
+.archi-feedback-form input[type="url"],
+.archi-feedback-form textarea {
     width: 100%;
     padding: 0.75rem;
     border: 1px solid var(--unified-border);
@@ -342,14 +342,14 @@
     background: white;
 }
 
-.unified-comment-form input:focus,
-.unified-comment-form textarea:focus {
+.archi-feedback-form input:focus,
+.archi-feedback-form textarea:focus {
     outline: none;
     border-color: var(--comment-primary);
     box-shadow: 0 0 0 3px rgba(22, 160, 133, 0.1);
 }
 
-.unified-comment-form textarea {
+.archi-feedback-form textarea {
     resize: vertical;
     min-height: 120px;
 }
@@ -382,7 +382,7 @@
 }
 
 @media (min-width: 768px) {
-    .unified-comment-form .form-row {
+    .archi-feedback-form .form-row {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: var(--unified-spacing);
@@ -393,7 +393,7 @@
    BOUTON SUBMIT UNIFIÉ
    ========================================================================== */
 
-.unified-submit {
+.archi-feedback-submit {
     background: linear-gradient(135deg, var(--comment-primary), var(--guestbook-primary));
     color: white;
     padding: 0.75rem 2rem;
@@ -408,12 +408,12 @@
     gap: 0.5rem;
 }
 
-.unified-submit:hover {
+.archi-feedback-submit:hover {
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(22, 160, 133, 0.3);
 }
 
-.unified-submit:active {
+.archi-feedback-submit:active {
     transform: translateY(0);
 }
 
@@ -449,18 +449,18 @@
     padding: 0;
 }
 
-.children .unified-feedback-card {
+.children .archi-feedback-card {
     background: var(--unified-bg);
     border-left: 3px solid var(--comment-primary);
 }
 
-.depth-2 .unified-feedback-card {
+.depth-2 .archi-feedback-card {
     background: #f1f3f5;
 }
 
-.depth-3 .unified-feedback-card,
-.depth-4 .unified-feedback-card,
-.depth-5 .unified-feedback-card {
+.depth-3 .archi-feedback-card,
+.depth-4 .archi-feedback-card,
+.depth-5 .archi-feedback-card {
     background: #e9ecef;
 }
 
@@ -468,7 +468,7 @@
    PAGINATION UNIFIÉE
    ========================================================================== */
 
-.unified-pagination {
+.archi-feedback-pagination {
     display: flex;
     justify-content: center;
     gap: 0.5rem;
@@ -476,8 +476,8 @@
     flex-wrap: wrap;
 }
 
-.unified-pagination a,
-.unified-pagination span {
+.archi-feedback-pagination a,
+.archi-feedback-pagination span {
     padding: 0.5rem 1rem;
     border: 1px solid var(--unified-border);
     border-radius: 4px;
@@ -488,13 +488,13 @@
     text-align: center;
 }
 
-.unified-pagination a:hover {
+.archi-feedback-pagination a:hover {
     background: var(--comment-primary);
     border-color: var(--comment-primary);
     color: white;
 }
 
-.unified-pagination .current {
+.archi-feedback-pagination .current {
     background: var(--comment-primary);
     border-color: var(--comment-primary);
     color: white;
@@ -513,7 +513,7 @@
    MESSAGES INFO
    ========================================================================== */
 
-.unified-info-message {
+.archi-feedback-info-message {
     background: var(--unified-bg);
     border-left: 4px solid var(--comment-primary);
     padding: var(--unified-spacing);
@@ -524,7 +524,7 @@
     color: var(--unified-text);
 }
 
-.unified-info-message .icon {
+.archi-feedback-info-message .icon {
     font-size: 1.5rem;
     flex-shrink: 0;
 }
@@ -567,13 +567,13 @@
     border: 2px solid var(--guestbook-primary);
 }
 
-.bypostauthor .unified-author-avatar {
+.bypostauthor .archi-feedback-avatar {
     background: linear-gradient(135deg, #f39c12, #e74c3c);
 }
 
 /* Pingback/trackback */
-.pingback .unified-feedback-card,
-.trackback .unified-feedback-card {
+.pingback .archi-feedback-card,
+.trackback .archi-feedback-card {
     background: var(--unified-bg);
     border-left-color: #95a5a6;
 }
@@ -584,17 +584,17 @@
 
 @media (max-width: 768px) {
     /* Grille - 2 colonnes sur tablette (comme articles similaires) */
-    .unified-feedback-grid {
+    .archi-feedback-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 20px;
     }
     
-    .unified-feedback-section {
+    .archi-feedback-section {
         padding: 0 1rem;
         margin: 1.5rem auto;
     }
     
-    .unified-section-title {
+    .archi-feedback-title {
         font-size: 1.5rem;
         margin-bottom: var(--unified-spacing);
     }
@@ -603,7 +603,7 @@
         margin-left: 1rem;
     }
     
-    .unified-author-avatar {
+    .archi-feedback-avatar {
         width: 50px;
         height: 50px;
         min-width: 50px;
@@ -611,7 +611,7 @@
         font-size: 1.25rem;
     }
     
-    .unified-comment-form {
+    .archi-feedback-form {
         padding: var(--unified-spacing);
     }
     
@@ -621,7 +621,7 @@
         align-items: flex-start;
     }
     
-    .unified-action-buttons {
+    .archi-feedback-actions {
         flex-direction: column;
         gap: var(--unified-spacing-sm);
     }
@@ -629,16 +629,16 @@
 
 @media (max-width: 480px) {
     /* Grille - 1 colonne sur mobile (comme articles similaires) */
-    .unified-feedback-grid {
+    .archi-feedback-grid {
         grid-template-columns: 1fr;
         gap: 20px;
     }
     
-    .unified-section-title {
+    .archi-feedback-title {
         font-size: 1.25rem;
     }
     
-    .unified-author-avatar {
+    .archi-feedback-avatar {
         width: 40px;
         height: 40px;
         min-width: 40px;
@@ -671,10 +671,10 @@
         --unified-shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.6);
     }
     
-    .unified-comment-form input[type="text"],
-    .unified-comment-form input[type="email"],
-    .unified-comment-form input[type="url"],
-    .unified-comment-form textarea {
+    .archi-feedback-form input[type="text"],
+    .archi-feedback-form input[type="email"],
+    .archi-feedback-form input[type="url"],
+    .archi-feedback-form textarea {
         background: #2c3e50;
         color: #ecf0f1;
         border-color: #4a5f7f;
@@ -696,7 +696,7 @@
     }
 }
 
-.unified-feedback-card {
+.archi-feedback-card {
     animation: fadeIn 0.3s ease;
 }
 
@@ -705,14 +705,14 @@
    ========================================================================== */
 
 @media print {
-    .unified-action-buttons,
-    .unified-comment-form,
-    .unified-pagination,
+    .archi-feedback-actions,
+    .archi-feedback-form,
+    .archi-feedback-pagination,
     .cancel-comment-reply {
         display: none !important;
     }
     
-    .unified-feedback-card {
+    .archi-feedback-card {
         box-shadow: none;
         border: 1px solid #ddd;
         page-break-inside: avoid;

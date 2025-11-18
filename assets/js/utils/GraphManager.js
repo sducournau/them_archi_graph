@@ -24,8 +24,8 @@ import {
 class GraphManager {
   constructor(containerId, options = {}) {
     this.containerId = containerId;
-    this.width = options.width || 1200;
-    this.height = options.height || 800;
+    this.width = options.width || 8000; // 🔥 Espace raisonnable (réduit de 20000)
+    this.height = options.height || 6000; // 🔥 Ratio 4:3 (réduit de 14000)
 
     // Get configuration from WordPress (simplified and centralized)
     const globalConfig = window.archiGraph?.config || {};
@@ -34,7 +34,7 @@ class GraphManager {
     this.config = {
       // Visual
       nodeColor: options.nodeColor || globalConfig.nodeColor || '#3498db',
-      nodeSize: options.nodeSize || globalConfig.nodeSize || 30,
+      nodeSize: options.nodeSize || globalConfig.nodeSize || 80, // 🔥 FIX: Changed from 30 to 80 for consistency with PHP config
       nodeOpacity: options.nodeOpacity || globalConfig.nodeOpacity || 1.0,
       showLabels: options.showLabels ?? globalConfig.showLabels ?? true,
       showPolygons: options.showPolygons ?? globalConfig.showPolygons ?? true,
@@ -198,23 +198,43 @@ class GraphManager {
    */
   createSVG() {
     const container = d3.select(`#${this.containerId}`);
+    const containerNode = container.node();
 
+    // 🔥 IMPORTANT: Le SVG doit s'adapter au conteneur, pas avoir une taille fixe
     this.svg = container
       .append("svg")
-      .attr("width", this.width)
-      .attr("height", this.height)
-      .attr("viewBox", [0, 0, this.width, this.height])
-      .style("max-width", "100%")
-      .style("height", "auto");
+      .attr("viewBox", [0, 0, this.width, this.height]) // ViewBox sur l'espace virtuel
+      .attr("preserveAspectRatio", "xMidYMid meet")
+      .style("width", "100%")  // 🔥 Prend toute la largeur du conteneur
+      .style("height", "100%") // 🔥 Prend toute la hauteur du conteneur
+      .style("display", "block");
 
-    // Ajouter zoom et pan
+    // Ajouter zoom et pan avec plage étendue
     const zoom = d3.zoom()
-      .scaleExtent([0.5, 3])
+      .scaleExtent([0.1, 4]) // Zoom de 10% à 400%
       .on("zoom", (event) => {
         this.svg.selectAll("g").attr("transform", event.transform);
       });
 
     this.svg.call(zoom);
+    
+    // 🔥 Zoom initial optimisé pour voir l'ensemble du graphique dispersé
+    const containerWidth = containerNode.clientWidth;
+    const containerHeight = containerNode.clientHeight;
+    
+    const initialScale = 0.5; // 🔥 FIX: Reduced from 0.7 to 0.5 to show more area and dispersion
+    
+    // Calculer la translation pour centrer le graphique scalé dans le viewport
+    const scaledWidth = this.width * initialScale;
+    const scaledHeight = this.height * initialScale;
+    const translateX = (containerWidth - scaledWidth) / 2;
+    const translateY = (containerHeight - scaledHeight) / 2;
+    
+    const initialTransform = d3.zoomIdentity
+      .translate(translateX, translateY)
+      .scale(initialScale);
+    
+    this.svg.call(zoom.transform, initialTransform);
   }
 
   /**
@@ -700,12 +720,18 @@ class GraphManager {
           .attr("r", (d.node_size || 80) / 2 * scale)
           .style("opacity", 1);
 
-        // Effet de halo (intensité selon le preset)
-        const haloWidth = scale > 1.2 ? 4 : 3; // Plus fort pour Rich preset
-        halo.transition()
-          .duration(300)
-          .attr("stroke-width", haloWidth)
-          .attr("stroke-opacity", 0.5);
+        // Effet de halo (configurable via Customizer)
+        const settings = window.archiGraphSettings || {};
+        const haloEnabled = settings.nodeHaloEnabled !== undefined ? settings.nodeHaloEnabled : true;
+        const haloWidth = settings.nodeHaloWidth || 3;
+        const haloOpacity = settings.nodeHaloOpacity || 0.5;
+        
+        if (haloEnabled) {
+          halo.transition()
+            .duration(300)
+            .attr("stroke-width", haloWidth)
+            .attr("stroke-opacity", haloOpacity);
+        }
 
         // Animer le label
         text.transition()
@@ -1018,8 +1044,8 @@ import GraphManager from './utils/GraphManager.js';
 
 // Créer et initialiser le graphique
 const graph = new GraphManager('graph-container', {
-  width: 1200,
-  height: 800,
+  width: 8000,
+  height: 5600,
   animationType: 'bounce',
   animationDuration: 800,
   hoverEffect: true,

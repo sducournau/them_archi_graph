@@ -14,10 +14,10 @@ if (post_password_required()) {
 }
 ?>
 
-<div id="comments" class="comments-area unified-feedback-section">
+<div id="comments" class="comments-area archi-feedback-section">
     
     <?php if (have_comments()) : ?>
-        <h2 class="comments-title unified-section-title">
+        <h2 class="comments-title archi-feedback-title">
             <span class="comment-icon">💬</span>
             <?php
             $comment_count = get_comments_number();
@@ -39,7 +39,7 @@ if (post_password_required()) {
                 'style'       => 'li',
                 'short_ping'  => true,
                 'avatar_size' => 60,
-                'callback'    => 'archi_unified_comment_callback',
+                'callback'    => 'archi_comment_callback',
             ]);
             ?>
         </ol>
@@ -48,7 +48,7 @@ if (post_password_required()) {
         // Pagination des commentaires
         if (get_comment_pages_count() > 1 && get_option('page_comments')) :
             ?>
-            <nav class="comment-navigation unified-pagination" role="navigation">
+            <nav class="comment-navigation archi-feedback-pagination" role="navigation">
                 <h3 class="screen-reader-text"><?php _e('Navigation des commentaires', 'archi-graph'); ?></h3>
                 <div class="nav-links">
                     <?php
@@ -67,7 +67,7 @@ if (post_password_required()) {
     // Message si commentaires fermés mais il y en a
     if (!comments_open() && get_comments_number() && post_type_supports(get_post_type(), 'comments')) :
         ?>
-        <p class="no-comments unified-info-message">
+        <p class="no-comments archi-feedback-info-message">
             <span class="icon">ℹ️</span>
             <?php _e('Les commentaires sont fermés.', 'archi-graph'); ?>
         </p>
@@ -79,13 +79,13 @@ if (post_password_required()) {
         comment_form([
             'title_reply'          => __('Laisser un commentaire', 'archi-graph'),
             'title_reply_to'       => __('Répondre à %s', 'archi-graph'),
-            'title_reply_before'   => '<h3 id="reply-title" class="comment-reply-title unified-section-title"><span class="comment-icon">✍️</span>',
+            'title_reply_before'   => '<h3 id="reply-title" class="comment-reply-title archi-feedback-title"><span class="comment-icon">✍️</span>',
             'title_reply_after'    => '</h3>',
             'cancel_reply_before'  => '<span class="cancel-comment-reply">',
             'cancel_reply_after'   => '</span>',
             'cancel_reply_link'    => __('Annuler la réponse', 'archi-graph'),
-            'class_form'           => 'unified-comment-form comment-form',
-            'class_submit'         => 'submit-button unified-submit',
+            'class_form'           => 'archi-feedback-form comment-form',
+            'class_submit'         => 'submit-button archi-feedback-submit',
             'label_submit'         => __('Publier le commentaire', 'archi-graph'),
             'submit_button'        => '<button type="submit" id="%2$s" class="%3$s">%4$s</button>',
             

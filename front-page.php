@@ -197,8 +197,7 @@ body.admin-bar .header-trigger-zone {
 // Configuration initiale pour le graphique
 window.graphConfig = {
     containerId: 'graph-container',
-    width: window.innerWidth,
-    height: window.innerHeight,
+    // ⚠️ NE PAS définir width/height ici - React utilisera 8000×6000 par défaut
     apiEndpoint: '<?php echo esc_url(home_url('/wp-json/archi/v1/articles')); ?>',
     themeUrl: '<?php echo esc_url(get_template_directory_uri()); ?>',
     nonce: '<?php echo wp_create_nonce('wp_rest'); ?>',

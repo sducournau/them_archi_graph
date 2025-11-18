@@ -29,10 +29,11 @@ export const showNodeTooltip = (node, event, svgRef, transformRef, options = {})
   }
 
   // Determine color based on content type
-  const defaultProjectColor = options.islandColor || '#f39c12';
-  const defaultIllustrationColor = options.illustrationIslandColor || '#3498db';
+  const settings = window.archiGraphSettings || {};
+  const defaultProjectColor = settings.projectColor || options.islandColor || '#f39c12';
+  const defaultIllustrationColor = settings.illustrationColor || options.illustrationIslandColor || '#3498db';
   
-  let titleColor = '#3498db';
+  let titleColor = settings.defaultNodeColor || '#3498db';
   if (node.post_type === 'archi_project') {
     titleColor = defaultProjectColor;
   } else if (node.post_type === 'archi_illustration') {
@@ -146,10 +147,11 @@ export const showSideTitlePanel = (node, showLink = false, options = {}) => {
   titleElement.textContent = '';
   
   // Determine title color based on node category
-  const defaultProjectColor = options.islandColor || '#f39c12';
-  const defaultIllustrationColor = options.illustrationIslandColor || '#3498db';
+  const settings = window.archiGraphSettings || {};
+  const defaultProjectColor = settings.projectColor || options.islandColor || '#f39c12';
+  const defaultIllustrationColor = settings.illustrationColor || options.illustrationIslandColor || '#3498db';
   
-  let titleColor = '#3498db';
+  let titleColor = settings.defaultNodeColor || '#3498db';
   if (node.post_type === 'archi_project') {
     titleColor = defaultProjectColor;
   } else if (node.post_type === 'archi_illustration') {
@@ -221,8 +223,9 @@ export const hideSideTitlePanel = () => {
  * @returns {string} Hex color
  */
 export const getNodeColor = (node, options = {}) => {
-  const defaultProjectColor = options.islandColor || '#f39c12';
-  const defaultIllustrationColor = options.illustrationIslandColor || '#3498db';
+  const settings = window.archiGraphSettings || {};
+  const defaultProjectColor = settings.projectColor || options.islandColor || '#f39c12';
+  const defaultIllustrationColor = settings.illustrationColor || options.illustrationIslandColor || '#3498db';
   
   if (node.post_type === 'archi_project') {
     return defaultProjectColor;
@@ -232,5 +235,5 @@ export const getNodeColor = (node, options = {}) => {
     return node.categories[0].color;
   }
   
-  return '#3498db'; // Default fallback
+  return settings.defaultNodeColor || '#3498db'; // Default fallback from Customizer
 };

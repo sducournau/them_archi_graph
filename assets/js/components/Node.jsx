@@ -6,6 +6,15 @@ import React from "react";
  * Il sert de référence pour la structure des données
  */
 const Node = ({ data, position, isSelected, onHover, onClick }) => {
+  // Récupérer les settings depuis window.archiGraphSettings
+  const settings = window.archiGraphSettings || {};
+  const priorityFeaturedColor = settings.priorityFeaturedColor || '#e74c3c';
+  const priorityHighColor = settings.priorityHighColor || '#f39c12';
+  const priorityBadgeSize = settings.priorityBadgeSize || 8;
+  const priorityBadgeOffset = settings.priorityBadgeOffset || 5;
+  const priorityBadgeStrokeColor = settings.priorityBadgeStrokeColor || '#ffffff';
+  const priorityBadgeStrokeWidth = settings.priorityBadgeStrokeWidth || 2;
+  
   return (
     <g
       className="graph-node"
@@ -35,12 +44,12 @@ const Node = ({ data, position, isSelected, onHover, onClick }) => {
         data.priority_level === "high") && (
         <circle
           className="priority-badge"
-          r={8}
-          cx={(data.node_size || 80) / 2 - 5}
-          cy={-(data.node_size || 80) / 2 + 5}
-          fill={data.priority_level === "featured" ? "#e74c3c" : "#f39c12"}
-          stroke="#ffffff"
-          strokeWidth={2}
+          r={priorityBadgeSize}
+          cx={(data.node_size || 80) / 2 - priorityBadgeOffset}
+          cy={-(data.node_size || 80) / 2 + priorityBadgeOffset}
+          fill={data.priority_level === "featured" ? priorityFeaturedColor : priorityHighColor}
+          stroke={priorityBadgeStrokeColor}
+          strokeWidth={priorityBadgeStrokeWidth}
         />
       )}
 

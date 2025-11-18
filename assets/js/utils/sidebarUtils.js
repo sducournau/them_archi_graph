@@ -61,10 +61,11 @@ export function showInfoPanel(nodeData) {
   const categoriesContainer = document.getElementById("panel-categories");
   if (categoriesContainer && nodeData.categories) {
     categoriesContainer.innerHTML = "";
+    const settings = window.archiGraphSettings || {};
     nodeData.categories.forEach((cat) => {
       const span = document.createElement("span");
       span.className = "category-tag";
-      span.style.backgroundColor = cat.color || "#3498db";
+      span.style.backgroundColor = cat.color || settings.defaultNodeColor || "#3498db";
       span.textContent = cat.name || "";
       categoriesContainer.appendChild(span);
     });

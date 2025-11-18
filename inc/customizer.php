@@ -235,7 +235,7 @@ function archi_customize_register($wp_customize) {
     // Couleur nœud par défaut
     $wp_customize->add_setting('archi_default_node_color', [
         'default' => '#3498db',
-        'transport' => 'refresh',
+        'transport' => 'postMessage',
         'sanitize_callback' => 'sanitize_hex_color'
     ]);
     
@@ -374,12 +374,64 @@ function archi_customize_register($wp_customize) {
         ]
     ]);
     
+    // Activer l'effet halo au survol
+    $wp_customize->add_setting('archi_node_halo_enabled', [
+        'default' => true,
+        'transport' => 'refresh',
+        'sanitize_callback' => 'archi_sanitize_checkbox'
+    ]);
+    
+    $wp_customize->add_control('archi_node_halo_enabled', [
+        'label' => __('Effet halo au survol', 'archi-graph'),
+        'description' => __('Afficher un contour lumineux autour des nœuds au survol.', 'archi-graph'),
+        'section' => 'archi_graph_options',
+        'type' => 'checkbox'
+    ]);
+    
+    // Largeur du halo
+    $wp_customize->add_setting('archi_node_halo_width', [
+        'default' => 3,
+        'transport' => 'refresh',
+        'sanitize_callback' => 'absint'
+    ]);
+    
+    $wp_customize->add_control('archi_node_halo_width', [
+        'label' => __('Largeur du halo', 'archi-graph'),
+        'description' => __('Épaisseur du contour lumineux en pixels (1-8).', 'archi-graph'),
+        'section' => 'archi_graph_options',
+        'type' => 'range',
+        'input_attrs' => [
+            'min' => 1,
+            'max' => 8,
+            'step' => 1
+        ]
+    ]);
+    
+    // Opacité du halo
+    $wp_customize->add_setting('archi_node_halo_opacity', [
+        'default' => 0.5,
+        'transport' => 'refresh',
+        'sanitize_callback' => 'archi_sanitize_float'
+    ]);
+    
+    $wp_customize->add_control('archi_node_halo_opacity', [
+        'label' => __('Opacité du halo', 'archi-graph'),
+        'description' => __('Transparence du contour lumineux (0.0-1.0).', 'archi-graph'),
+        'section' => 'archi_graph_options',
+        'type' => 'range',
+        'input_attrs' => [
+            'min' => 0.0,
+            'max' => 1.0,
+            'step' => 0.1
+        ]
+    ]);
+    
     // --- LIENS ET CONNEXIONS ---
     
     // Couleur des liens
     $wp_customize->add_setting('archi_graph_link_color', [
         'default' => '#999999',
-        'transport' => 'refresh',
+        'transport' => 'postMessage',
         'sanitize_callback' => 'sanitize_hex_color'
     ]);
     
@@ -538,7 +590,7 @@ function archi_customize_register($wp_customize) {
     // Couleur des projets
     $wp_customize->add_setting('archi_project_color', [
         'default' => '#f39c12',
-        'transport' => 'refresh',
+        'transport' => 'postMessage',
         'sanitize_callback' => 'sanitize_hex_color'
     ]);
     
@@ -551,7 +603,7 @@ function archi_customize_register($wp_customize) {
     // Couleur des illustrations
     $wp_customize->add_setting('archi_illustration_color', [
         'default' => '#3498db',
-        'transport' => 'refresh',
+        'transport' => 'postMessage',
         'sanitize_callback' => 'sanitize_hex_color'
     ]);
     
@@ -564,7 +616,7 @@ function archi_customize_register($wp_customize) {
     // Couleur de la zone des pages
     $wp_customize->add_setting('archi_pages_zone_color', [
         'default' => '#9b59b6',
-        'transport' => 'refresh',
+        'transport' => 'postMessage',
         'sanitize_callback' => 'sanitize_hex_color'
     ]);
     
@@ -577,7 +629,7 @@ function archi_customize_register($wp_customize) {
     // Couleur des liens du livre d'or
     $wp_customize->add_setting('archi_guestbook_link_color', [
         'default' => '#2ecc71',
-        'transport' => 'refresh',
+        'transport' => 'postMessage',
         'sanitize_callback' => 'sanitize_hex_color'
     ]);
     
@@ -592,7 +644,7 @@ function archi_customize_register($wp_customize) {
     // Couleur du badge "Featured"
     $wp_customize->add_setting('archi_priority_featured_color', [
         'default' => '#e74c3c',
-        'transport' => 'refresh',
+        'transport' => 'postMessage',
         'sanitize_callback' => 'sanitize_hex_color'
     ]);
     
@@ -605,7 +657,7 @@ function archi_customize_register($wp_customize) {
     // Couleur du badge "High"
     $wp_customize->add_setting('archi_priority_high_color', [
         'default' => '#f39c12',
-        'transport' => 'refresh',
+        'transport' => 'postMessage',
         'sanitize_callback' => 'sanitize_hex_color'
     ]);
     
@@ -732,6 +784,411 @@ function archi_customize_register($wp_customize) {
             'min' => 0.0,
             'max' => 1.0,
             'step' => 0.05
+        ]
+    ]);
+    
+    // ========================================
+    // SECTION 3.5: EFFETS VISUELS DU GRAPHE
+    // ========================================
+    $wp_customize->add_section('archi_graph_effects', [
+        'title' => __('✨ Effets Visuels du Graphe', 'archi-graph'),
+        'description' => __('Personnalisez les effets visuels, animations et lueurs du graphique.', 'archi-graph'),
+        'priority' => 32,
+    ]);
+    
+    // --- PRESET D'EFFETS ---
+    $wp_customize->add_setting('archi_effects_preset', [
+        'default' => 'normal',
+        'transport' => 'postMessage',
+        'sanitize_callback' => 'sanitize_text_field'
+    ]);
+    
+    $wp_customize->add_control('archi_effects_preset', [
+        'label' => __('🎭 Preset d\'Effets', 'archi-graph'),
+        'description' => __('Appliquez un ensemble d\'effets prédéfinis (remplace les paramètres individuels).', 'archi-graph'),
+        'section' => 'archi_graph_effects',
+        'type' => 'select',
+        'choices' => [
+            'none' => __('Aucun effet', 'archi-graph'),
+            'subtle' => __('Subtil', 'archi-graph'),
+            'normal' => __('Normal (recommandé)', 'archi-graph'),
+            'intense' => __('Intense', 'archi-graph'),
+            'custom' => __('Personnalisé', 'archi-graph')
+        ]
+    ]);
+    
+    // --- LUEUR DES NŒUDS ACTIFS ---
+    $wp_customize->add_setting('archi_active_node_glow_enabled', [
+        'default' => true,
+        'transport' => 'postMessage',
+        'sanitize_callback' => 'archi_sanitize_checkbox'
+    ]);
+    
+    $wp_customize->add_control('archi_active_node_glow_enabled', [
+        'label' => __('💫 Lueur des Nœuds Actifs', 'archi-graph'),
+        'description' => __('Afficher une lueur autour des nœuds sélectionnés.', 'archi-graph'),
+        'section' => 'archi_graph_effects',
+        'type' => 'checkbox'
+    ]);
+    
+    // Intensité de la lueur
+    $wp_customize->add_setting('archi_active_node_glow_intensity', [
+        'default' => 25,
+        'transport' => 'postMessage',
+        'sanitize_callback' => 'absint'
+    ]);
+    
+    $wp_customize->add_control('archi_active_node_glow_intensity', [
+        'label' => __('Intensité de la Lueur', 'archi-graph'),
+        'description' => __('Rayon de diffusion de la lueur en pixels (10-50).', 'archi-graph'),
+        'section' => 'archi_graph_effects',
+        'type' => 'range',
+        'input_attrs' => [
+            'min' => 10,
+            'max' => 50,
+            'step' => 5
+        ]
+    ]);
+    
+    // Opacité de la lueur
+    $wp_customize->add_setting('archi_active_node_glow_opacity', [
+        'default' => 0.8,
+        'transport' => 'postMessage',
+        'sanitize_callback' => 'archi_sanitize_float'
+    ]);
+    
+    $wp_customize->add_control('archi_active_node_glow_opacity', [
+        'label' => __('Opacité de la Lueur', 'archi-graph'),
+        'description' => __('Transparence de l\'effet lumineux (0.0-1.0).', 'archi-graph'),
+        'section' => 'archi_graph_effects',
+        'type' => 'range',
+        'input_attrs' => [
+            'min' => 0.0,
+            'max' => 1.0,
+            'step' => 0.1
+        ]
+    ]);
+    
+    // --- OMBRES ---
+    $wp_customize->add_setting('archi_node_shadow_enabled', [
+        'default' => true,
+        'transport' => 'postMessage',
+        'sanitize_callback' => 'archi_sanitize_checkbox'
+    ]);
+    
+    $wp_customize->add_control('archi_node_shadow_enabled', [
+        'label' => __('🌑 Ombres des Nœuds', 'archi-graph'),
+        'description' => __('Afficher des ombres portées sous les nœuds.', 'archi-graph'),
+        'section' => 'archi_graph_effects',
+        'type' => 'checkbox'
+    ]);
+    
+    // Intensité de l'ombre
+    $wp_customize->add_setting('archi_node_shadow_blur', [
+        'default' => 6,
+        'transport' => 'postMessage',
+        'sanitize_callback' => 'absint'
+    ]);
+    
+    $wp_customize->add_control('archi_node_shadow_blur', [
+        'label' => __('Flou de l\'Ombre', 'archi-graph'),
+        'description' => __('Rayon de flou de l\'ombre en pixels (2-20).', 'archi-graph'),
+        'section' => 'archi_graph_effects',
+        'type' => 'range',
+        'input_attrs' => [
+            'min' => 2,
+            'max' => 20,
+            'step' => 2
+        ]
+    ]);
+    
+    // Opacité de l'ombre
+    $wp_customize->add_setting('archi_node_shadow_opacity', [
+        'default' => 0.3,
+        'transport' => 'postMessage',
+        'sanitize_callback' => 'archi_sanitize_float'
+    ]);
+    
+    $wp_customize->add_control('archi_node_shadow_opacity', [
+        'label' => __('Opacité de l\'Ombre', 'archi-graph'),
+        'description' => __('Intensité de l\'ombre (0.0-1.0).', 'archi-graph'),
+        'section' => 'archi_graph_effects',
+        'type' => 'range',
+        'input_attrs' => [
+            'min' => 0.0,
+            'max' => 1.0,
+            'step' => 0.1
+        ]
+    ]);
+    
+    // --- ANIMATION DE PULSATION ---
+    $wp_customize->add_setting('archi_node_pulse_enabled', [
+        'default' => true,
+        'transport' => 'postMessage',
+        'sanitize_callback' => 'archi_sanitize_checkbox'
+    ]);
+    
+    $wp_customize->add_control('archi_node_pulse_enabled', [
+        'label' => __('💓 Animation de Pulsation', 'archi-graph'),
+        'description' => __('Effet de pulsation sur les nœuds prioritaires.', 'archi-graph'),
+        'section' => 'archi_graph_effects',
+        'type' => 'checkbox'
+    ]);
+    
+    // Durée de la pulsation
+    $wp_customize->add_setting('archi_node_pulse_duration', [
+        'default' => 2500,
+        'transport' => 'postMessage',
+        'sanitize_callback' => 'absint'
+    ]);
+    
+    $wp_customize->add_control('archi_node_pulse_duration', [
+        'label' => __('Durée de la Pulsation', 'archi-graph'),
+        'description' => __('Temps du cycle en millisecondes (1000-5000).', 'archi-graph'),
+        'section' => 'archi_graph_effects',
+        'type' => 'range',
+        'input_attrs' => [
+            'min' => 1000,
+            'max' => 5000,
+            'step' => 500
+        ]
+    ]);
+    
+    // Intensité de la pulsation
+    $wp_customize->add_setting('archi_node_pulse_intensity', [
+        'default' => 0.85,
+        'transport' => 'postMessage',
+        'sanitize_callback' => 'archi_sanitize_float'
+    ]);
+    
+    $wp_customize->add_control('archi_node_pulse_intensity', [
+        'label' => __('Intensité de la Pulsation', 'archi-graph'),
+        'description' => __('Opacité minimale du cycle (0.5-1.0).', 'archi-graph'),
+        'section' => 'archi_graph_effects',
+        'type' => 'range',
+        'input_attrs' => [
+            'min' => 0.5,
+            'max' => 1.0,
+            'step' => 0.05
+        ]
+    ]);
+    
+    // --- PARTICULES FLOTTANTES ---
+    $wp_customize->add_setting('archi_particles_enabled', [
+        'default' => true,
+        'transport' => 'postMessage',
+        'sanitize_callback' => 'archi_sanitize_checkbox'
+    ]);
+    
+    $wp_customize->add_control('archi_particles_enabled', [
+        'label' => __('⭐ Particules Flottantes', 'archi-graph'),
+        'description' => __('Afficher des particules animées en arrière-plan.', 'archi-graph'),
+        'section' => 'archi_graph_effects',
+        'type' => 'checkbox'
+    ]);
+    
+    // Nombre de particules
+    $wp_customize->add_setting('archi_particles_count', [
+        'default' => 20,
+        'transport' => 'postMessage',
+        'sanitize_callback' => 'absint'
+    ]);
+    
+    $wp_customize->add_control('archi_particles_count', [
+        'label' => __('Nombre de Particules', 'archi-graph'),
+        'description' => __('Quantité de particules à afficher (10-50).', 'archi-graph'),
+        'section' => 'archi_graph_effects',
+        'type' => 'range',
+        'input_attrs' => [
+            'min' => 10,
+            'max' => 50,
+            'step' => 5
+        ]
+    ]);
+    
+    // Opacité des particules
+    $wp_customize->add_setting('archi_particles_opacity', [
+        'default' => 0.15,
+        'transport' => 'postMessage',
+        'sanitize_callback' => 'archi_sanitize_float'
+    ]);
+    
+    $wp_customize->add_control('archi_particles_opacity', [
+        'label' => __('Opacité des Particules', 'archi-graph'),
+        'description' => __('Transparence des particules (0.05-0.5).', 'archi-graph'),
+        'section' => 'archi_graph_effects',
+        'type' => 'range',
+        'input_attrs' => [
+            'min' => 0.05,
+            'max' => 0.5,
+            'step' => 0.05
+        ]
+    ]);
+    
+    // Vitesse des particules
+    $wp_customize->add_setting('archi_particles_speed', [
+        'default' => 15,
+        'transport' => 'postMessage',
+        'sanitize_callback' => 'absint'
+    ]);
+    
+    $wp_customize->add_control('archi_particles_speed', [
+        'label' => __('Vitesse des Particules', 'archi-graph'),
+        'description' => __('Durée du cycle d\'animation en secondes (10-30).', 'archi-graph'),
+        'section' => 'archi_graph_effects',
+        'type' => 'range',
+        'input_attrs' => [
+            'min' => 10,
+            'max' => 30,
+            'step' => 5
+        ]
+    ]);
+    
+    // --- LUEUR AMBIANTE ---
+    $wp_customize->add_setting('archi_ambient_glow_enabled', [
+        'default' => true,
+        'transport' => 'postMessage',
+        'sanitize_callback' => 'archi_sanitize_checkbox'
+    ]);
+    
+    $wp_customize->add_control('archi_ambient_glow_enabled', [
+        'label' => __('🌌 Lueur Ambiante', 'archi-graph'),
+        'description' => __('Effet de halo lumineux en arrière-plan.', 'archi-graph'),
+        'section' => 'archi_graph_effects',
+        'type' => 'checkbox'
+    ]);
+    
+    // Opacité de la lueur ambiante
+    $wp_customize->add_setting('archi_ambient_glow_opacity', [
+        'default' => 0.3,
+        'transport' => 'postMessage',
+        'sanitize_callback' => 'archi_sanitize_float'
+    ]);
+    
+    $wp_customize->add_control('archi_ambient_glow_opacity', [
+        'label' => __('Opacité de la Lueur Ambiante', 'archi-graph'),
+        'description' => __('Intensité du halo lumineux (0.1-0.6).', 'archi-graph'),
+        'section' => 'archi_graph_effects',
+        'type' => 'range',
+        'input_attrs' => [
+            'min' => 0.1,
+            'max' => 0.6,
+            'step' => 0.05
+        ]
+    ]);
+    
+    // Durée de pulsation de la lueur ambiante
+    $wp_customize->add_setting('archi_ambient_glow_duration', [
+        'default' => 8,
+        'transport' => 'postMessage',
+        'sanitize_callback' => 'absint'
+    ]);
+    
+    $wp_customize->add_control('archi_ambient_glow_duration', [
+        'label' => __('Durée de Pulsation', 'archi-graph'),
+        'description' => __('Vitesse du cycle de pulsation en secondes (4-15).', 'archi-graph'),
+        'section' => 'archi_graph_effects',
+        'type' => 'range',
+        'input_attrs' => [
+            'min' => 4,
+            'max' => 15,
+            'step' => 1
+        ]
+    ]);
+    
+    // --- EFFETS AU SURVOL ---
+    $wp_customize->add_setting('archi_hover_scale', [
+        'default' => 1.2,
+        'transport' => 'postMessage',
+        'sanitize_callback' => 'archi_sanitize_float'
+    ]);
+    
+    $wp_customize->add_control('archi_hover_scale', [
+        'label' => __('🔍 Agrandissement au Survol', 'archi-graph'),
+        'description' => __('Facteur d\'agrandissement des nœuds survolés (1.0-1.5).', 'archi-graph'),
+        'section' => 'archi_graph_effects',
+        'type' => 'range',
+        'input_attrs' => [
+            'min' => 1.0,
+            'max' => 1.5,
+            'step' => 0.1
+        ]
+    ]);
+    
+    // Durée de transition au survol
+    $wp_customize->add_setting('archi_hover_transition_duration', [
+        'default' => 300,
+        'transport' => 'postMessage',
+        'sanitize_callback' => 'absint'
+    ]);
+    
+    $wp_customize->add_control('archi_hover_transition_duration', [
+        'label' => __('Durée de Transition au Survol', 'archi-graph'),
+        'description' => __('Vitesse de l\'animation de survol en millisecondes (100-800).', 'archi-graph'),
+        'section' => 'archi_graph_effects',
+        'type' => 'range',
+        'input_attrs' => [
+            'min' => 100,
+            'max' => 800,
+            'step' => 100
+        ]
+    ]);
+    
+    // Luminosité au survol
+    $wp_customize->add_setting('archi_hover_brightness', [
+        'default' => 1.15,
+        'transport' => 'postMessage',
+        'sanitize_callback' => 'archi_sanitize_float'
+    ]);
+    
+    $wp_customize->add_control('archi_hover_brightness', [
+        'label' => __('Luminosité au Survol', 'archi-graph'),
+        'description' => __('Augmentation de luminosité au survol (1.0-1.5).', 'archi-graph'),
+        'section' => 'archi_graph_effects',
+        'type' => 'range',
+        'input_attrs' => [
+            'min' => 1.0,
+            'max' => 1.5,
+            'step' => 0.05
+        ]
+    ]);
+    
+    // --- NŒUD ACTIF (SÉLECTIONNÉ) ---
+    $wp_customize->add_setting('archi_active_node_scale', [
+        'default' => 1.5,
+        'transport' => 'postMessage',
+        'sanitize_callback' => 'archi_sanitize_float'
+    ]);
+    
+    $wp_customize->add_control('archi_active_node_scale', [
+        'label' => __('🎯 Agrandissement du Nœud Actif', 'archi-graph'),
+        'description' => __('Facteur d\'agrandissement du nœud sélectionné (1.2-2.0).', 'archi-graph'),
+        'section' => 'archi_graph_effects',
+        'type' => 'range',
+        'input_attrs' => [
+            'min' => 1.2,
+            'max' => 2.0,
+            'step' => 0.1
+        ]
+    ]);
+    
+    // Animation de lueur du nœud actif
+    $wp_customize->add_setting('archi_active_node_glow_animation', [
+        'default' => 'pulse',
+        'transport' => 'postMessage',
+        'sanitize_callback' => 'sanitize_text_field'
+    ]);
+    
+    $wp_customize->add_control('archi_active_node_glow_animation', [
+        'label' => __('Animation de Lueur du Nœud Actif', 'archi-graph'),
+        'description' => __('Type d\'animation pour la lueur du nœud sélectionné.', 'archi-graph'),
+        'section' => 'archi_graph_effects',
+        'type' => 'select',
+        'choices' => [
+            'none' => __('Aucune', 'archi-graph'),
+            'pulse' => __('Pulsation', 'archi-graph'),
+            'breathe' => __('Respiration', 'archi-graph'),
+            'glow' => __('Lueur continue', 'archi-graph')
         ]
     ]);
     
@@ -1272,3 +1729,130 @@ function archi_adjust_color_brightness($hex, $steps) {
                . str_pad(dechex($g), 2, '0', STR_PAD_LEFT)
                . str_pad(dechex($b), 2, '0', STR_PAD_LEFT);
 }
+
+/**
+ * 🔥 Apply visual effects preset values
+ * Fonction appelée quand l'utilisateur change le preset d'effets visuels
+ * 
+ * @param string $preset Preset name: 'none', 'subtle', 'normal', 'intense', 'custom'
+ * @return array Associative array of all settings values for the preset
+ * @since 2.0.0
+ */
+function archi_get_effects_preset_values($preset = 'normal') {
+    $presets = [
+        'none' => [
+            // Tout désactivé
+            'archi_active_node_glow_enabled' => false,
+            'archi_node_shadow_enabled' => false,
+            'archi_node_pulse_enabled' => false,
+            'archi_particles_enabled' => false,
+            'archi_ambient_glow_enabled' => false,
+            'archi_hover_scale' => 1.0,
+            'archi_hover_brightness' => 1.0,
+        ],
+        
+        'subtle' => [
+            // Effets très discrets
+            'archi_active_node_glow_enabled' => true,
+            'archi_active_node_glow_intensity' => 15,
+            'archi_active_node_glow_opacity' => 0.5,
+            'archi_node_shadow_enabled' => true,
+            'archi_node_shadow_blur' => 4,
+            'archi_node_shadow_opacity' => 0.2,
+            'archi_node_pulse_enabled' => false,
+            'archi_node_pulse_duration' => 3000,
+            'archi_node_pulse_intensity' => 0.9,
+            'archi_particles_enabled' => true,
+            'archi_particles_count' => 10,
+            'archi_particles_opacity' => 0.08,
+            'archi_particles_speed' => 20,
+            'archi_ambient_glow_enabled' => true,
+            'archi_ambient_glow_opacity' => 0.15,
+            'archi_ambient_glow_duration' => 10,
+            'archi_hover_scale' => 1.1,
+            'archi_hover_transition_duration' => 400,
+            'archi_hover_brightness' => 1.08,
+            'archi_active_node_scale' => 1.3,
+        ],
+        
+        'normal' => [
+            // Valeurs par défaut équilibrées (recommandé)
+            'archi_active_node_glow_enabled' => true,
+            'archi_active_node_glow_intensity' => 25,
+            'archi_active_node_glow_opacity' => 0.8,
+            'archi_node_shadow_enabled' => true,
+            'archi_node_shadow_blur' => 6,
+            'archi_node_shadow_opacity' => 0.3,
+            'archi_node_pulse_enabled' => true,
+            'archi_node_pulse_duration' => 2500,
+            'archi_node_pulse_intensity' => 0.85,
+            'archi_particles_enabled' => true,
+            'archi_particles_count' => 20,
+            'archi_particles_opacity' => 0.15,
+            'archi_particles_speed' => 15,
+            'archi_ambient_glow_enabled' => true,
+            'archi_ambient_glow_opacity' => 0.3,
+            'archi_ambient_glow_duration' => 8,
+            'archi_hover_scale' => 1.2,
+            'archi_hover_transition_duration' => 300,
+            'archi_hover_brightness' => 1.15,
+            'archi_active_node_scale' => 1.5,
+            'archi_active_node_glow_animation' => 'pulse',
+        ],
+        
+        'intense' => [
+            // Effets très marqués et dynamiques
+            'archi_active_node_glow_enabled' => true,
+            'archi_active_node_glow_intensity' => 40,
+            'archi_active_node_glow_opacity' => 1.0,
+            'archi_node_shadow_enabled' => true,
+            'archi_node_shadow_blur' => 12,
+            'archi_node_shadow_opacity' => 0.5,
+            'archi_node_pulse_enabled' => true,
+            'archi_node_pulse_duration' => 1500,
+            'archi_node_pulse_intensity' => 0.7,
+            'archi_particles_enabled' => true,
+            'archi_particles_count' => 40,
+            'archi_particles_opacity' => 0.25,
+            'archi_particles_speed' => 10,
+            'archi_ambient_glow_enabled' => true,
+            'archi_ambient_glow_opacity' => 0.5,
+            'archi_ambient_glow_duration' => 5,
+            'archi_hover_scale' => 1.35,
+            'archi_hover_transition_duration' => 200,
+            'archi_hover_brightness' => 1.3,
+            'archi_active_node_scale' => 1.8,
+            'archi_active_node_glow_animation' => 'breathe',
+        ],
+    ];
+    
+    return $presets[$preset] ?? $presets['normal'];
+}
+
+/**
+ * 🔥 Apply preset when user selects one in Customizer
+ * Hook appelé quand archi_effects_preset change
+ * 
+ * @param mixed $value New preset value
+ * @param WP_Customize_Setting $setting Setting object
+ * @return mixed Sanitized value
+ * @since 2.0.0
+ */
+function archi_apply_effects_preset_on_change($value, $setting) {
+    // Si c'est "custom", ne rien faire (l'utilisateur ajustera manuellement)
+    if ($value === 'custom') {
+        return $value;
+    }
+    
+    // Récupérer les valeurs du preset
+    $preset_values = archi_get_effects_preset_values($value);
+    
+    // Appliquer chaque valeur (seulement côté PHP, le JS gérera la preview)
+    foreach ($preset_values as $setting_id => $setting_value) {
+        set_theme_mod($setting_id, $setting_value);
+    }
+    
+    return $value;
+}
+// Note: Le hook sera ajouté dans le JS du Customizer pour la preview en temps réel
+

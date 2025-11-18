@@ -16,20 +16,20 @@
 .graph-container {
   background: #ffffff !important;
   width: 100% !important;
-  height: calc(100vh - 100px) !important;
-  min-height: 600px !important;
+  height: 100vh !important; /* 🔥 Pleine hauteur - pas de limite artificielle */
+  min-height: 800px !important; /* 🔥 Minimum augmenté pour mieux voir */
   position: relative !important;
   z-index: 1 !important;
   display: block !important;
 }
 
-/* Assurer que le graphe SVG est visible */
+/* Assurer que le graphe SVG est visible et peut utiliser tout l'espace */
 .graph-container > div {
   position: relative !important;
   z-index: 1 !important;
   width: 100% !important;
   height: 100% !important;
-  min-height: 600px !important;
+  min-height: 800px !important; /* 🔥 Minimum augmenté */
   display: block !important;
 }
 

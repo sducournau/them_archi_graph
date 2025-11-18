@@ -80,11 +80,20 @@ export function createVisualEffectFilters(svg) {
  * Apply continuous pulse effect to a node
  * @param {d3.Selection} imageElement - Node image element
  * @param {Object} nodeData - Node data with size and animation settings
+ * @param {Object} settings - Customizer settings
  */
-export function applyPulseEffect(imageElement, nodeData) {
+export function applyPulseEffect(imageElement, nodeData, settings = {}) {
   const baseSize = nodeData.node_size || 80;
-  const pulseSize = baseSize * 1.1;
-  const duration = nodeData.animation_duration || 1000;
+  
+  // 🔥 UTILISER LES PARAMÈTRES DU CUSTOMIZER
+  const pulseDuration = settings.nodePulseDuration ?? 2500;
+  const pulseIntensity = settings.nodePulseIntensity ?? 0.85;
+  
+  // Calcul de la taille de pulse basé sur l'intensité
+  // pulseIntensity = opacité minimale (0.5-1.0)
+  // On convertit en facteur de scale: intensity 0.85 → scale 1.08
+  const pulseScale = 1 + (1 - pulseIntensity) * 0.5;
+  const pulseSize = baseSize * pulseScale;
   
   // Cancel any existing transitions first
   imageElement.interrupt();
@@ -99,19 +108,21 @@ export function applyPulseEffect(imageElement, nodeData) {
   const pulse = () => {
     imageElement
       .transition()
-      .duration(duration)
+      .duration(pulseDuration)
       .ease(d3.easeSinInOut)
       .attr('width', pulseSize)
       .attr('height', pulseSize)
       .attr('x', -pulseSize / 2)
       .attr('y', -pulseSize / 2)
+      .style('opacity', pulseIntensity) // 🔥 Opacité minimale paramétrable
       .transition()
-      .duration(duration)
+      .duration(pulseDuration)
       .ease(d3.easeSinInOut)
       .attr('width', baseSize)
       .attr('height', baseSize)
       .attr('x', -baseSize / 2)
       .attr('y', -baseSize / 2)
+      .style('opacity', 1) // Retour à opacité maximale
       .on('end', pulse);
   };
   
@@ -121,9 +132,19 @@ export function applyPulseEffect(imageElement, nodeData) {
 /**
  * Apply glow effect to a node
  * @param {d3.Selection} imageElement - Node image element
+ * @param {Object} settings - Customizer settings
  */
-export function applyGlowEffect(imageElement) {
-  imageElement.style('filter', 'url(#node-glow) url(#drop-shadow)');
+export function applyGlowEffect(imageElement, settings = {}) {
+  // 🔥 UTILISER LES PARAMÈTRES DU CUSTOMIZER
+  const glowEnabled = settings.activeNodeGlowEnabled ?? true;
+  
+  if (glowEnabled) {
+    imageElement.style('filter', 'url(#glow)');
+  } else {
+    // Si désactivé, utiliser drop-shadow classique
+    const shadowEnabled = settings.nodeShadowEnabled ?? true;
+    imageElement.style('filter', shadowEnabled ? 'url(#drop-shadow)' : 'none');
+  }
 }
 
 /**
@@ -138,61 +159,53 @@ export function removeGlowEffect(imageElement) {
  * Apply all continuous effects to nodes based on their data
  * @param {d3.Selection} nodeElements - All node group elements
  * @param {d3.Selection} svg - SVG container for filters
+ * @param {Object} settings - Customizer settings
  */
 export function applyContinuousEffects(nodeElements, svg, settings = {}) {
   // Ensure filters exist
   createVisualEffectFilters(svg);
   
-  // 🔥 RÉCUPÉRER LES PARAMÈTRES DU CUSTOMIZER
+  // 🔥 RÉCUPÉRER LES NOUVEAUX PARAMÈTRES DU CUSTOMIZER
   const hoverEffect = settings.hoverEffect || 'highlight';
+  const nodePulseEnabled = settings.nodePulseEnabled ?? true;
+  const activeGlowEnabled = settings.activeNodeGlowEnabled ?? true;
   
   // ⚡ PERFORMANCE: Désactiver les animations continues par défaut
   // Elles consomment trop de ressources avec requestAnimationFrame
   // Utiliser uniquement des effets CSS ou au hover
   const enableContinuousAnimations = settings.enableContinuousAnimations === true;
   
-  if (!enableContinuousAnimations) {
-    // Seulement appliquer les filtres statiques (glow)
-    nodeElements.each(function(d) {
-      const node = d3.select(this);
-      const imageElement = node.select('.node-image');
-      
-      // Appliquer uniquement le glow statique si configuré
-      if (hoverEffect === 'glow') {
-        applyGlowEffect(imageElement);
-      }
-    });
+  if (!enableContinuousAnimations && !nodePulseEnabled && !activeGlowEnabled) {
+    // Aucun effet continu à appliquer
     return;
   }
   
-  // Code original seulement si animations continues activées
   nodeElements.each(function(d) {
     const node = d3.select(this);
     const imageElement = node.select('.node-image');
     
-    // 🔥 UTILISER hoverEffect DU CUSTOMIZER au lieu des propriétés individuelles
-    // Si hoverEffect est défini dans le Customizer, l'utiliser pour TOUS les nœuds
+    // 🔥 UTILISER LES NOUVEAUX PARAMÈTRES
     let pulseEnabled = false;
     let glowEnabled = false;
     
-    if (hoverEffect === 'pulse') {
+    if (nodePulseEnabled && hoverEffect === 'pulse') {
       pulseEnabled = true;
-    } else if (hoverEffect === 'glow') {
+    } else if (activeGlowEnabled && hoverEffect === 'glow') {
       glowEnabled = true;
     } else {
       // Fallback sur les propriétés individuelles du nœud
-      pulseEnabled = (d.hover?.pulse === true) || (d.pulse_effect === true || d.pulse_effect === '1');
-      glowEnabled = (d.hover?.glow === true) || (d.glow_effect === true || d.glow_effect === '1');
+      pulseEnabled = nodePulseEnabled && ((d.hover?.pulse === true) || (d.pulse_effect === true || d.pulse_effect === '1'));
+      glowEnabled = activeGlowEnabled && ((d.hover?.glow === true) || (d.glow_effect === true || d.glow_effect === '1'));
     }
     
     // Apply pulse effect if enabled
     if (pulseEnabled) {
-      applyPulseEffect(imageElement, d);
+      applyPulseEffect(imageElement, d, settings); // 🔥 Passer les settings
     }
     
     // Apply glow effect if enabled
     if (glowEnabled) {
-      applyGlowEffect(imageElement);
+      applyGlowEffect(imageElement, settings); // 🔥 Passer les settings
     }
   });
 }
@@ -202,15 +215,17 @@ export function applyContinuousEffects(nodeElements, svg, settings = {}) {
  * @param {d3.Selection} imageElement - Node image element
  * @param {Object} nodeData - Node data
  * @param {boolean} isHovering - Whether mouse is hovering
+ * @param {Object} settings - Customizer settings
  */
 export function applyHoverScale(imageElement, nodeData, isHovering, settings = {}) {
   const baseSize = nodeData.node_size || 80;
-  const hoverScale = nodeData.hover_scale || 1.15;
-  const animationLevel = nodeData.animation_level || 'normal';
   
-  // 🔥 UTILISER transitionSpeed et hoverEffect DU CUSTOMIZER
-  const transitionSpeed = settings.transitionSpeed || 200;
+  // 🔥 UTILISER LES NOUVEAUX PARAMÈTRES DU CUSTOMIZER
+  const hoverScale = settings.hoverScale ?? nodeData.hover_scale ?? 1.2;
+  const hoverTransitionDuration = settings.hoverTransitionDuration ?? 300;
+  const hoverBrightness = settings.hoverBrightness ?? 1.15;
   const hoverEffect = settings.hoverEffect || 'scale';
+  const animationLevel = nodeData.animation_level || 'normal';
   
   // Si hoverEffect n'est pas 'scale' ou 'highlight', ne pas appliquer le scale
   if (hoverEffect !== 'scale' && hoverEffect !== 'highlight' && hoverEffect !== 'none') {
@@ -218,14 +233,14 @@ export function applyHoverScale(imageElement, nodeData, isHovering, settings = {
     return;
   }
   
-  // Determine duration based on animation level, ou utiliser transitionSpeed du Customizer
-  let duration = transitionSpeed;
+  // Determine duration based on animation level
+  let duration = hoverTransitionDuration;
   if (animationLevel === 'none') {
     duration = 0;
   } else if (animationLevel === 'subtle') {
-    duration = transitionSpeed * 1.5;
+    duration = hoverTransitionDuration * 1.5;
   } else if (animationLevel === 'intense') {
-    duration = transitionSpeed * 0.75;
+    duration = hoverTransitionDuration * 0.75;
   }
   
   if (isHovering && hoverEffect !== 'none') {
@@ -236,7 +251,8 @@ export function applyHoverScale(imageElement, nodeData, isHovering, settings = {
       .attr('width', scaledSize)
       .attr('height', scaledSize)
       .attr('x', -scaledSize / 2)
-      .attr('y', -scaledSize / 2);
+      .attr('y', -scaledSize / 2)
+      .style('filter', `brightness(${hoverBrightness})`); // 🔥 NOUVEAU: luminosité paramétrable
   } else {
     imageElement
       .transition()
@@ -244,7 +260,8 @@ export function applyHoverScale(imageElement, nodeData, isHovering, settings = {
       .attr('width', baseSize)
       .attr('height', baseSize)
       .attr('x', -baseSize / 2)
-      .attr('y', -baseSize / 2);
+      .attr('y', -baseSize / 2)
+      .style('filter', settings?.nodeShadowEnabled ? 'url(#drop-shadow)' : 'none'); // 🔥 Reset au filtre par défaut
   }
 }
 

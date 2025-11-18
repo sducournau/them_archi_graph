@@ -404,16 +404,17 @@ function archi_get_post_type_label($post_type = null) {
  * @param array $args Arguments de wp_list_comments()
  * @param int $depth Profondeur du commentaire (threading)
  * @since 1.1.0
+ * @version 1.2.0 Renamed from archi_unified_comment_callback (removed forbidden prefix)
  */
-function archi_unified_comment_callback($comment, $args, $depth) {
+function archi_comment_callback($comment, $args, $depth) {
     $tag = ('div' === $args['style']) ? 'div' : 'li';
-    $comment_class = empty($args['has_children']) ? 'unified-feedback-card comment-item' : 'parent unified-feedback-card comment-item';
+    $comment_class = empty($args['has_children']) ? 'archi-feedback-card comment-item' : 'parent archi-feedback-card comment-item';
     ?>
     <<?php echo $tag; ?> id="comment-<?php comment_ID(); ?>" <?php comment_class($comment_class, $comment); ?>>
         <article id="div-comment-<?php comment_ID(); ?>" class="comment-body">
             
             <div class="comment-author-section">
-                <div class="unified-author-avatar">
+                <div class="archi-feedback-avatar">
                     <?php 
                     if ($args['avatar_size'] != 0) {
                         echo get_avatar($comment, $args['avatar_size'], '', '', ['class' => 'avatar-circle']); 
@@ -421,7 +422,7 @@ function archi_unified_comment_callback($comment, $args, $depth) {
                     ?>
                 </div>
                 
-                <div class="comment-meta unified-meta-info">
+                <div class="comment-meta archi-feedback-meta">
                     <div class="comment-author-name">
                         <?php
                         $comment_author = get_comment_author_link($comment);
@@ -455,11 +456,11 @@ function archi_unified_comment_callback($comment, $args, $depth) {
                 </div>
             </div>
 
-            <div class="comment-content unified-content-area">
+            <div class="comment-content archi-feedback-content">
                 <?php comment_text(); ?>
             </div>
 
-            <div class="comment-actions unified-action-buttons">
+            <div class="comment-actions archi-feedback-actions">
                 <?php
                 // Bouton répondre
                 $reply_link = get_comment_reply_link(array_merge($args, [

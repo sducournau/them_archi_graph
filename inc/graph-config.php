@@ -156,11 +156,13 @@ function archi_visual_get_config() {
         
         // PHYSICS SIMULATION
         'physics' => [
-            'charge_strength' => -200, // 🔥 FIX: Harmonized to -200 for optimal node spacing (reduced repulsion)
-            'link_distance' => 100, // 🔥 FIX: Harmonized to 100 for consistent node-to-node distance
-            'collision_radius' => 50, // 🔥 FIX: Harmonized to 50 (80px node / 2 + 10px padding)
-            'center_strength' => 0.05,
-            'cluster_strength' => 0.1,
+            'charge_strength' => -200, // 🔥 FIX: Reduced from -150 to -200 for natural dispersion
+            'charge_distance' => 400, // 🔥 FIX: Increased from 300 to 400 for wider influence
+            'link_distance' => 150, // 🔥 FIX: Increased from 120 to 150 for more breathing room
+            'collision_radius' => 55, // 🔥 FIX: Increased from 50 to 55 for better spacing
+            'collision_padding' => 20, // 🔥 FIX: Increased from 15 to 20px for more space
+            'center_strength' => 0.03, // 🔥 FIX: Reduced from 0.15 to 0.03 for free dispersion
+            'cluster_strength' => 0.15, // 🔥 FIX: Reduced from 0.25 to 0.15 for natural grouping
         ],
         
         // PERFORMANCE
@@ -202,6 +204,7 @@ function archi_visual_expand_config($config = null) {
         // Visual
         'nodeColor' => $config['visual']['default_node_color'],
         'nodeSize' => $config['visual']['default_node_size'],
+        'defaultNodeSize' => $config['visual']['default_node_size'], // 🔥 FIX: Alias pour compatibilité
         'nodeOpacity' => $config['visual']['node_opacity'],
         'showLabels' => $config['visual']['show_labels'],
         'showPolygons' => $config['visual']['show_polygons'],
@@ -243,10 +246,15 @@ function archi_visual_expand_config($config = null) {
         
         // Physics
         'chargeStrength' => $config['physics']['charge_strength'],
+        'chargeDistance' => $config['physics']['charge_distance'] ?? 400, // 🔥 FIX: Updated default to 400
         'linkDistance' => $config['physics']['link_distance'],
         'collisionRadius' => $config['physics']['collision_radius'],
+        'collisionPadding' => $config['physics']['collision_padding'] ?? 20, // 🔥 FIX: Updated to 20
         'centerStrength' => $config['physics']['center_strength'],
         'clusterStrength' => $config['physics']['cluster_strength'],
+        'simulationAlpha' => 0.3, // 🔥 FIX: Démarrage doux
+        'simulationAlphaDecay' => 0.02, // 🔥 FIX: Stabilisation rapide
+        'simulationVelocityDecay' => 0.4, // 🔥 FIX: Plus de friction
         
         // Performance
         'lazyLoad' => $config['performance']['enable_lazy_load'],

@@ -186,10 +186,11 @@ export const createCategoryPolygons = (nodes, categories, polygonColors = []) =>
     const path = smoothHull(hull, 0.5);
 
     // Utiliser la couleur native de la catégorie pour le polygone
+    const settings = window.archiGraphSettings || {};
     polygons.push({
       category,
       path,
-      color: category.color || "#3498db",
+      color: category.color || settings.defaultNodeColor || "#3498db",
       opacity: 0.2, // Opacité fixe et cohérente
       nodeCount: categoryNodes.length,
     });
@@ -223,6 +224,11 @@ export const drawPolygons = (svg, polygons, options = {}) => {
     .selectAll(`.${className}`)
     .data(polygons, (d) => d.category.id);
 
+  // Get settings from window
+  const settings = window.archiGraphSettings || {};
+  const strokeWidth = settings.clusterStrokeWidth || 3;
+  const strokeOpacity = settings.clusterStrokeOpacity || 0.35;
+
   // Enter
   const enter = polygonPaths
     .enter()
@@ -231,8 +237,8 @@ export const drawPolygons = (svg, polygons, options = {}) => {
     .attr("d", (d) => d.path)
     .attr("fill", (d) => d.color)
     .attr("stroke", (d) => d.color)
-    .attr("stroke-width", 2)
-    .attr("stroke-opacity", 0.5)
+    .attr("stroke-width", strokeWidth)
+    .attr("stroke-opacity", strokeOpacity)
     .attr("fill-opacity", 0);
 
   if (animated) {
@@ -270,7 +276,7 @@ export const drawPolygons = (svg, polygons, options = {}) => {
         .transition()
         .duration(200)
         .attr("fill-opacity", Math.min(d.opacity * 1.5, 0.5))
-        .attr("stroke-width", 3);
+        .attr("stroke-width", strokeWidth + 1);
 
       // Afficher le nom de la catégorie
       showPolygonTooltip(event, d);
@@ -280,7 +286,7 @@ export const drawPolygons = (svg, polygons, options = {}) => {
         .transition()
         .duration(200)
         .attr("fill-opacity", d.opacity)
-        .attr("stroke-width", 2);
+        .attr("stroke-width", strokeWidth);
 
       hidePolygonTooltip();
     });

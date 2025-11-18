@@ -87,14 +87,21 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
   // ⚡ PERFORMANCE: Debounce pour updateGraph
   const updateGraphTimeoutRef = useRef(null);
 
-  // ✅ Paramètres de physique TRÈS FAIBLES pour garder coordonnées dans viewBox 1200x800
-  const REPULSION_FORCE = 600;   // ✅ Force très faible pour éviter explosion
-  const MIN_DISTANCE = 100;      // ✅ Distance courte adaptée aux forces faibles
+  // ✅ Paramètres de physique AUGMENTÉS pour plus d'espace
+  const REPULSION_FORCE = 1200;   // ✅ Force doublée pour plus d'espacement
+  const MIN_DISTANCE = 150;       // ✅ Distance minimale augmentée
   const DAMPING = 0.8;
 
-  // Configuration
-  const width = config.width || 1200;
-  const height = config.height || 800;
+  // 🖥️ Dimensions FIXES de l'espace virtuel du graphe
+  // Le SVG s'adaptera avec width/height 100% mais le viewBox reste fixe
+  const getGraphDimensions = () => {
+    return {
+      width: config.width || 2800,   // ✅ Espace virtuel réduit à 2800px pour graphe ultra-compact
+      height: config.height || 2100  // ✅ Espace virtuel réduit à 2100px pour graphe ultra-compact
+    };
+  };
+  
+  const { width, height } = getGraphDimensions();
   const options = config.options || {};
 
   /**
@@ -114,6 +121,23 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
       }
     };
     document.addEventListener("click", handleDocumentClick);
+    
+    // 🖥️ Gestionnaire de redimensionnement de l'écran
+    let resizeTimeout;
+    const handleResize = () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        console.log("🔄 Screen resized, updating graph dimensions");
+        // Le viewBox reste FIXE même lors du resize - seul le SVG responsive change
+        if (svgRef.current && simulationRef.current) {
+          const { width: fixedWidth, height: fixedHeight } = getGraphDimensions();
+          d3.select(svgRef.current)
+            .attr("viewBox", `0 0 ${fixedWidth} ${fixedHeight}`);
+          console.log(`📐 ViewBox remains: ${fixedWidth}x${fixedHeight}`);
+        }
+      }, 300); // Debounce de 300ms
+    };
+    window.addEventListener("resize", handleResize);
 
     // Cleanup
     return () => {
@@ -124,6 +148,8 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
         cancelAnimationFrame(animationFrameRef.current);
       }
       document.removeEventListener("click", handleDocumentClick);
+      window.removeEventListener("resize", handleResize);
+      clearTimeout(resizeTimeout);
     };
   }, []);
 
@@ -309,6 +335,9 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
       .style("visibility", "visible")
       .style("opacity", "1");
 
+    // 🖥️ Log des dimensions calculées
+    console.log(`📐 Graph ViewBox: ${width}x${height} (Screen: ${window.innerWidth}x${window.innerHeight})`);
+
     // Container principal avec zoom
     const container = svg
       .attr("width", width)
@@ -316,7 +345,21 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
       .attr("viewBox", `0 0 ${width} ${height}`)
       .attr("preserveAspectRatio", "xMidYMid meet")
       .style("background", "#ffffff")
-      .call(d3.zoom().scaleExtent([0.1, 4]).on("zoom", handleZoom));
+      .call(
+        d3.zoom()
+          .scaleExtent([0.05, 4])  // ✅ Permettre plus de dézoom (0.05 au lieu de 0.1)
+          .on("zoom", handleZoom)
+      );
+
+    // ✅ Appliquer un zoom initial pour avoir une vue d'ensemble confortable
+    // Zoom à 100% pour voir tout le graphe compact au démarrage
+    const initialScale = 1.0;
+    const initialTransform = d3.zoomIdentity
+      .translate(0, 0)
+      .scale(initialScale);
+    
+    container.call(d3.zoom().transform, initialTransform);
+    transformRef.current = initialTransform;
 
     // Groupe principal pour les transformations
     const g = container.append("g").attr("class", "graph-group");
@@ -341,7 +384,11 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
     // Dégradés pour les nœuds
     const defs = svg.append("defs");
 
-    // Gradient pour le glow des nœuds
+    // Gradient pour le glow des nœuds (paramétrable via Customizer)
+    const glowSettings = customizerSettingsRef.current;
+    const glowOpacity = glowSettings?.activeNodeGlowOpacity ?? 0.8;
+    const glowIntensity = glowSettings?.activeNodeGlowIntensity ?? 25;
+    
     const nodeGlow = defs
       .append("radialGradient")
       .attr("id", "nodeGlow")
@@ -352,72 +399,89 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
     nodeGlow
       .append("stop")
       .attr("offset", "0%")
-      .attr("style", "stop-color: rgba(255, 255, 255, 0.3); stop-opacity: 1");
+      .attr("style", `stop-color: rgba(255, 255, 255, ${glowOpacity}); stop-opacity: 1`);
 
     nodeGlow
       .append("stop")
       .attr("offset", "100%")
       .attr("style", "stop-color: rgba(255, 255, 255, 0); stop-opacity: 1");
 
-    // Filtre d'ombre
-    const filter = defs
-      .append("filter")
-      .attr("id", "drop-shadow")
-      .attr("x", "-50%")
-      .attr("y", "-50%")
-      .attr("width", "200%")
-      .attr("height", "200%");
+    // Filtre d'ombre (paramétrable via Customizer)
+    const shadowEnabled = glowSettings?.nodeShadowEnabled ?? true;
+    const shadowBlur = glowSettings?.nodeShadowBlur ?? 6;
+    const shadowOpacity = glowSettings?.nodeShadowOpacity ?? 0.3;
+    
+    if (shadowEnabled) {
+      const filter = defs
+        .append("filter")
+        .attr("id", "drop-shadow")
+        .attr("x", "-50%")
+        .attr("y", "-50%")
+        .attr("width", "200%")
+        .attr("height", "200%");
 
-    filter
-      .append("feDropShadow")
-      .attr("dx", 2)
-      .attr("dy", 2)
-      .attr("stdDeviation", 3)
-      .attr("flood-color", "rgba(0,0,0,0.3)");
+      filter
+        .append("feDropShadow")
+        .attr("dx", 2)
+        .attr("dy", 2)
+        .attr("stdDeviation", shadowBlur)
+        .attr("flood-color", `rgba(0,0,0,${shadowOpacity})`);
+    }
 
-    // Filtre de glow
-    const glowFilter = defs
-      .append("filter")
-      .attr("id", "glow")
-      .attr("x", "-50%")
-      .attr("y", "-50%")
-      .attr("width", "200%")
-      .attr("height", "200%");
+    // Filtre de glow (paramétrable via Customizer)
+    const activeGlowEnabled = glowSettings?.activeNodeGlowEnabled ?? true;
+    
+    if (activeGlowEnabled) {
+      const glowFilter = defs
+        .append("filter")
+        .attr("id", "glow")
+        .attr("x", "-50%")
+        .attr("y", "-50%")
+        .attr("width", "200%")
+        .attr("height", "200%");
 
-    glowFilter
-      .append("feGaussianBlur")
-      .attr("stdDeviation", "3")
-      .attr("result", "coloredBlur");
+      glowFilter
+        .append("feGaussianBlur")
+        .attr("stdDeviation", Math.max(3, glowIntensity / 8)) // Conversion intensité → blur
+        .attr("result", "coloredBlur");
 
-    const glowMerge = glowFilter.append("feMerge");
-    glowMerge.append("feMergeNode").attr("in", "coloredBlur");
-    glowMerge.append("feMergeNode").attr("in", "SourceGraphic");
+      const glowMerge = glowFilter.append("feMerge");
+      glowMerge.append("feMergeNode").attr("in", "coloredBlur");
+      glowMerge.append("feMergeNode").attr("in", "SourceGraphic");
+    }
 
-    // Filtre de lueur pour les îles architecturales
-    const islandGlowFilter = defs
-      .append("filter")
-      .attr("id", "island-glow")
-      .attr("x", "-50%")
-      .attr("y", "-50%")
-      .attr("width", "200%")
-      .attr("height", "200%");
+    // Filtre de lueur pour les îles architecturales (paramétrable via Customizer)
+    const ambientGlowEnabled = glowSettings?.ambientGlowEnabled ?? true;
+    
+    if (ambientGlowEnabled) {
+      const islandGlowFilter = defs
+        .append("filter")
+        .attr("id", "island-glow")
+        .attr("x", "-50%")
+        .attr("y", "-50%")
+        .attr("width", "200%")
+        .attr("height", "200%");
 
-    islandGlowFilter
-      .append("feGaussianBlur")
-      .attr("stdDeviation", "5")
-      .attr("result", "islandBlur");
+      islandGlowFilter
+        .append("feGaussianBlur")
+        .attr("stdDeviation", "5")
+        .attr("result", "islandBlur");
 
-    const islandMerge = islandGlowFilter.append("feMerge");
-    islandMerge.append("feMergeNode").attr("in", "islandBlur");
-    islandMerge.append("feMergeNode").attr("in", "islandBlur");
-    islandMerge.append("feMergeNode").attr("in", "SourceGraphic");
+      const islandMerge = islandGlowFilter.append("feMerge");
+      islandMerge.append("feMergeNode").attr("in", "islandBlur");
+      islandMerge.append("feMergeNode").attr("in", "islandBlur");
+      islandMerge.append("feMergeNode").attr("in", "SourceGraphic");
+    }
 
-    // Créer les particules flottantes
-    createFloatingParticles();
+    // Créer les particules flottantes (si activées via Customizer)
+    const particlesEnabled = glowSettings?.particlesEnabled ?? true;
+    if (particlesEnabled) {
+      createFloatingParticles();
+    }
   };
 
   /**
-   * Créer les particules flottantes en arrière-plan
+   * Créer les particules flottantes en arrière-plan (paramétrable via Customizer)
    */
   const createFloatingParticles = () => {
     const container =
@@ -436,8 +500,14 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
     // Nettoyer les anciennes particules
     particlesContainer.innerHTML = "";
 
-    // Créer 20 particules
-    for (let i = 0; i < 20; i++) {
+    // Récupérer les paramètres du Customizer
+    const settings = customizerSettingsRef.current;
+    const particlesCount = settings?.particlesCount ?? 20;
+    const particlesOpacity = settings?.particlesOpacity ?? 0.15;
+    const particlesSpeed = settings?.particlesSpeed ?? 15;
+
+    // Créer N particules (paramétrable)
+    for (let i = 0; i < particlesCount; i++) {
       const particle = document.createElement("div");
       particle.className = "particle";
 
@@ -445,8 +515,9 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
       particle.style.width = `${size}px`;
       particle.style.height = `${size}px`;
       particle.style.left = `${Math.random() * 100}%`;
-      particle.style.animationDelay = `${Math.random() * 15}s`;
-      particle.style.animationDuration = `${15 + Math.random() * 10}s`;
+      particle.style.opacity = String(particlesOpacity);
+      particle.style.animationDelay = `${Math.random() * particlesSpeed}s`;
+      particle.style.animationDuration = `${particlesSpeed + Math.random() * 10}s`;
 
       particlesContainer.appendChild(particle);
     }
@@ -497,16 +568,9 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
     }
 
 
-    // Initialiser les positions si elles n'existent pas
-    filteredArticles.forEach((article) => {
-      if (article.x === undefined || article.x === null) {
-        article.x = width / 2 + (Math.random() - 0.5) * 100;
-      }
-      if (article.y === undefined || article.y === null) {
-        article.y = height / 2 + (Math.random() - 0.5) * 100;
-      }
-    });
-
+    // 🔥 Initialiser les positions avec clustering intelligent par catégorie
+    // Spread ajusté à 20 pour un graphe hyper-compact
+    initializeNodePositions(filteredArticles, width, height, 20);
 
     // Calculer les liens de proximité entre les articles
     const links = calculateNodeLinks(filteredArticles, {
@@ -519,46 +583,56 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
     // Vérifier si l'affichage des liens est activé
     const shouldShowLinks = options.showLinks !== false;
 
-    // 🔥 UTILISER LA FORCE DE REGROUPEMENT DU CUSTOMIZER
-    const clusterStrength = customizerSettings.clusterStrength !== undefined 
-      ? customizerSettings.clusterStrength 
-      : 0.1;
+    // 🔥 UTILISER LA FORCE DE REGROUPEMENT DU CUSTOMIZER (ULTRA-MAXIMALE)
+    const clusterStrength = parseFloat(customizerSettings.clusterStrength) || 0.8; // ✅ Augmenté à 0.8 pour regroupement hyper-serré
 
-    // 🔥 TAILLE PAR DÉFAUT OPTIMISÉE pour visibilité dans viewBox 1200x800
-    const defaultNodeSize = customizerSettings.defaultNodeSize || 80; // 🔥 FIX: Réduit de 120 à 80 pour meilleure densité
+    // 🔥 TAILLE PAR DÉFAUT OPTIMISÉE pour meilleure visibilité
+    const defaultNodeSize = parseInt(customizerSettings.defaultNodeSize) || 200; // ✅ Augmenté à 200px pour nœuds énormes et bien visibles
     
-    // 🔥 UTILISER LES FORCES DE SIMULATION DU CUSTOMIZER (VALEURS OPTIMISÉES)
-    const chargeStrength = customizerSettings.chargeStrength || -200; // 🔥 FIX: Réduit de -800 à -200 pour moins de répulsion
-    const chargeDistance = customizerSettings.chargeDistance || 300; // 🔥 FIX: Augmenté de 150 à 300 pour meilleure répartition
-    const collisionPadding = customizerSettings.collisionPadding || 10; // 🔥 FIX: Réduit de 15 à 10 pour nœuds 80px
-    const alphaValue = customizerSettings.simulationAlpha || 1;
-    const alphaDecayValue = customizerSettings.simulationAlphaDecay || 0.02;
-    const velocityDecayValue = customizerSettings.simulationVelocityDecay || 0.5; // 🔥 FIX: Augmenté de 0.3 à 0.5 pour stabilisation rapide
+    // 🔥 UTILISER LES FORCES DE SIMULATION DU CUSTOMIZER (OPTIMISÉES POUR PROXIMITÉ MAXIMALE)
+    const chargeStrength = parseFloat(customizerSettings.chargeStrength) || -10; // ✅ Réduit à -10 pour rapprocher ÉNORMÉMENT les nœuds
+    const chargeDistance = parseFloat(customizerSettings.chargeDistance) || 60; // ✅ Réduit à 60 pour rapprocher ÉNORMÉMENT les nœuds
+    const collisionPadding = parseFloat(customizerSettings.collisionPadding) || 8; // ✅ Réduit à 8 pour permettre proximité maximale
+    const centerStrength = parseFloat(customizerSettings.centerStrength) || 0.4; // ✅ Augmenté à 0.4 pour centrage ultra-fort
+    const alphaValue = parseFloat(customizerSettings.simulationAlpha) || 0.3; // 🔥 FIX: Démarrage plus doux
+    const alphaDecayValue = parseFloat(customizerSettings.simulationAlphaDecay) || 0.02;
+    const velocityDecayValue = parseFloat(customizerSettings.simulationVelocityDecay) || 0.4; // 🔥 FIX: Plus de friction pour limiter les mouvements
 
-    console.log('🎯 Cluster strength:', clusterStrength, 'Node size:', defaultNodeSize);
+    console.log('🎯 Graph Physics Settings:', {
+      chargeStrength,
+      chargeDistance,
+      collisionPadding,
+      centerStrength,
+      clusterStrength,
+      defaultNodeSize,
+      alphaValue,
+      alphaDecayValue,
+      velocityDecayValue
+    });
 
     // Créer la simulation de force
     const simulation = d3
       .forceSimulation(filteredArticles)
       .force("charge", d3.forceManyBody().strength(chargeStrength).distanceMax(chargeDistance))
-      .force("center", d3.forceCenter(width / 2, height / 2).strength(0.05)) // 🔥 FIX: Force de centrage douce
+      .force("center", d3.forceCenter(width / 2, height / 2).strength(centerStrength)) // 🔥 FIX: Force de centrage ajustable
       .force(
         "collision",
         d3
           .forceCollide()
           .radius((d) => (d.node_size || defaultNodeSize) / 2 + collisionPadding)
-          .strength(0.9) // 🔥 FIX: Force de collision très forte (0.9) pour éviter chevauchements
-          .iterations(3) // 🔥 FIX: 3 itérations pour collision précise
+          .strength(1.0) // 🔥 FIX: Force de collision MAXIMALE (1.0) pour garantir l'espacement
+          .iterations(6) // 🔥 FIX: 6 itérations pour collision ultra-précise sans chevauchements
       )
-      .force("boundary", forceBoundary(width, height, 80)) // 🔥 FIX: Padding augmenté à 80px pour plus de marge
+      // 🔥 FIX: Boundary désactivée pour permettre un espace libre
+      // .force("boundary", forceBoundary(width, height, 80))
       .alpha(alphaValue)
       .alphaDecay(alphaDecayValue)
       .velocityDecay(velocityDecayValue);
 
     // Ajouter la force des liens seulement si l'option est activée
     if (shouldShowLinks) {
-      const linkDistance = customizerSettings.linkDistance || 100; // 🔥 FIX: Reduced from 150 to bring nodes closer
-      const linkDistanceVariation = customizerSettings.linkDistanceVariation || 40; // 🔥 FIX: Reduced from 50
+      const linkDistance = customizerSettings.linkDistance || 25; // ✅ Réduit à 25 pour rapprocher MASSIVEMENT les nœuds liés
+      const linkDistanceVariation = customizerSettings.linkDistanceVariation || 8; // ✅ Réduit à 8
       const linkStrengthDivisor = customizerSettings.linkStrengthDivisor || 200;
       
       simulation.force(
@@ -591,11 +665,9 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
     // Créer/Mettre à jour les nœuds
     updateNodes(g, filteredArticles, simulation, customizerSettings);
 
-    // Les îles architecturales remplacent les clusters de catégories
-    // updateClusters(g, categories, filteredArticles);
-
-    // Îles architecturales par catégories activées
-    updateArchitecturalIslands(g, filteredArticles, customizerSettings);
+    // 🔥 FIX: Afficher les clusters de catégories (polygones)
+    // Les clusters permettent de voir les regroupements par catégorie
+    updateClusters(g, categories, filteredArticles, customizerSettings);
 
 
     // Démarrer la simulation
@@ -607,11 +679,11 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
         updateLinkPositions(g, links);
       }
       
-      // ⚡ PERFORMANCE FIX: Ne mettre à jour les îles architecturales que périodiquement
+      // ⚡ PERFORMANCE FIX: Ne mettre à jour les polygones que périodiquement
       // au lieu de chaque tick (60 fois par seconde !)
       // Mettre à jour uniquement tous les 30 ticks (~0.5 secondes) ou quand la simulation ralentit
       if (tickCount % 30 === 0 || simulation.alpha() < 0.1) {
-        updateArchitecturalIslands(g, filteredArticles, customizerSettings);
+        updateClusters(g, categories, filteredArticles, customizerSettings);
       }
       
       tickCount++;
@@ -786,10 +858,10 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
   const updateNodes = (container, data, simulation, settings = {}) => {
     const nodesGroup = container.select(".nodes");
 
-    // 🔥 UTILISER LES PARAMÈTRES DU CUSTOMIZER (taille optimisée pour viewBox 1200x800)
+    // 🔥 UTILISER LES PARAMÈTRES DU CUSTOMIZER (taille optimisée)
     const defaultNodeColor = settings.defaultNodeColor || '#3498db';
-    const defaultNodeSize = settings.defaultNodeSize || 80; // 🔥 FIX: 80px pour meilleure densité dans viewBox
-    const priorityBadgeSize = settings.priorityBadgeSize || 8;
+    const defaultNodeSize = settings.defaultNodeSize || 200; // ✅ 200px pour excellente visibilité
+    const priorityBadgeSize = settings.priorityBadgeSize || 10;
     const priorityBadgeOffset = settings.priorityBadgeOffset || 5;
     const priorityBadgeStrokeColor = settings.priorityBadgeStrokeColor || '#ffffff';
     const priorityBadgeStrokeWidth = settings.priorityBadgeStrokeWidth || 2;
@@ -835,7 +907,16 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
       const applySymbol = (selection, d) => {
         const size = d.node_size || defaultNodeSize;
         const radius = size / 2;
-        const color = d.node_color || defaultNodeColor;
+        
+        // 🎨 UTILISER LA COULEUR DE LA CATÉGORIE PRINCIPALE
+        let color = defaultNodeColor;
+        if (d.categories && d.categories.length > 0) {
+          // Utiliser la couleur de la première catégorie
+          color = d.categories[0].color || defaultNodeColor;
+        } else if (d.node_color) {
+          // Sinon, utiliser la couleur personnalisée du nœud
+          color = d.node_color;
+        }
         
         switch(symbolType) {
           case 'circle':
@@ -913,25 +994,25 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
       .append("image")
       .attr("class", "node-image")
       .attr("width", (d) => {
-        const size = d.node_size || defaultNodeSize || 80;
-        return isFinite(size) ? size : 80;
+        const size = d.node_size || defaultNodeSize || 200;
+        return isFinite(size) ? size : 200;
       })
       .attr("height", (d) => {
-        const size = d.node_size || defaultNodeSize || 80;
-        return isFinite(size) ? size : 80;
+        const size = d.node_size || defaultNodeSize || 200;
+        return isFinite(size) ? size : 200;
       })
       .attr("x", (d) => {
-        const size = d.node_size || defaultNodeSize || 80;
-        return isFinite(size) ? -(size / 2) : -40;
+        const size = d.node_size || defaultNodeSize || 200;
+        return isFinite(size) ? -(size / 2) : -100;
       })
       .attr("y", (d) => {
-        const size = d.node_size || defaultNodeSize || 80;
-        return isFinite(size) ? -(size / 2) : -40;
+        const size = d.node_size || defaultNodeSize || 200;
+        return isFinite(size) ? -(size / 2) : -100;
       })
       .attr("href", (d) => d.thumbnail || "")
       .attr("preserveAspectRatio", "xMidYMid meet")
-      .style("filter", "url(#drop-shadow)")
-      .style("transition", "all 0.3s ease")
+      .style("filter", settings?.nodeShadowEnabled ? "url(#drop-shadow)" : "none") // 🔥 Paramétrable
+      .style("transition", `all ${settings?.hoverTransitionDuration ?? 300}ms ease`) // 🔥 Durée paramétrable
       .style("overflow", "visible");
 
     // Badge de priorité (petit cercle en haut à droite de l'image)
@@ -999,16 +1080,16 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
     const clustersGroup = container.select(".clusters");
     
     // 🔥 UTILISER LES PARAMÈTRES DU CUSTOMIZER POUR LES CLUSTERS
-    const clusterFillOpacity = settings.clusterFillOpacity || 0.12;
+    const clusterFillOpacity = settings.clusterFillOpacity || 0.15; // 🔥 FIX: Augmenté pour meilleure visibilité
     const clusterStrokeWidth = settings.clusterStrokeWidth || 3;
-    const clusterStrokeOpacity = settings.clusterStrokeOpacity || 0.35;
-    const clusterLabelFontSize = settings.clusterLabelFontSize || 14;
+    const clusterStrokeOpacity = settings.clusterStrokeOpacity || 0.45; // 🔥 FIX: Augmenté pour contours plus visibles
+    const clusterLabelFontSize = settings.clusterLabelFontSize || 16; // 🔥 FIX: Labels plus grands
     const clusterLabelFontWeight = settings.clusterLabelFontWeight || 'bold';
-    const clusterCountFontSize = settings.clusterCountFontSize || 11;
-    const clusterCountOpacity = settings.clusterCountOpacity || 0.7;
+    const clusterCountFontSize = settings.clusterCountFontSize || 12; // 🔥 FIX: Compteurs plus grands
+    const clusterCountOpacity = settings.clusterCountOpacity || 0.8; // 🔥 FIX: Plus visible
     const clusterTextShadow = settings.clusterTextShadow || '2px 2px 4px rgba(255,255,255,0.8)';
-    const clusterHullPadding = settings.clusterHullPadding || 40;
-    const clusterCircleRadius = settings.clusterCircleRadius || 80;
+    const clusterHullPadding = settings.clusterHullPadding || 60; // 🔥 FIX: Padding augmenté pour polygones plus larges
+    const clusterCircleRadius = settings.clusterCircleRadius || 100; // 🔥 FIX: Cercles plus grands
     const clusterCirclePoints = settings.clusterCirclePoints || 12;
 
     // Calculer les enveloppes convexes pour chaque catégorie
@@ -1194,7 +1275,7 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
     const islandLabelFontSize = settings.islandLabelFontSize || 14;
     const islandLabelFontWeight = settings.islandLabelFontWeight || '600';
     const islandLabelOpacity = settings.islandLabelOpacity || 0.7;
-    const islandLabelYOffset = settings.islandLabelYOffset || -10;
+    const islandLabelYOffset = parseFloat(settings.islandLabelYOffset) || -10; // 🔥 FIX: Forcer conversion en nombre
     const islandTextShadow = settings.islandTextShadow || '2px 2px 6px rgba(255,255,255,0.9)';
     const islandCountFontSize = settings.islandCountFontSize || 11;
     const islandCountOpacity = settings.islandCountOpacity || 0.6;
@@ -1212,7 +1293,7 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
               id: cat.id,
               name: cat.name,
               slug: cat.slug,
-              color: cat.color || '#3498db', // Couleur de la catégorie ou bleu par défaut
+              color: cat.color || settings.defaultNodeColor || '#3498db', // Utiliser la couleur du Customizer
               articles: []
             });
           }
@@ -1706,7 +1787,7 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
     // 🔥 Use settings from Customizer
     const graphSettings = customizerSettingsRef.current;
     const scale = graphSettings.activeNodeScale || 1.5;
-    const defaultSize = graphSettings.defaultNodeSize || 80; // 🔥 FIX: Cohérent avec la taille définie (80px)
+    const defaultSize = graphSettings.defaultNodeSize || 200; // 🔥 FIX: Cohérent avec la taille définie (200px)
     
     imageElement
       .transition()
@@ -1769,7 +1850,7 @@ const GraphContainer = ({ config, onGraphReady, onError }) => {
         // Cancel any ongoing transitions
         imageElement.interrupt();
         
-        const defaultSize = customizerSettingsRef.current?.defaultNodeSize || 80; // 🔥 FIX: Cohérent avec la taille définie (80px)
+        const defaultSize = customizerSettingsRef.current?.defaultNodeSize || 200; // 🔥 FIX: Cohérent avec la taille définie (200px)
         
         imageElement
           .transition()

@@ -34,13 +34,13 @@ registerBlockType("archi-graph/interactive-graph", {
   icon: "networking",
   category: "archi-graph",
   attributes: {
-    width: { type: "number", default: 1200 },
-    height: { type: "number", default: 800 },
+    width: { type: "number", default: 16000 }, // 🔥 Doublé pour viewBox étendu
+    height: { type: "number", default: 11200 }, // 🔥 Doublé pour viewBox étendu
     maxArticles: { type: "number", default: 100 },
     enableFilters: { type: "boolean", default: true },
     enableSearch: { type: "boolean", default: true },
     animationDuration: { type: "number", default: 1000 },
-    nodeSpacing: { type: "number", default: 100 },
+    nodeSpacing: { type: "number", default: 200 }, // 🔥 Doublé pour meilleur espacement
     clusterStrength: { type: "number", default: 10 },
   },
   edit: function (props) {
@@ -64,15 +64,15 @@ registerBlockType("archi-graph/interactive-graph", {
               label={__("Largeur", "archi-graph")}
               value={width}
               onChange={(value) => setAttributes({ width: value })}
-              min={400}
-              max={1600}
+              min={4000} // 🔥 Doublé
+              max={20000} // 🔥 Doublé
             />
             <RangeControl
               label={__("Hauteur", "archi-graph")}
               value={height}
               onChange={(value) => setAttributes({ height: value })}
-              min={300}
-              max={1200}
+              min={2800} // 🔥 Doublé
+              max={16000} // 🔥 Doublé
             />
           </PanelBody>
 

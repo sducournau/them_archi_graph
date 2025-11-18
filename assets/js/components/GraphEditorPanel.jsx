@@ -26,10 +26,16 @@ const GraphEditorPanel = ({
 }) => {
   const [showPanel, setShowPanel] = useState(false);
   const [showAdvancedParams, setShowAdvancedParams] = useState(false);
+  
+  // Récupérer les settings depuis window.archiGraphSettings
+  const settings = window.archiGraphSettings || {};
+  const defaultNodeColor = settings.defaultNodeColor || '#3498db';
+  const defaultNodeSize = settings.defaultNodeSize || 80;
+  
   const [nodeParams, setNodeParams] = useState({
     shape: 'circle',
-    color: '#3498db',
-    size: 60,
+    color: defaultNodeColor,
+    size: defaultNodeSize,
     icon: '',
     badge: ''
   });
@@ -43,8 +49,8 @@ const GraphEditorPanel = ({
     if (selectedNode) {
       setNodeParams({
         shape: selectedNode.node_shape || 'circle',
-        color: selectedNode.node_color || '#3498db',
-        size: selectedNode.node_size || 80,
+        color: selectedNode.node_color || defaultNodeColor,
+        size: selectedNode.node_size || defaultNodeSize,
         icon: selectedNode.node_icon || '',
         badge: selectedNode.node_badge || ''
       });

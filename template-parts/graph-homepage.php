@@ -40,8 +40,7 @@
 // Configuration initiale pour le graphique
 window.graphConfig = {
     containerId: 'graph-container',
-    width: window.innerWidth,
-    height: window.innerHeight - 100,
+    // ⚠️ NE PAS définir width/height - React utilisera 8000×6000 par défaut pour le viewBox
     apiEndpoint: '<?php echo esc_url(home_url('/wp-json/archi/v1/articles')); ?>',
     themeUrl: '<?php echo esc_url(get_template_directory_uri()); ?>',
     nonce: '<?php echo wp_create_nonce('wp_rest'); ?>',
